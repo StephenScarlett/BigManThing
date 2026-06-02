@@ -1,0 +1,15 @@
+{
+  "name": "@bmt/db",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:reset": "supabase db reset",
+    "supabase:diff": "supabase db diff",
+    "supabase:push": "supabase db push",
+    "typecheck": "echo \"(db) no ts to check\"",
+    "lint": "echo \"(db) no lint\"",
+    "test": "echo \"(db) no tests yet\""
+  }
+}

@@ -1,0 +1,69 @@
+import { supabase } from "@/lib/supabase";
+import { getAnonSessionId } from "@/lib/anon";
+import type { Entity, GuessNahMode, SubmitGuessResponse } from "@bmt/shared";
+
+const ENTITY_COLUMNS =
+  "id, mode, name, aliases, era, reach, first_letter, image_url, audio_url, description, difficulty, guess_nah_enabled, draw_nah_enabled, type, domain, form, alignment, status, kind, heritage, material, occasion, sense";
+
+/** Today's puzzle id from the public view (no answer leak). */
+export async function fetchTodaysPuzzle(
+  mode: GuessNahMode,
+): Promise<{ puzzle_id: string; puzzle_date: string } | null> {
+  const today = new Date().toISOString().slice(0, 10);
+  console.log("[BMT] fetchTodaysPuzzle", { mode, today });
+  const { data, error } = await supabase
+    .from("daily_puzzles_public")
+    .select("id, puzzle_date, mode")
+    .eq("puzzle_date", today)
+    .eq("mode", mode)
+    .maybeSingle();
+  if (error) {
+    console.error("[BMT] fetchTodaysPuzzle error", error);
+    throw error;
+  }
+  console.log("[BMT] fetchTodaysPuzzle result", data);
+  if (!data) return null;
+  return { puzzle_id: data.id, puzzle_date: data.puzzle_date };
+}
+
+/** Lightweight entity rows needed for autocomplete + rendering guesses. */
+export async function fetchEntityCatalog(mode: GuessNahMode): Promise<Entity[]> {
+  console.log("[BMT] fetchEntityCatalog", { mode });
+  const { data, error } = await supabase
+    .from("entities")
+    .select(ENTITY_COLUMNS)
+    .eq("guess_nah_enabled", true)
+    .eq("mode", mode)
+    .order("name");
+  if (error) {
+    console.error("[BMT] fetchEntityCatalog error", error);
+    throw error;
+  }
+  console.log("[BMT] fetchEntityCatalog count:", data?.length ?? 0);
+  return (data ?? []) as Entity[];
+}
+
+export async function submitGuess(
+  puzzle_id: string,
+  guess_entity_id: string,
+): Promise<SubmitGuessResponse & { already_finished?: boolean }> {
+  const { data: sess } = await supabase.auth.getSession();
+  const anonId = getAnonSessionId();
+  const headers: Record<string, string> = { "x-bmt-anon-id": anonId };
+  const body = { puzzle_id, guess_entity_id };
+  console.log("[BMT] submitGuess →", body, "authed:", !!sess.session);
+  const { data, error } = await supabase.functions.invoke<
+    SubmitGuessResponse & { already_finished?: boolean; error?: string }
+  >("submit-guess", { body, headers });
+  if (error) {
+    console.error("[BMT] submitGuess invoke error", {
+      message: error.message,
+      context: (error as { context?: unknown }).context,
+    });
+    throw error;
+  }
+  console.log("[BMT] submitGuess response", data);
+  if (!data) throw new Error("empty_response");
+  if ("error" in data && data.error) throw new Error(data.error);
+  return data;
+}

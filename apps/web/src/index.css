@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme (default) */
+    --surface: #FFFFFF;
+    --surface-2: #F4F4F5;
+    --surface-3: #E4E4E7;
+    --ink: #0A0A0A;
+    --ink-muted: #52525B;
+    --line: #D4D4D8;
+    --feedback-exact: #15803D;     /* deep green still readable on white */
+    --feedback-wrong: #A1A1AA;     /* muted neutral */
+    --feedback-ordered: #E10600;   /* brand red for higher/lower */
+  }
+
+  .dark {
+    --surface: #0A0A0A;
+    --surface-2: #161616;
+    --surface-3: #232323;
+    --ink: #FAFAFA;
+    --ink-muted: #A1A1AA;
+    --line: #2A2A2A;
+    --feedback-exact: #22C55E;
+    --feedback-wrong: #3F3F46;
+    --feedback-ordered: #FF3B36;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+    overscroll-behavior: none;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  h1, h2, h3 {
+    @apply font-display tracking-wide;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-3 font-semibold
+           transition-transform active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand-red text-brand-white hover:bg-brand-red-dim;
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-surface-2 text-ink hover:border-brand-red;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-surface-2 p-5;
+  }
+}

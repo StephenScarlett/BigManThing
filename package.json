@@ -1,0 +1,22 @@
+{
+  "name": "bigmanthing",
+  "private": true,
+  "version": "0.0.1",
+  "description": "BigManThing — Trinidad & Tobago–themed browser game platform.",
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter ./apps/* run dev",
+    "dev:web": "pnpm --filter @bmt/web run dev",
+    "dev:server": "pnpm --filter @bmt/game-server run dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "pnpm -r run lint",
+    "test": "pnpm -r run test"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
