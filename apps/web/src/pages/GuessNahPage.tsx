@@ -145,7 +145,13 @@ function ModePanel({ mode }: { mode: GuessNahMode }) {
         persist({ rows, solved: res.solved });
         return;
       }
-      const next = [...rows, { guess: entity, feedback: res.feedback }];
+      // Defensive: if solved, override all feedback to "exact"
+      // (handles stale edge function returning wrong feedback for correct answer)
+      let fb = res.feedback;
+      if (res.solved) {
+        fb = Object.fromEntries(Object.keys(fb).map((k) => [k, "exact"])) as unknown as typeof fb;
+      }
+      const next = [...rows, { guess: entity, feedback: fb }];
       setRows(next);
       setSolved(res.solved);
       persist({ rows: next, solved: res.solved });

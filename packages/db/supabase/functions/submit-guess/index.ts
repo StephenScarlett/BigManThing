@@ -9,42 +9,99 @@
 // @ts-nocheck — Deno runtime, types not available in our tsconfig.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-const ERAS = ["pre_1900", "y1900_1950", "y1950_2000", "y2000_plus", "timeless"];
-const ERA_INDEX = Object.fromEntries(ERAS.map((e, i) => [e, i]));
+// ── Array-based comparison helpers ──────────────────────────────────────────
 
+/** Compare two text[] columns. exact = identical sets, partial = any overlap, wrong = no overlap. */
+function arrEq(g, a) {
+  const gs = new Set(g ?? []);
+  const as_ = new Set(a ?? []);
+  if (gs.size === 0 && as_.size === 0) return "exact";
+  if (gs.size === 0 || as_.size === 0) return "wrong";
+  if (gs.size === as_.size && [...gs].every((v) => as_.has(v))) return "exact";
+  for (const v of gs) { if (as_.has(v)) return "partial"; }
+  return "wrong";
+}
+
+/** Compare arrays with group-based partial matching. */
+function arrGrouped(g, a, groupLookup) {
+  const gs = new Set(g ?? []);
+  const as_ = new Set(a ?? []);
+  if (gs.size === 0 && as_.size === 0) return "exact";
+  if (gs.size === 0 || as_.size === 0) return "wrong";
+  if (gs.size === as_.size && [...gs].every((v) => as_.has(v))) return "exact";
+  for (const v of gs) { if (as_.has(v)) return "partial"; }
+  const gGroups = new Set([...gs].map((v) => groupLookup[v]).filter(Boolean));
+  const aGroups = new Set([...as_].map((v) => groupLookup[v]).filter(Boolean));
+  for (const grp of gGroups) { if (aGroups.has(grp)) return "partial"; }
+  return "wrong";
+}
+
+/** Compare era ranges. exact = identical, higher/lower based on midpoint. */
+function eraOrdered(gStart, gEnd, aStart, aEnd) {
+  if (gStart == null || gEnd == null || aStart == null || aEnd == null) return "wrong";
+  if (gStart === aStart && gEnd === aEnd) return "exact";
+  const gMid = (gStart + gEnd) / 2;
+  const aMid = (aStart + aEnd) / 2;
+  if (gStart <= aEnd && gEnd >= aStart) return "partial";
+  return gMid < aMid ? "higher" : "lower";
+}
+
+/** Compare reach arrays ordered by scale. */
 const REACHES = ["local_legend", "trinidad_wide", "caribbean_wide", "global"];
-const REACH_INDEX = Object.fromEntries(REACHES.map((r, i) => [r, i]));
-
-function eq(g, a) {
-  return g === a ? "exact" : "wrong";
+function reachOrdered(g, a) {
+  const gs = g ?? [];
+  const as_ = a ?? [];
+  if (gs.length === 0 && as_.length === 0) return "exact";
+  if (gs.length === 0 || as_.length === 0) return "wrong";
+  const gSet = new Set(gs);
+  const aSet = new Set(as_);
+  if (gSet.size === aSet.size && [...gSet].every((v) => aSet.has(v))) return "exact";
+  const gMax = Math.max(...gs.map((v) => REACHES.indexOf(v)).filter((i) => i >= 0));
+  const aMax = Math.max(...as_.map((v) => REACHES.indexOf(v)).filter((i) => i >= 0));
+  if (gMax < 0 || aMax < 0) return "wrong";
+  if (gMax === aMax) return "partial";
+  return gMax < aMax ? "higher" : "lower";
 }
 
-function ordered(g, a) {
-  if (g === undefined || a === undefined) return "wrong";
-  if (g === a) return "exact";
-  return g < a ? "higher" : "lower";
-}
+// Groups for partial (orange) matching
+const FIELD_GROUPS = {
+  music: "creative", comedy: "creative", entertainment: "creative",
+  media: "digital", social_media: "digital",
+  politics: "civic", activism: "civic",
+  sports: "sports", business: "business",
+};
+const DOMAIN_TYPE_GROUPS = {
+  elite_global_performer: "global_tier", international_professional: "global_tier",
+  regional_icon: "national_tier", national_figure: "national_tier",
+  local_creator: "local_tier", cultural_legend: "local_tier",
+};
+const OUTPUT_CONTEXT_GROUPS = {
+  studio_music: "performance", live_performance: "performance", stage_comedy: "performance",
+  digital_content: "media", radio_media: "media",
+  stadium_sport: "stadium_sport", political_office: "political_office",
+};
 
 function computeFeedback(guess, answer) {
   if (answer.mode === "ting") {
     return {
-      kind: eq(guess.kind, answer.kind),
-      heritage: eq(guess.heritage, answer.heritage),
-      era: ordered(ERA_INDEX[guess.era], ERA_INDEX[answer.era]),
-      material: eq(guess.material, answer.material),
-      occasion: eq(guess.occasion, answer.occasion),
-      sense: eq(guess.sense, answer.sense),
-      reach: ordered(REACH_INDEX[guess.reach], REACH_INDEX[answer.reach]),
+      kind: arrEq(guess.kind, answer.kind),
+      heritage: arrEq(guess.heritage, answer.heritage),
+      era: eraOrdered(guess.era_start, guess.era_end, answer.era_start, answer.era_end),
+      material: arrEq(guess.material, answer.material),
+      occasion: arrEq(guess.occasion, answer.occasion),
+      sense: arrEq(guess.sense, answer.sense),
+      reach: reachOrdered(guess.reach, answer.reach),
     };
   }
   return {
-    type: eq(guess.type, answer.type),
-    domain: eq(guess.domain, answer.domain),
-    era: ordered(ERA_INDEX[guess.era], ERA_INDEX[answer.era]),
-    form: eq(guess.form, answer.form),
-    alignment: eq(guess.alignment, answer.alignment),
-    reach: ordered(REACH_INDEX[guess.reach], REACH_INDEX[answer.reach]),
-    status: eq(guess.status, answer.status),
+    field: arrGrouped(guess.field, answer.field, FIELD_GROUPS),
+    role: arrEq(guess.role, answer.role),
+    era: eraOrdered(guess.era_start, guess.era_end, answer.era_start, answer.era_end),
+    gender: arrEq(guess.gender, answer.gender),
+    status: arrEq(guess.status, answer.status),
+    domain_type: arrGrouped(guess.domain_type, answer.domain_type, DOMAIN_TYPE_GROUPS),
+    output_context: arrGrouped(guess.output_context, answer.output_context, OUTPUT_CONTEXT_GROUPS),
+    region: arrEq(guess.region, answer.region),
   };
 }
 

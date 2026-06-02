@@ -12,7 +12,8 @@
     --ink-muted: #52525B;
     --line: #D4D4D8;
     --feedback-exact: #15803D;     /* deep green still readable on white */
-    --feedback-wrong: #A1A1AA;     /* muted neutral */
+    --feedback-partial: #D97706;    /* amber/orange for partial match */
+    --feedback-wrong: #DC2626;     /* red for wrong */
     --feedback-ordered: #E10600;   /* brand red for higher/lower */
   }
 
@@ -24,7 +25,8 @@
     --ink-muted: #A1A1AA;
     --line: #2A2A2A;
     --feedback-exact: #22C55E;
-    --feedback-wrong: #3F3F46;
+    --feedback-partial: #F59E0B;
+    --feedback-wrong: #EF4444;
     --feedback-ordered: #FF3B36;
   }
 

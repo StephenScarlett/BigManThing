@@ -3,6 +3,7 @@ import type {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@bmt/shared";
+import { supabase } from "@/lib/supabase";
 
 export type BmtSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -15,6 +16,16 @@ export function getSocket(): BmtSocket {
     socket = io(url, {
       autoConnect: true,
       transports: ["websocket"],
+      // Pass the Supabase JWT on every (re)connection — server verifies it
+      // and derives the canonical username from the profiles table.
+      auth: async (cb: (data: Record<string, unknown>) => void) => {
+        const { data } = await supabase.auth.getSession();
+        cb({
+          token: data.session?.access_token ?? null,
+          // Fallback used only when server has no Supabase env vars (local dev)
+          nickname: null,
+        });
+      },
     });
     socket.on("connect", () => console.log("[socket] connected", socket?.id));
     socket.on("disconnect", (r) => console.log("[socket] disconnected", r));

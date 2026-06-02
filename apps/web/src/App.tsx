@@ -1,21 +1,45 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import HomePage from "@/pages/HomePage";
 import GuessNahPage from "@/pages/GuessNahPage";
 import DrawNahPage from "@/pages/DrawNahPage";
 import { ThemeToggle } from "@/lib/theme";
+import UserMenu from "@/features/auth/UserMenu";
+import NameGate from "@/features/auth/NameGate";
+import { useAuth } from "@/lib/auth";
+
+const AdminPage = lazy(() => import("@/pages/AdminPage"));
 
 export default function App() {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  // Show full-screen gate until we have a session (real or anonymous)
+  if (!loading && !user) return <NameGate />;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-6 md:py-10">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/guess" element={<GuessNahPage />} />
-          <Route path="/draw" element={<DrawNahPage />} />
-          <Route path="/draw/:roomCode" element={<DrawNahPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Routes location={location}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/guess" element={<GuessNahPage />} />
+              <Route path="/draw" element={<DrawNahPage />} />
+              <Route path="/draw/:roomCode" element={<DrawNahPage />} />
+              <Route path="/admin" element={<Suspense fallback={<div className="text-center py-20 text-ink-muted">Loading…</div>}><AdminPage /></Suspense>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       </main>
       <Footer />
     </div>
@@ -42,6 +66,7 @@ function Header() {
             </NavLink>
           </nav>
           <ThemeToggle />
+          <UserMenu />
         </div>
       </div>
     </header>

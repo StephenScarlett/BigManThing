@@ -37,12 +37,6 @@ export function GuessInput({ catalog, excludeIds, disabled, onPick }: Props) {
     inputRef.current?.focus();
   }
 
-  function tagFor(e: Entity): string {
-    if (e.mode === "ting" && e.kind) return e.kind.replace("_", " ");
-    if (e.mode === "dem" && e.type) return e.type;
-    return e.mode;
-  }
-
   return (
     <div className="relative">
       <input
@@ -89,10 +83,12 @@ export function GuessInput({ catalog, excludeIds, disabled, onPick }: Props) {
                 i === highlight ? "bg-surface-3" : ""
               }`}
             >
-              <span className="text-xs uppercase text-brand-red w-32 shrink-0">
-                {tagFor(m)}
-              </span>
-              <span>{m.name}</span>
+              {m.image_url ? (
+                <img src={m.image_url} alt="" className="w-7 h-7 rounded-full object-cover shrink-0" />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-surface-3 shrink-0" />
+              )}
+              <span className="flex-1">{m.name}</span>
             </li>
           ))}
         </ul>

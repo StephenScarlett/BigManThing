@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { DrawNahCategory, DrawRoomSettings } from "@bmt/shared";
 import { DRAW_NAH_CATEGORIES, DRAW_NAH_CATEGORY_LABELS } from "@bmt/shared";
@@ -13,8 +13,7 @@ import { EndScreen } from "@/features/draw-nah/EndScreen";
 import { RoundSummaryModal } from "@/features/draw-nah/RoundSummaryModal";
 import { useRoundCountdown } from "@/features/draw-nah/useRoundCountdown";
 import { useAudioUnlock, useMuted } from "@/features/draw-nah/useSound";
-
-const NICK_KEY = "bmt:draw:nickname";
+import { useAuth } from "@/lib/auth";
 
 export default function DrawNahPage() {
   const { roomCode } = useParams<{ roomCode?: string }>();
@@ -25,28 +24,19 @@ export default function DrawNahPage() {
 // ── Pre-room: create or join ────────────────────────────────────────────────
 function Lobby() {
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState(
-    () => localStorage.getItem(NICK_KEY) ?? "",
-  );
+  const { profile } = useAuth();
+  const nickname = profile?.username ?? "";
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function persistNick() {
-    localStorage.setItem(NICK_KEY, nickname.trim());
-  }
-
   function create() {
     setError(null);
-    if (nickname.trim().length < 2) {
-      setError("Nickname needs 2+ characters.");
-      return;
-    }
-    persistNick();
+    if (!nickname) return setError("Profile loading…");
     setBusy(true);
     getSocket().emit(
       "room:create",
-      { nickname: nickname.trim() },
+      { nickname },
       (res) => {
         setBusy(false);
         if (!res.ok) return setError(res.error);
@@ -57,14 +47,13 @@ function Lobby() {
 
   function join() {
     setError(null);
-    if (nickname.trim().length < 2) return setError("Nickname needs 2+ characters.");
+    if (!nickname) return setError("Profile loading…");
     if (code.trim().length !== 6) return setError("Room codes are 6 characters.");
-    persistNick();
     setBusy(true);
     const upper = code.trim().toUpperCase();
     getSocket().emit(
       "room:join",
-      { nickname: nickname.trim(), room_code: upper },
+      { nickname, room_code: upper },
       (res) => {
         setBusy(false);
         if (!res.ok) return setError(res.error);
@@ -85,16 +74,13 @@ function Lobby() {
       </header>
 
       <div className="card space-y-3">
-        <label className="block">
-          <span className="text-sm font-semibold">Nickname</span>
-          <input
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value.slice(0, 20))}
-            placeholder="What dey go call yuh?"
-            className="mt-1 w-full rounded border border-line bg-surface px-3 py-2 focus:border-brand-red focus:outline-none"
-            maxLength={20}
-          />
-        </label>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-semibold">Playing as</span>
+          <span className="font-mono font-bold text-brand-red">{nickname || "…"}</span>
+        </div>
+        <p className="text-xs text-ink-muted -mt-1">
+          Change your name via the user menu (top-right).
+        </p>
 
         <button
           type="button"
@@ -151,7 +137,8 @@ function RoomView({ roomCode }: { roomCode: string }) {
   const [muted, setMuted] = useMuted();
   const seconds = useRoundCountdown();
 
-  const nickname = useMemo(() => localStorage.getItem(NICK_KEY) ?? "", []);
+  const { profile } = useAuth();
+  const nickname = profile?.username ?? "";
 
   // Always emit room:join on mount — the server resyncs same-socket joins,
   // which fixes the race where the host's room:state is broadcast before

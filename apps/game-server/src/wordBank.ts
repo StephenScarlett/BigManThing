@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { admin } from "./supabase.js";
 import type { DrawNahCategory, GuessNahMode } from "@bmt/shared";
 
 export interface WordEntry {
@@ -14,16 +14,6 @@ let cache: WordEntry[] = [];
 let loadedAt = 0;
 const TTL_MS = 5 * 60 * 1000;
 
-const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-
-const admin =
-  SUPABASE_URL && SERVICE_KEY
-    ? createClient(SUPABASE_URL, SERVICE_KEY, {
-        auth: { persistSession: false },
-      })
-    : null;
-
 export async function loadWordBank(force = false): Promise<WordEntry[]> {
   if (!admin) {
     console.warn(
@@ -36,7 +26,7 @@ export async function loadWordBank(force = false): Promise<WordEntry[]> {
   }
   const { data, error } = await admin
     .from("entities")
-    .select("id, name, aliases, difficulty, mode, domain, type, kind")
+    .select("id, name, aliases, difficulty, mode, field, kind")
     .eq("draw_nah_enabled", true);
   if (error) {
     console.error("[wordBank] load error:", error.message);
@@ -79,8 +69,7 @@ export function pickWords(
 /** Maps entity DB fields to a DrawNahCategory. */
 function deriveCategory(r: {
   mode: string;
-  type?: string | null;
-  domain?: string | null;
+  field?: string | null;
   kind?: string | null;
 }): DrawNahCategory {
   if (r.mode === "ting") {
@@ -94,27 +83,27 @@ function deriveCategory(r: {
     }
   }
   // dem mode
-  if (r.type === "folklore") return "folklore";
-  switch (r.domain) {
+  switch (r.field) {
     case "sports":                          return "sports";
     case "music":                           return "music";
-    case "folklore":                        return "folklore";
-    case "nature":                          return "nature";
     case "politics":
-    case "culture":
+    case "comedy":
     case "media":
-    case "religion":                        return "culture";
-    default:                               return "culture";
+    case "business":
+    case "activism":
+    case "entertainment":
+    case "social_media":                    return "culture";
+    default:                                return "culture";
   }
 }
 
 const FALLBACK: WordEntry[] = [
   { entity_id: "fb1", name: "Doubles",    aliases: [],        difficulty: "easy", mode: "ting", category: "food" },
   { entity_id: "fb2", name: "Steelpan",   aliases: ["Pan"],   difficulty: "easy", mode: "ting", category: "instrument" },
-  { entity_id: "fb3", name: "Soucouyant", aliases: [],        difficulty: "easy", mode: "dem",  category: "folklore" },
+  { entity_id: "fb3", name: "Soucouyant", aliases: [],        difficulty: "easy", mode: "dem",  category: "culture" },
   { entity_id: "fb4", name: "Brian Lara", aliases: [],        difficulty: "easy", mode: "dem",  category: "sports" },
   { entity_id: "fb5", name: "Mauby",      aliases: [],        difficulty: "easy", mode: "ting", category: "drink" },
-  { entity_id: "fb6", name: "Papa Bois",  aliases: [],        difficulty: "easy", mode: "dem",  category: "folklore" },
+  { entity_id: "fb6", name: "Papa Bois",  aliases: [],        difficulty: "easy", mode: "dem",  category: "culture" },
   { entity_id: "fb7", name: "Soca music", aliases: ["Soca"],  difficulty: "easy", mode: "dem",  category: "music" },
   { entity_id: "fb8", name: "Carnival",   aliases: [],        difficulty: "easy", mode: "dem",  category: "culture" },
 ];

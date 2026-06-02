@@ -1,16 +1,17 @@
 import type { GuessNahMode } from "./entities.js";
 
-export type FeedbackState = "exact" | "wrong" | "higher" | "lower";
+export type FeedbackState = "exact" | "partial" | "wrong" | "higher" | "lower";
 
-/** Dem Nah feedback (people + folklore). */
+/** Dem Nah feedback (people only — 8 columns). */
 export interface DemFeedback {
-  type: FeedbackState;
-  domain: FeedbackState;
+  field: FeedbackState;
+  role: FeedbackState;
   era: FeedbackState;
-  form: FeedbackState;
-  alignment: FeedbackState;
-  reach: FeedbackState;
+  gender: FeedbackState;
   status: FeedbackState;
+  domain_type: FeedbackState;
+  output_context: FeedbackState;
+  region: FeedbackState;
 }
 
 /** Ting Nah feedback (food + drink + objects). */

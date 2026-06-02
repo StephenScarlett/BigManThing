@@ -3,7 +3,7 @@ import { getAnonSessionId } from "@/lib/anon";
 import type { Entity, GuessNahMode, SubmitGuessResponse } from "@bmt/shared";
 
 const ENTITY_COLUMNS =
-  "id, mode, name, aliases, era, reach, first_letter, image_url, audio_url, description, difficulty, guess_nah_enabled, draw_nah_enabled, type, domain, form, alignment, status, kind, heritage, material, occasion, sense";
+  "id, mode, name, aliases, era_start, era_end, first_letter, image_url, audio_url, description, difficulty, guess_nah_enabled, draw_nah_enabled, field, role, role_group, gender, status, domain_type, output_context, region, kind, heritage, material, occasion, sense, reach";
 
 /** Today's puzzle id from the public view (no answer leak). */
 export async function fetchTodaysPuzzle(

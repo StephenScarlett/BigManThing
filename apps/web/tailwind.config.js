@@ -21,6 +21,7 @@ export default {
         line: "var(--line)",
         feedback: {
           exact: "var(--feedback-exact)",
+          partial: "var(--feedback-partial)",
           wrong: "var(--feedback-wrong)",
           ordered: "var(--feedback-ordered)",
         },
