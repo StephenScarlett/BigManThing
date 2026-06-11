@@ -8,6 +8,7 @@ export interface WordEntry {
   difficulty: "easy" | "medium" | "hard";
   mode: GuessNahMode;
   category: DrawNahCategory;
+  image_url: string | null;
 }
 
 let cache: WordEntry[] = [];
@@ -26,7 +27,7 @@ export async function loadWordBank(force = false): Promise<WordEntry[]> {
   }
   const { data, error } = await admin
     .from("entities")
-    .select("id, name, aliases, difficulty, mode, field, kind")
+    .select("id, name, aliases, difficulty, mode, field, kind, image_url")
     .eq("draw_nah_enabled", true);
   if (error) {
     console.error("[wordBank] load error:", error.message);
@@ -39,6 +40,7 @@ export async function loadWordBank(force = false): Promise<WordEntry[]> {
     difficulty: r.difficulty,
     mode: r.mode,
     category: deriveCategory(r),
+    image_url: r.image_url ?? null,
   }));
   loadedAt = Date.now();
   console.log(`[wordBank] loaded ${cache.length} words`);
@@ -66,44 +68,41 @@ export function pickWords(
   return out;
 }
 
-/** Maps entity DB fields to a DrawNahCategory. */
+const DEM_FIELDS: ReadonlySet<DrawNahCategory> = new Set([
+  "sports", "music", "politics", "comedy", "media",
+  "business", "activism", "entertainment", "social_media",
+]);
+const TING_KINDS: ReadonlySet<DrawNahCategory> = new Set([
+  "food", "drink", "instrument", "wearable", "tool_object",
+]);
+
+/** Maps entity DB fields to a DrawNahCategory using exact value alignment. */
 function deriveCategory(r: {
   mode: string;
-  field?: string | null;
-  kind?: string | null;
+  field?: string[] | string | null;
+  kind?: string[] | string | null;
 }): DrawNahCategory {
+  const firstOf = (v: string[] | string | null | undefined): string | null => {
+    if (Array.isArray(v)) return v[0] ?? null;
+    return typeof v === "string" ? v : null;
+  };
   if (r.mode === "ting") {
-    switch (r.kind) {
-      case "food":        return "food";
-      case "drink":       return "drink";
-      case "instrument":  return "instrument";
-      case "wearable":    return "wearable";
-      case "tool_object": return "object";
-      default:            return "object";
-    }
+    const k = firstOf(r.kind);
+    if (k && TING_KINDS.has(k as DrawNahCategory)) return k as DrawNahCategory;
+    return "tool_object";
   }
-  // dem mode
-  switch (r.field) {
-    case "sports":                          return "sports";
-    case "music":                           return "music";
-    case "politics":
-    case "comedy":
-    case "media":
-    case "business":
-    case "activism":
-    case "entertainment":
-    case "social_media":                    return "culture";
-    default:                                return "culture";
-  }
+  const f = firstOf(r.field);
+  if (f && DEM_FIELDS.has(f as DrawNahCategory)) return f as DrawNahCategory;
+  return "entertainment";
 }
 
 const FALLBACK: WordEntry[] = [
-  { entity_id: "fb1", name: "Doubles",    aliases: [],        difficulty: "easy", mode: "ting", category: "food" },
-  { entity_id: "fb2", name: "Steelpan",   aliases: ["Pan"],   difficulty: "easy", mode: "ting", category: "instrument" },
-  { entity_id: "fb3", name: "Soucouyant", aliases: [],        difficulty: "easy", mode: "dem",  category: "culture" },
-  { entity_id: "fb4", name: "Brian Lara", aliases: [],        difficulty: "easy", mode: "dem",  category: "sports" },
-  { entity_id: "fb5", name: "Mauby",      aliases: [],        difficulty: "easy", mode: "ting", category: "drink" },
-  { entity_id: "fb6", name: "Papa Bois",  aliases: [],        difficulty: "easy", mode: "dem",  category: "culture" },
-  { entity_id: "fb7", name: "Soca music", aliases: ["Soca"],  difficulty: "easy", mode: "dem",  category: "music" },
-  { entity_id: "fb8", name: "Carnival",   aliases: [],        difficulty: "easy", mode: "dem",  category: "culture" },
+  { entity_id: "fb1", name: "Doubles",    aliases: [],        difficulty: "easy", mode: "ting", category: "food",        image_url: null },
+  { entity_id: "fb2", name: "Steelpan",   aliases: ["Pan"],   difficulty: "easy", mode: "ting", category: "instrument",  image_url: null },
+  { entity_id: "fb3", name: "Soucouyant", aliases: [],        difficulty: "easy", mode: "dem",  category: "entertainment", image_url: null },
+  { entity_id: "fb4", name: "Brian Lara", aliases: [],        difficulty: "easy", mode: "dem",  category: "sports",      image_url: null },
+  { entity_id: "fb5", name: "Mauby",      aliases: [],        difficulty: "easy", mode: "ting", category: "drink",       image_url: null },
+  { entity_id: "fb6", name: "Papa Bois",  aliases: [],        difficulty: "easy", mode: "dem",  category: "entertainment", image_url: null },
+  { entity_id: "fb7", name: "Soca music", aliases: ["Soca"],  difficulty: "easy", mode: "dem",  category: "music",       image_url: null },
+  { entity_id: "fb8", name: "Carnival",   aliases: [],        difficulty: "easy", mode: "dem",  category: "entertainment", image_url: null },
 ];

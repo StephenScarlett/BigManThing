@@ -87,8 +87,9 @@ export function useDrawSocket(): void {
     };
     const onWordCurrentDrawer: Parameters<
       typeof s.on<"word:current:drawer">
-    >[1] = ({ word }) => {
+    >[1] = ({ word, image_url }) => {
       store.getState().setMyWord(word);
+      store.getState().setMyImageUrl(image_url ?? null);
       store.getState().setGuessMask(null);
     };
     const onHint: Parameters<typeof s.on<"hint:reveal">>[1] = ({ mask }) => {
@@ -104,6 +105,7 @@ export function useDrawSocket(): void {
     };
     const onRoundEnd = (summary: RoundSummary) => {
       store.getState().setMyWord(null);
+      store.getState().setMyImageUrl(null);
       store.getState().setGuessMask(null);
       store.getState().setCurrentSummary(summary);
     };

@@ -10,18 +10,26 @@ import NameGate from "@/features/auth/NameGate";
 import { useAuth } from "@/lib/auth";
 
 const AdminPage = lazy(() => import("@/pages/AdminPage"));
+const WhereNahPage = lazy(() => import("@/pages/WhereNahPage"));
 
 export default function App() {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const isDrawRoom = location.pathname.startsWith("/draw/");
 
   // Show full-screen gate until we have a session (real or anonymous)
   if (!loading && !user) return <NameGate />;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-6 md:py-10">
+    <div className={isDrawRoom ? "h-dvh overflow-hidden" : "min-h-screen flex flex-col"}>
+      {!isDrawRoom && <Header />}
+      <main
+        className={`w-full ${
+          isDrawRoom
+            ? "h-dvh p-0"
+            : "flex-1 mx-auto max-w-6xl px-3 md:px-4 py-6 md:py-10"
+        }`}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -35,13 +43,14 @@ export default function App() {
               <Route path="/guess" element={<GuessNahPage />} />
               <Route path="/draw" element={<DrawNahPage />} />
               <Route path="/draw/:roomCode" element={<DrawNahPage />} />
+              <Route path="/where" element={<Suspense fallback={<div className="text-center py-20 text-ink-muted">Loading…</div>}><WhereNahPage /></Suspense>} />
               <Route path="/admin" element={<Suspense fallback={<div className="text-center py-20 text-ink-muted">Loading…</div>}><AdminPage /></Suspense>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
       </main>
-      <Footer />
+      {!isDrawRoom && <Footer />}
     </div>
   );
 }
@@ -63,6 +72,9 @@ function Header() {
             </NavLink>
             <NavLink to="/draw" active={pathname.startsWith("/draw")}>
               Draw Nah
+            </NavLink>
+            <NavLink to="/where" active={pathname.startsWith("/where")}>
+              Where Nah
             </NavLink>
           </nav>
           <ThemeToggle />

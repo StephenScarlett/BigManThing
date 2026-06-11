@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Entity, GuessFeedback, GuessNahMode } from "@bmt/shared";
 import {
   fetchEntityCatalog,
+  fetchAttributeLabelMap,
   fetchTodaysPuzzle,
   submitGuess,
 } from "@/features/guess-nah/api";
@@ -84,6 +85,11 @@ function ModePanel({ mode }: { mode: GuessNahMode }) {
   const catalogQuery = useQuery({
     queryKey: ["entity-catalog", mode],
     queryFn: () => fetchEntityCatalog(mode),
+  });
+  const labelsQuery = useQuery({
+    queryKey: ["attribute-label-map"],
+    queryFn: fetchAttributeLabelMap,
+    staleTime: 5 * 60 * 1000,
   });
 
   const [rows, setRows] = useState<Row[]>([]);
@@ -194,16 +200,21 @@ function ModePanel({ mode }: { mode: GuessNahMode }) {
       />
       {error && <p className="text-brand-red text-sm">{error}</p>}
 
-      {rows.length > 0 && <AttributeRowHeader mode={mode} />}
-      <div className="space-y-3">
-        {rows.map((r, i) => (
-          <AttributeRow
-            key={`${r.guess.id}-${i}`}
-            guess={r.guess}
-            feedback={r.feedback}
-            rowIndex={i}
-          />
-        ))}
+      <div className="overflow-x-auto pb-2">
+        <div className={mode === "ting" ? "min-w-[52rem]" : "min-w-[62rem]"}>
+          {rows.length > 0 && <AttributeRowHeader mode={mode} />}
+          <div className="space-y-3">
+            {rows.map((r, i) => (
+              <AttributeRow
+                key={`${r.guess.id}-${i}`}
+                guess={r.guess}
+                feedback={r.feedback}
+                rowIndex={i}
+                labelMap={labelsQuery.data ?? {}}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {solved && (

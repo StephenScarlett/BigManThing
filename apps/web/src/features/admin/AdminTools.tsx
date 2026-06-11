@@ -373,21 +373,54 @@ function ClearGuessesSection() {
       if (target === "me") {
         // Delete this user's attempts
         if (userId) {
-          await supabase.from("guess_attempts").delete()
-            .eq("puzzle_id", puzzleId).eq("user_id", userId);
-          await supabase.from("daily_results").delete()
-            .eq("puzzle_id", puzzleId).eq("user_id", userId);
+          const { error: attemptsErr } = await supabase
+            .from("guess_attempts")
+            .delete()
+            .eq("puzzle_id", puzzleId)
+            .eq("user_id", userId);
+          if (attemptsErr) throw attemptsErr;
+
+          const { error: resultsErr } = await supabase
+            .from("daily_results")
+            .delete()
+            .eq("puzzle_id", puzzleId)
+            .eq("user_id", userId);
+          if (resultsErr) throw resultsErr;
         } else {
-          await supabase.from("guess_attempts").delete()
-            .eq("puzzle_id", puzzleId).eq("anon_session_id", anonId);
-          await supabase.from("daily_results").delete()
-            .eq("puzzle_id", puzzleId).eq("anon_session_id", anonId);
+          const { error: attemptsErr } = await supabase
+            .from("guess_attempts")
+            .delete()
+            .eq("puzzle_id", puzzleId)
+            .eq("anon_session_id", anonId);
+          if (attemptsErr) throw attemptsErr;
+
+          const { error: resultsErr } = await supabase
+            .from("daily_results")
+            .delete()
+            .eq("puzzle_id", puzzleId)
+            .eq("anon_session_id", anonId);
+          if (resultsErr) throw resultsErr;
         }
+        // Guess Nah page caches rows by puzzle id; clear local cache so UI reflects DB immediately.
+        localStorage.removeItem(`bmt:guess:${puzzleId}`);
         setStatus(`✓ Your guesses cleared for today's ${mode === "dem" ? "Dem Nah" : "Ting Nah"}.`);
       } else {
         // Clear ALL players — admin nuclear option
-        await supabase.from("guess_attempts").delete().eq("puzzle_id", puzzleId);
-        await supabase.from("daily_results").delete().eq("puzzle_id", puzzleId);
+        const { error: attemptsErr } = await supabase
+          .from("guess_attempts")
+          .delete()
+          .eq("puzzle_id", puzzleId);
+        if (attemptsErr) throw attemptsErr;
+
+        const { error: resultsErr } = await supabase
+          .from("daily_results")
+          .delete()
+          .eq("puzzle_id", puzzleId);
+        if (resultsErr) throw resultsErr;
+
+        // Also clear local cache in this browser session.
+        localStorage.removeItem(`bmt:guess:${puzzleId}`);
+
         setStatus(`✓ ALL guesses cleared for today's ${mode === "dem" ? "Dem Nah" : "Ting Nah"}.`);
       }
     } catch (e) {

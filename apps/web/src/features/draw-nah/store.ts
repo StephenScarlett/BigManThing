@@ -14,6 +14,7 @@ interface State {
   events: DrawEvent[];
   wordOptions: DrawWordOption[];
   myWord: string | null;
+  myImageUrl: string | null;
   guessMask: { length: number; mask: string } | null;
   closeFlashAt: number;
   haveGuessed: boolean;
@@ -31,6 +32,7 @@ interface State {
   clearEvents: () => void;
   setWordOptions: (opts: DrawWordOption[]) => void;
   setMyWord: (w: string | null) => void;
+  setMyImageUrl: (u: string | null) => void;
   setGuessMask: (m: { length: number; mask: string } | null) => void;
   setMaskString: (mask: string) => void;
   flashClose: () => void;
@@ -51,6 +53,7 @@ export const useDrawStore = create<State>((set) => ({
   events: [],
   wordOptions: [],
   myWord: null,
+  myImageUrl: null,
   guessMask: null,
   closeFlashAt: 0,
   haveGuessed: false,
@@ -72,6 +75,7 @@ export const useDrawStore = create<State>((set) => ({
   clearEvents: () => set({ events: [] }),
   setWordOptions: (opts) => set({ wordOptions: opts }),
   setMyWord: (w) => set({ myWord: w }),
+  setMyImageUrl: (u) => set({ myImageUrl: u }),
   setGuessMask: (m) => set({ guessMask: m }),
   setMaskString: (mask) =>
     set((s) =>
@@ -89,6 +93,7 @@ export const useDrawStore = create<State>((set) => ({
       events: [],
       wordOptions: [],
       myWord: null,
+      myImageUrl: null,
       guessMask: null,
       currentSummary: null,
       haveGuessed: false,
@@ -100,6 +105,7 @@ export const useDrawStore = create<State>((set) => ({
       events: [],
       wordOptions: [],
       myWord: null,
+      myImageUrl: null,
       guessMask: null,
       currentSummary: null,
       haveGuessed: false,

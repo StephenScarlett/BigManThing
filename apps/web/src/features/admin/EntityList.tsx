@@ -17,6 +17,7 @@ type SortDir = "asc" | "desc";
 
 export default function EntityList() {
   const [entities, setEntities] = useState<Entity[]>([]);
+  const [labelMap, setLabelMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [search, setSearch] = useState("");
@@ -39,6 +40,21 @@ export default function EntityList() {
 
     const { data, error } = await q;
     if (error) console.error("[admin] load error:", error.message);
+
+    const { data: labelRows, error: labelError } = await supabase
+      .from("attribute_options")
+      .select("value, display_label");
+    if (labelError) {
+      console.error("[admin] attribute label load error:", labelError.message);
+    } else {
+      const nextMap: Record<string, string> = {};
+      for (const row of labelRows ?? []) {
+        const rec = row as { value?: string; display_label?: string };
+        if (rec.value && rec.display_label) nextMap[rec.value] = rec.display_label;
+      }
+      setLabelMap(nextMap);
+    }
+
     setEntities((data ?? []) as Entity[]);
     setLoading(false);
   }, [viewMode]);
@@ -54,7 +70,11 @@ export default function EntityList() {
           e.name.toLowerCase().includes(term) ||
           e.aliases?.some((a) => a.toLowerCase().includes(term)) ||
           e.role?.some((r) => r.toLowerCase().includes(term)) ||
-          e.field?.some((f) => f.toLowerCase().includes(term)),
+          e.field?.some((f) => f.toLowerCase().includes(term)) ||
+            e.affiliations?.some((v) => v.toLowerCase().includes(term)) ||
+            e.details?.some((v) => v.toLowerCase().includes(term)) ||
+            e.origin?.some((v) => v.toLowerCase().includes(term)) ||
+          e.reach?.some((v) => v.toLowerCase().includes(term)),
       );
     }
     // Sort
@@ -152,7 +172,7 @@ export default function EntityList() {
         <div className="flex gap-2 items-center">
           <input
             type="text"
-            placeholder="Search name, alias, role, field…"
+            placeholder="Search name, alias, role, field, affiliations, details…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-64 rounded-md border border-line bg-surface px-3 py-1.5 text-xs text-ink
@@ -210,10 +230,11 @@ export default function EntityList() {
                 </Th>
                 {viewMode !== "ting" && (
                   <>
+                    <Th className="min-w-[95px]">Affiliations</Th>
                     <Th className="min-w-[80px]">Gender</Th>
-                    <Th className="min-w-[90px]">Domain</Th>
-                    <Th className="min-w-[90px]">Context</Th>
-                    <Th className="min-w-[80px]">Region</Th>
+                    <Th className="min-w-[70px]">Reach</Th>
+                    <Th className="min-w-[90px]">Details</Th>
+                    <Th className="min-w-[80px]">Origin</Th>
                   </>
                 )}
                 {viewMode === "ting" && (
@@ -289,28 +310,29 @@ export default function EntityList() {
                   )}
                   {/* Field / Kind */}
                   <td className="py-2 px-3 text-ink-muted">
-                    {viewMode === "ting" ? pretty(e.kind) : pretty(e.field)}
+                    {viewMode === "ting" ? pretty(e.kind, labelMap) : pretty(e.field, labelMap)}
                   </td>
                   {/* Role / Heritage */}
                   <td className="py-2 px-3 text-ink-muted truncate max-w-[100px]">
-                    {viewMode === "ting" ? pretty(e.heritage) : pretty(e.role)}
+                    {viewMode === "ting" ? pretty(e.heritage, labelMap) : pretty(e.role, labelMap)}
                   </td>
                   {/* Dem-specific */}
                   {viewMode !== "ting" && (
                     <>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.gender)}</td>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.domain_type)}</td>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.output_context)}</td>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.region)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.affiliations, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.gender, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.reach, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.details, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.origin, labelMap)}</td>
                     </>
                   )}
                   {/* Ting-specific */}
                   {viewMode === "ting" && (
                     <>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.material)}</td>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.occasion)}</td>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.sense)}</td>
-                      <td className="py-2 px-3 text-ink-muted">{pretty(e.reach)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.material, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.occasion, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.sense, labelMap)}</td>
+                      <td className="py-2 px-3 text-ink-muted">{pretty(e.reach, labelMap)}</td>
                     </>
                   )}
                   {/* Era */}
@@ -324,7 +346,7 @@ export default function EntityList() {
                         e.status.includes("retired") ? "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400" :
                         "bg-surface-3 text-ink-muted"
                       }`}>
-                        {pretty(e.status)}
+                        {pretty(e.status, labelMap)}
                       </span>
                     ) : null}
                   </td>
@@ -427,17 +449,20 @@ function Th({
   );
 }
 
-function pretty(val: string | string[] | null | undefined): string {
+function pretty(val: string | string[] | null | undefined, labelMap: Record<string, string>): string {
   if (!val) return "—";
   if (Array.isArray(val)) {
     if (val.length === 0) return "—";
-    return val.map((v) => v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())).join(", ");
+    return val
+      .map((v) => labelMap[v] ?? v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
+      .join(", ");
   }
-  return val.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return labelMap[val] ?? val.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function formatEra(start: number | null | undefined, end: number | null | undefined): string {
-  if (start == null || end == null) return "—";
+  if (start == null) return "—";
+  if (end == null) return `${start}+`;
   if (start === end) return String(start);
   return `${start}–${end}`;
 }

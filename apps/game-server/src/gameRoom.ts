@@ -150,6 +150,14 @@ export class GameRoom {
 
     this.systemMessage(`${player.nickname} left.`);
 
+    // If a game is already in progress and only one player remains,
+    // end immediately and show the game-over screen to that player.
+    if (this.players.size <= 1 && this.state !== "lobby" && this.state !== "game_over") {
+      this.systemMessage("Game ended: not enough players remaining.");
+      this.endGame();
+      return;
+    }
+
     if (wasDrawer && (this.state === "drawing" || this.state === "picking_word")) {
       this.systemMessage(`Drawer left — round skipped.`);
       void this.endRoundEarly("drawer_left");
@@ -272,6 +280,7 @@ export class GameRoom {
       difficulty: w.difficulty,
       category: w.category,
       mode: w.mode,
+      image_url: w.image_url,
     }));
     this.state = "picking_word";
     this.round_ends_at = Date.now() + PICK_TIME_SECONDS * 1000;
@@ -302,7 +311,10 @@ export class GameRoom {
     this.round_ends_at = Date.now() + this.settings.draw_time_seconds * 1000;
     this.clearAllTimers();
 
-    this.io.to(socketId).emit("word:current:drawer", { word: word.name });
+    this.io.to(socketId).emit("word:current:drawer", {
+      word: word.name,
+      image_url: word.image_url,
+    });
     this.io
       .to(this.code)
       .except(socketId)
@@ -378,7 +390,10 @@ export class GameRoom {
     if (this.drawn_events.length) socket.emit("draw:replay", this.drawn_events);
     if (this.current_word && this.state === "drawing") {
       if (socket.id === this.current_drawer_id) {
-        socket.emit("word:current:drawer", { word: this.current_word.name });
+        socket.emit("word:current:drawer", {
+          word: this.current_word.name,
+          image_url: this.current_word.image_url,
+        });
       } else if (this.current_mask) {
         socket.emit("word:current", {
           length: this.current_word.name.length,
@@ -492,7 +507,8 @@ export class GameRoom {
     this.state = "round_end";
 
     const word = this.current_word?.name ?? "?";
-    const category: DrawNahCategory = this.current_word?.category ?? "object";
+    const category: DrawNahCategory = this.current_word?.category ?? "tool_object";
+    const image_url = this.current_word?.image_url ?? null;
     const drawer_id = this.current_drawer_id ?? "";
     const drawer_nickname = drawer_id ? this.players.get(drawer_id)?.nickname ?? "?" : "?";
     const guessers = [...this.guessed_this_round].map((id) => {
@@ -513,6 +529,7 @@ export class GameRoom {
       drawer_nickname,
       guessers,
       scores,
+      image_url,
       snapshot_data_url: null,
     };
     this.pending_summary = summary;

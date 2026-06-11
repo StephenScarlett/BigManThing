@@ -5,17 +5,18 @@ interface Props {
   guess: Entity;
   feedback: GuessFeedback;
   rowIndex: number;
+  labelMap?: Record<string, string>;
 }
 
 const DEM_HEADERS = [
   "Field",
   "Role",
-  "Peak Era",
+  "Affiliations",
   "Gender",
   "Status",
-  "Domain",
-  "Context",
-  "Region",
+  "Reach",
+  "Details",
+  "Origin",
 ] as const;
 
 const TING_HEADERS = [
@@ -30,12 +31,11 @@ const TING_HEADERS = [
 
 export function AttributeRowHeader({ mode }: { mode: "dem" | "ting" }) {
   const headers = mode === "ting" ? TING_HEADERS : DEM_HEADERS;
-  const cols = mode === "ting" ? "grid-cols-[2.75rem_repeat(7,1fr)]" : "grid-cols-[2.75rem_repeat(8,1fr)]";
   return (
-    <div className={`grid ${cols} gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 px-1`}>
+    <div className={`grid gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 px-1 ${mode === "ting" ? "grid-cols-[4rem_repeat(7,minmax(0,1fr))]" : "grid-cols-[4rem_repeat(8,minmax(0,1fr))]"}`}>
       <div />
       {headers.map((h) => (
-        <div key={h} className="text-center uppercase tracking-wider">
+        <div key={h} className="min-w-0 text-center uppercase tracking-wider">
           {h}
         </div>
       ))}
@@ -43,35 +43,33 @@ export function AttributeRowHeader({ mode }: { mode: "dem" | "ting" }) {
   );
 }
 
-export function AttributeRow({ guess, feedback, rowIndex }: Props) {
+export function AttributeRow({ guess, feedback, rowIndex, labelMap = {} }: Props) {
   const arrow = (s: FeedbackState) =>
     s === "higher" ? "↑" : s === "lower" ? "↓" : null;
 
   const isTing = "kind" in feedback;
 
-  const cells: { state: FeedbackState; label: string; arrow?: string | null }[] =
+  const cells: { state: FeedbackState; labels: string[]; arrow?: string | null }[] =
     isTing
       ? [
-          { state: feedback.kind, label: prettyArr(guess.kind) },
-          { state: feedback.heritage, label: prettyArr(guess.heritage) },
-          { state: feedback.era, label: formatEra(guess.era_start, guess.era_end), arrow: arrow(feedback.era) },
-          { state: feedback.material, label: prettyArr(guess.material) },
-          { state: feedback.occasion, label: prettyArr(guess.occasion) },
-          { state: feedback.sense, label: prettyArr(guess.sense) },
-          { state: feedback.reach, label: prettyArr(guess.reach), arrow: arrow(feedback.reach) },
+          { state: feedback.kind, labels: prettyArr(guess.kind, labelMap) },
+          { state: feedback.heritage, labels: prettyArr(guess.heritage, labelMap) },
+          { state: feedback.era, labels: [formatEra(guess.era_start, guess.era_end)], arrow: arrow(feedback.era) },
+          { state: feedback.material, labels: prettyArr(guess.material, labelMap) },
+          { state: feedback.occasion, labels: prettyArr(guess.occasion, labelMap) },
+          { state: feedback.sense, labels: prettyArr(guess.sense, labelMap) },
+          { state: feedback.reach, labels: prettyArr(guess.reach, labelMap), arrow: arrow(feedback.reach) },
         ]
       : [
-          { state: feedback.field, label: prettyArr(guess.field) },
-          { state: feedback.role, label: prettyArr(guess.role) },
-          { state: feedback.era, label: formatEra(guess.era_start, guess.era_end), arrow: arrow(feedback.era) },
-          { state: feedback.gender, label: prettyArr(guess.gender) },
-          { state: feedback.status, label: prettyArr(guess.status) },
-          { state: feedback.domain_type, label: prettyArr(guess.domain_type) },
-          { state: feedback.output_context, label: prettyArr(guess.output_context) },
-          { state: feedback.region, label: prettyArr(guess.region) },
+          { state: feedback.field, labels: prettyArr(guess.field, labelMap) },
+          { state: feedback.role, labels: prettyArr(guess.role, labelMap) },
+          { state: feedback.associations, labels: prettyArr(guess.affiliations, labelMap) },
+          { state: feedback.gender, labels: prettyArr(guess.gender, labelMap) },
+          { state: feedback.status, labels: prettyArr(guess.status, labelMap) },
+          { state: feedback.reach, labels: prettyArr(guess.reach, labelMap), arrow: arrow(feedback.reach) },
+          { state: feedback.details, labels: prettyArr(guess.details, labelMap) },
+          { state: feedback.origin, labels: prettyArr(guess.origin, labelMap) },
         ];
-
-  const cols = isTing ? "grid-cols-[2.75rem_repeat(7,1fr)]" : "grid-cols-[2.75rem_repeat(8,1fr)]";
 
   return (
     <motion.div
@@ -82,14 +80,16 @@ export function AttributeRow({ guess, feedback, rowIndex }: Props) {
       <div className="text-sm text-slate-700 dark:text-slate-300 mb-1 px-1">
         <span className="font-semibold">#{rowIndex + 1}</span> &nbsp; {guess.name}
       </div>
-      <div className={`grid ${cols} gap-1.5`}>
+      <div className={`grid gap-1.5 ${isTing ? "grid-cols-[4rem_repeat(7,minmax(0,1fr))]" : "grid-cols-[4rem_repeat(8,minmax(0,1fr))]"}`}>
         {/* Entity image — matches cell height */}
-        <div className="rounded-lg overflow-hidden min-h-[2.75rem] flex items-center justify-center bg-surface-3">
+        <div className="flex items-start justify-center">
+          <div className="w-full aspect-square rounded-lg overflow-hidden bg-surface-3 shrink-0">
           {guess.image_url ? (
             <img src={guess.image_url} alt="" className="w-full h-full object-cover" />
           ) : (
             <div className="text-ink-muted text-lg">?</div>
           )}
+          </div>
         </div>
         {cells.map((c, i) => (
           <motion.div
@@ -99,11 +99,35 @@ export function AttributeRow({ guess, feedback, rowIndex }: Props) {
             transition={{ delay: 0.15 + i * 0.1, duration: 0.4, ease: "easeOut" }}
             style={{ perspective: 600, transformStyle: "preserve-3d" }}
             className={`rounded-lg p-1.5 text-center text-[10px] font-semibold
-                        flex flex-col items-center justify-center min-h-[2.75rem]
-                        ${stateClass(c.state)}`}
+                        min-w-0 flex flex-col items-center justify-center min-h-[2.75rem]
+                        relative overflow-hidden ${stateClass(c.state)}`}
           >
-            <span className="leading-tight break-words">{c.label}</span>
-            {c.arrow && <span className="text-sm">{c.arrow}</span>}
+            <div className="absolute inset-0 bg-black/10" />
+            {c.labels.length === 1 ? (
+              <span
+                className="relative z-10 leading-tight break-words font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.45)]"
+                style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.45)" }}
+              >
+                {c.labels[0]}
+              </span>
+            ) : (
+              <ul
+                className="relative z-10 list-disc pl-3 text-left leading-tight space-y-0.5 break-words w-full font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.45)]"
+                style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.45)" }}
+              >
+                {c.labels.map((label) => (
+                  <li key={label}>{label}</li>
+                ))}
+              </ul>
+            )}
+            {c.arrow && (
+              <span
+                className="relative z-10 text-sm font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.45)]"
+                style={{ textShadow: "0 1px 2px rgba(0, 0, 0, 0.45)" }}
+              >
+                {c.arrow}
+              </span>
+            )}
           </motion.div>
         ))}
       </div>
@@ -127,14 +151,20 @@ function stateClass(state: string): string {
 }
 
 /** Format an array of values for display in a cell. */
-function prettyArr(val: string[] | null | undefined): string {
-  if (!val || val.length === 0) return "—";
-  return val.map(prettify).join(", ");
+function prettyArr(val: string[] | null | undefined, labelMap: Record<string, string>): string[] {
+  if (!val || val.length === 0) return ["—"];
+  return val
+    .map((v) => prettify(v, labelMap))
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
 }
 
-/** Format era range as human-readable. */
+/** Format era range as human-readable. null end = ongoing (shows age). */
 function formatEra(start: number | null | undefined, end: number | null | undefined): string {
-  if (start == null || end == null) return "—";
+  if (start == null) return "—";
+  if (end == null) {
+    const cur = new Date().getUTCFullYear();
+    return `${start}+ (${cur - start}y)`;
+  }
   if (start === end) return String(start);
   // Compact formatting: 1980–99, 2000–09
   const startStr = String(start);
@@ -144,16 +174,12 @@ function formatEra(start: number | null | undefined, end: number | null | undefi
   return `${startStr}–${endStr}`;
 }
 
-function prettify(value: string): string {
+function prettify(value: string, labelMap: Record<string, string>): string {
+  const mapped = labelMap[value];
+  if (mapped) return mapped;
+
   switch (value) {
-    // Domain type
-    case "elite_global_performer":     return "Elite Global";
-    case "international_professional": return "Int'l Pro";
-    case "regional_icon":              return "Regional Icon";
-    case "national_figure":            return "National Fig.";
-    case "local_creator":              return "Local Creator";
-    case "cultural_legend":            return "Cultural Legend";
-    // Output context
+    // Details
     case "stadium_sport":        return "Stadium Sport";
     case "studio_music":         return "Studio Music";
     case "live_performance":     return "Live Perf.";
@@ -161,7 +187,7 @@ function prettify(value: string): string {
     case "political_office":     return "Political";
     case "radio_media":          return "Radio/Media";
     case "stage_comedy":         return "Stage Comedy";
-    // Region
+    // Origin
     case "trinidad_north":       return "North";
     case "trinidad_south":       return "South";
     case "trinidad_central":     return "Central";

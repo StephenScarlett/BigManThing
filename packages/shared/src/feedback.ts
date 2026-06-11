@@ -57,20 +57,25 @@ function arrGrouped(
   return "wrong";
 }
 
-/** Compare era ranges. exact = identical, higher/lower based on midpoint. */
+/**
+ * Compare era ranges. exact = identical, higher/lower based on midpoint.
+ * `null` era_end is treated as "ongoing/current year" — useful for living
+ * people or active entities where age = current_year - era_start.
+ */
 function eraOrdered(
   gStart: number | null | undefined,
   gEnd: number | null | undefined,
   aStart: number | null | undefined,
   aEnd: number | null | undefined,
 ): FeedbackState {
-  if (gStart == null || gEnd == null || aStart == null || aEnd == null)
-    return "wrong";
-  if (gStart === aStart && gEnd === aEnd) return "exact";
-  const gMid = (gStart + gEnd) / 2;
-  const aMid = (aStart + aEnd) / 2;
-  // If ranges overlap, partial
-  if (gStart <= aEnd && gEnd >= aStart) return "partial";
+  if (gStart == null || aStart == null) return "wrong";
+  const cur = new Date().getUTCFullYear();
+  const ge = gEnd ?? cur;
+  const ae = aEnd ?? cur;
+  if (gStart === aStart && ge === ae) return "exact";
+  const gMid = (gStart + ge) / 2;
+  const aMid = (aStart + ae) / 2;
+  if (gStart <= ae && ge >= aStart) return "partial";
   return gMid < aMid ? "higher" : "lower";
 }
 
@@ -102,12 +107,7 @@ const DEFAULT_FIELD_GROUPS: Record<string, string> = {
   politics: "civic", activism: "civic",
   sports: "sports", business: "business",
 };
-const DEFAULT_DOMAIN_TYPE_GROUPS: Record<string, string> = {
-  elite_global_performer: "global_tier", international_professional: "global_tier",
-  regional_icon: "national_tier", national_figure: "national_tier",
-  local_creator: "local_tier", cultural_legend: "local_tier",
-};
-const DEFAULT_OUTPUT_CONTEXT_GROUPS: Record<string, string> = {
+const DEFAULT_DETAIL_GROUPS: Record<string, string> = {
   studio_music: "performance", live_performance: "performance", stage_comedy: "performance",
   digital_content: "media", radio_media: "media",
   stadium_sport: "stadium_sport", political_office: "political_office",
@@ -119,8 +119,7 @@ const DEFAULT_REACH_ORDER = ["local_legend", "trinidad_wide", "caribbean_wide", 
 
 export interface FeedbackGroupLookups {
   field?: Record<string, string>;
-  domain_type?: Record<string, string>;
-  output_context?: Record<string, string>;
+  details?: Record<string, string>;
 }
 
 export function computeFeedback(
@@ -138,18 +137,17 @@ function computeDemFeedback(
   groups?: FeedbackGroupLookups,
 ): DemFeedback {
   const fieldGroups = groups?.field ?? DEFAULT_FIELD_GROUPS;
-  const domainGroups = groups?.domain_type ?? DEFAULT_DOMAIN_TYPE_GROUPS;
-  const contextGroups = groups?.output_context ?? DEFAULT_OUTPUT_CONTEXT_GROUPS;
+  const detailGroups = groups?.details ?? DEFAULT_DETAIL_GROUPS;
 
   return {
     field: arrGrouped(guess.field, answer.field, fieldGroups),
     role: arrEq(guess.role, answer.role),
-    era: eraOrdered(guess.era_start, guess.era_end, answer.era_start, answer.era_end),
+    associations: arrEq(guess.affiliations, answer.affiliations),
     gender: arrEq(guess.gender, answer.gender),
     status: arrEq(guess.status, answer.status),
-    domain_type: arrGrouped(guess.domain_type, answer.domain_type, domainGroups),
-    output_context: arrGrouped(guess.output_context, answer.output_context, contextGroups),
-    region: arrEq(guess.region, answer.region),
+    reach: reachOrdered(guess.reach, answer.reach, DEFAULT_REACH_ORDER),
+    details: arrGrouped(guess.details, answer.details, detailGroups),
+    origin: arrEq(guess.origin, answer.origin),
   };
 }
 
@@ -170,7 +168,7 @@ export function feedbackToEmoji(fb: GuessFeedback): string {
     s === "exact" ? "🟩" : s === "partial" ? "🟧" : s === "higher" || s === "lower" ? "🟧" : "🟥";
   const order =
     "field" in fb
-      ? ["field", "role", "era", "gender", "status", "domain_type", "output_context", "region"]
+      ? ["field", "role", "associations", "gender", "status", "reach", "details", "origin"]
       : ["kind", "heritage", "era", "material", "occasion", "sense", "reach"];
   return order
     .map((k) => sq((fb as unknown as Record<string, FeedbackState>)[k] as FeedbackState))

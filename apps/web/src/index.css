@@ -34,6 +34,15 @@
     height: 100%;
   }
 
+  /*
+   * Fluid root font-size: ~15px on phones, ~16px on a typical laptop,
+   * up to ~19px on ultrawide monitors. All rem-based sizing scales
+   * with viewport. Tailwind's md/lg breakpoints stay in px.
+   */
+  html {
+    font-size: clamp(14.5px, 0.18vw + 14.2px, 19px);
+  }
+
   #root {
     min-height: 100dvh;
   }

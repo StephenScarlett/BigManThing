@@ -35,6 +35,11 @@ export default function HomePage() {
           title="Draw Nah"
           tagline="Lime with friends. Draw. Guess. Laugh."
         />
+        <ModeTile
+          to="/where"
+          title="Where Nah"
+          tagline="Dropped in Trinidad. Look around. Guess where."
+        />
       </motion.section>
 
       <motion.section className="card" variants={fadeUp}>

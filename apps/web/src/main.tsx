@@ -12,14 +12,22 @@ const queryClient = new QueryClient({
   },
 });
 
+const appTree = (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </QueryClientProvider>
+);
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
+  import.meta.env.DEV ? (
+    appTree
+  ) : (
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
-  </React.StrictMode>,
+    {appTree}
+  </React.StrictMode>
+  ),
 );

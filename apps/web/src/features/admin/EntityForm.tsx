@@ -50,9 +50,12 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
   const [guessEnabled, setGuessEnabled] = useState(entity?.guess_nah_enabled ?? true);
   const [drawEnabled, setDrawEnabled] = useState(entity?.draw_nah_enabled ?? true);
 
-  // Era as year range
+  // Era as year range. era_end = null means "ongoing/current".
   const [eraStart, setEraStart] = useState<string>(entity?.era_start?.toString() ?? "");
   const [eraEnd, setEraEnd] = useState<string>(entity?.era_end?.toString() ?? "");
+  const [eraOngoing, setEraOngoing] = useState<boolean>(
+    entity ? entity.era_end == null && entity.era_start != null : false,
+  );
 
   // Image
   const [imageUrl, setImageUrl] = useState(entity?.image_url ?? "");
@@ -62,12 +65,11 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
   // Multi-select arrays — all stored as string[]
   const [field, setField] = useState<string[]>(entity?.field ?? []);
   const [role, setRole] = useState<string[]>(entity?.role ?? []);
-  const [roleGroup, setRoleGroup] = useState<string[]>(entity?.role_group ?? []);
+  const [affiliations, setAffiliations] = useState<string[]>(entity?.affiliations ?? []);
   const [gender, setGender] = useState<string[]>(entity?.gender ?? []);
   const [status, setStatus] = useState<string[]>(entity?.status ?? []);
-  const [domainType, setDomainType] = useState<string[]>(entity?.domain_type ?? []);
-  const [outputContext, setOutputContext] = useState<string[]>(entity?.output_context ?? []);
-  const [region, setRegion] = useState<string[]>(entity?.region ?? []);
+  const [details, setDetails] = useState<string[]>(entity?.details ?? []);
+  const [origin, setOrigin] = useState<string[]>(entity?.origin ?? []);
 
   // Ting
   const [kind, setKind] = useState<string[]>(entity?.kind ?? []);
@@ -140,7 +142,7 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
       name: name.trim(),
       aliases: aliasArray,
       era_start: eraStart ? parseInt(eraStart) : null,
-      era_end: eraEnd ? parseInt(eraEnd) : null,
+      era_end: eraOngoing ? null : eraEnd ? parseInt(eraEnd) : null,
       description: description.trim() || null,
       image_url: imageUrl.trim() || null,
       difficulty,
@@ -152,14 +154,14 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
       Object.assign(row, {
         field: field.length ? field : null,
         role: role.length ? role : null,
-        role_group: roleGroup.length ? roleGroup : null,
+        affiliations: affiliations.length ? affiliations : null,
         gender: gender.length ? gender : null,
         status: status.length ? status : null,
-        domain_type: domainType.length ? domainType : null,
-        output_context: outputContext.length ? outputContext : null,
-        region: region.length ? region : null,
+        details: details.length ? details : null,
+        origin: origin.length ? origin : null,
+        reach: reach.length ? reach : null,
         // Clear ting fields
-        kind: null, heritage: null, material: null, occasion: null, sense: null, reach: null,
+        kind: null, heritage: null, material: null, occasion: null, sense: null,
       });
     } else {
       Object.assign(row, {
@@ -170,8 +172,8 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
         sense: sense.length ? sense : null,
         reach: reach.length ? reach : null,
         // Clear dem fields
-        field: null, role: null, role_group: null, gender: null, status: null,
-        domain_type: null, output_context: null, region: null,
+        field: null, role: null, affiliations: null, gender: null, status: null,
+        details: null, origin: null,
       });
     }
 
@@ -286,9 +288,22 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
             <input type="number" value={eraStart} onChange={(e) => setEraStart(e.target.value)}
                    placeholder="e.g. 1980" min={1500} max={2099} className={inputCls} />
           </Field>
-          <Field label="Era End (year)">
-            <input type="number" value={eraEnd} onChange={(e) => setEraEnd(e.target.value)}
-                   placeholder="e.g. 1999" min={1500} max={2099} className={inputCls} />
+          <Field label={eraOngoing ? "Era End — current" : "Era End (year)"}>
+            <input type="number" value={eraOngoing ? "" : eraEnd}
+                   onChange={(e) => setEraEnd(e.target.value)}
+                   disabled={eraOngoing}
+                   placeholder={eraOngoing ? "now" : "e.g. 1999"}
+                   min={1500} max={2099}
+                   className={`${inputCls} ${eraOngoing ? "opacity-50" : ""}`} />
+            <label className="mt-1.5 flex items-center gap-1.5 text-[11px] text-ink-muted cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={eraOngoing}
+                onChange={(e) => setEraOngoing(e.target.checked)}
+                className="h-3.5 w-3.5 accent-brand-red"
+              />
+              Ongoing / still active (use current year)
+            </label>
           </Field>
           <Field label="Difficulty">
             <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as typeof difficulty)}
@@ -324,13 +339,13 @@ export default function EntityForm({ entity, defaultMode, onSave, onCancel }: Pr
           <legend className="text-xs font-semibold text-ink-muted px-2 uppercase tracking-wider">Dem Nah Attributes</legend>
           <div className="grid grid-cols-2 gap-3">
             <MultiSelect label="Field *" attr="field" values={field} onChange={setField} options={optionsFor("field")} onRefresh={loadOptions} />
-            <MultiSelectCreatable label="Role *" values={role} onChange={setRole} placeholder="e.g. cricketer, soca_artist" />
-            <MultiSelect label="Role Group *" attr="role_group" values={roleGroup} onChange={setRoleGroup} options={optionsFor("role_group")} onRefresh={loadOptions} />
+            <MultiSelect label="Role *" attr="role" values={role} onChange={setRole} options={optionsFor("role")} onRefresh={loadOptions} />
+            <MultiSelect label="Affiliations *" attr="affiliations" values={affiliations} onChange={setAffiliations} options={optionsFor("affiliations")} onRefresh={loadOptions} />
             <MultiSelect label="Gender *" attr="gender" values={gender} onChange={setGender} options={optionsFor("gender")} onRefresh={loadOptions} />
             <MultiSelect label="Status *" attr="status" values={status} onChange={setStatus} options={optionsFor("status")} onRefresh={loadOptions} />
-            <MultiSelect label="Domain Type *" attr="domain_type" values={domainType} onChange={setDomainType} options={optionsFor("domain_type")} onRefresh={loadOptions} />
-            <MultiSelect label="Output Context *" attr="output_context" values={outputContext} onChange={setOutputContext} options={optionsFor("output_context")} onRefresh={loadOptions} />
-            <MultiSelect label="Region" attr="region" values={region} onChange={setRegion} options={optionsFor("region")} onRefresh={loadOptions} />
+            <MultiSelect label="Reach *" attr="reach" values={reach} onChange={setReach} options={optionsFor("reach")} onRefresh={loadOptions} />
+            <MultiSelect label="Details *" attr="details" values={details} onChange={setDetails} options={optionsFor("details")} onRefresh={loadOptions} />
+            <MultiSelect label="Origin *" attr="origin" values={origin} onChange={setOrigin} options={optionsFor("origin")} onRefresh={loadOptions} />
           </div>
         </fieldset>
       ) : (
@@ -575,66 +590,3 @@ function MultiSelect({
   );
 }
 
-// ── Multi-select with free-text input (for role — unconstrained values) ─────
-
-function MultiSelectCreatable({
-  label,
-  values,
-  onChange,
-  placeholder,
-}: {
-  label: string;
-  values: string[];
-  onChange: (v: string[]) => void;
-  placeholder?: string;
-}) {
-  const [input, setInput] = useState("");
-
-  function add() {
-    const val = input.trim().toLowerCase().replace(/\s+/g, "_");
-    if (val && !values.includes(val)) {
-      onChange([...values, val]);
-    }
-    setInput("");
-  }
-
-  function remove(val: string) {
-    onChange(values.filter((v) => v !== val));
-  }
-
-  return (
-    <div className="space-y-1">
-      <span className="text-xs text-ink-muted">{label}</span>
-      <div className="flex flex-wrap gap-1.5 mb-1">
-        <AnimatePresence>
-          {values.map((v) => (
-            <motion.span key={v} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="text-xs px-2 py-1 rounded-md bg-brand-red/20 border border-brand-red text-brand-red font-semibold flex items-center gap-1">
-              {pretty(v)}
-              <button type="button" onClick={() => remove(v)} className="hover:text-white">×</button>
-            </motion.span>
-          ))}
-        </AnimatePresence>
-      </div>
-      <div className="flex gap-1">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") { e.preventDefault(); add(); }
-          }}
-          placeholder={placeholder}
-          className={`${inputCls} !py-1 !text-xs flex-1`}
-        />
-        <button type="button" onClick={add} className="text-xs px-2 py-1 rounded border border-line hover:border-brand-red transition-colors">
-          Add
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function pretty(val: string): string {
-  return val.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}

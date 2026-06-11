@@ -88,6 +88,9 @@ importers:
         specifier: ^5.0.0
         version: 5.0.14(@types/react@18.3.30)(react@18.3.1)
     devDependencies:
+      '@types/google.maps':
+        specifier: ^3.65.1
+        version: 3.65.1
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.30
@@ -734,6 +737,9 @@ packages:
 
   '@types/express@5.0.6':
     resolution: {integrity: sha512-sKYVuV7Sv9fbPIt/442koC7+IIwK5olP1KWeD88e/idgoJqDm3JV/YUiPwkoKK92ylff2MGxSz1CSjsXelx0YA==}
+
+  '@types/google.maps@3.65.1':
+    resolution: {integrity: sha512-O9monmoXfyWsuyR4Wz3TZU26qai9y7jUV7DSRySluae6O5tQt3Obw5ETt0HKfNsjctnlF/yx/Tfn3WQNmKRXZA==}
 
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
@@ -2181,6 +2187,8 @@ snapshots:
       '@types/body-parser': 1.19.6
       '@types/express-serve-static-core': 5.1.1
       '@types/serve-static': 2.2.0
+
+  '@types/google.maps@3.65.1': {}
 
   '@types/http-errors@2.0.5': {}
 

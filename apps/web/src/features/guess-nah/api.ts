@@ -2,8 +2,13 @@ import { supabase } from "@/lib/supabase";
 import { getAnonSessionId } from "@/lib/anon";
 import type { Entity, GuessNahMode, SubmitGuessResponse } from "@bmt/shared";
 
+interface AttributeOptionRow {
+  value: string;
+  display_label: string;
+}
+
 const ENTITY_COLUMNS =
-  "id, mode, name, aliases, era_start, era_end, first_letter, image_url, audio_url, description, difficulty, guess_nah_enabled, draw_nah_enabled, field, role, role_group, gender, status, domain_type, output_context, region, kind, heritage, material, occasion, sense, reach";
+  "id, mode, name, aliases, era_start, era_end, first_letter, image_url, description, difficulty, guess_nah_enabled, draw_nah_enabled, field, role, affiliations, gender, status, details, origin, kind, heritage, material, occasion, sense, reach";
 
 /** Today's puzzle id from the public view (no answer leak). */
 export async function fetchTodaysPuzzle(
@@ -41,6 +46,22 @@ export async function fetchEntityCatalog(mode: GuessNahMode): Promise<Entity[]> 
   }
   console.log("[BMT] fetchEntityCatalog count:", data?.length ?? 0);
   return (data ?? []) as Entity[];
+}
+
+/** Map raw option value -> user-facing display label. */
+export async function fetchAttributeLabelMap(): Promise<Record<string, string>> {
+  const { data, error } = await supabase
+    .from("attribute_options")
+    .select("value, display_label");
+  if (error) throw error;
+
+  const map: Record<string, string> = {};
+  for (const row of (data ?? []) as AttributeOptionRow[]) {
+    if (row.value && row.display_label) {
+      map[row.value] = row.display_label;
+    }
+  }
+  return map;
 }
 
 export async function submitGuess(

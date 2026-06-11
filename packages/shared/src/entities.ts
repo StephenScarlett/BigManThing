@@ -1,12 +1,7 @@
 /**
  * Content library types — Guess Nah has two sub-modes:
- *   • Dem Nah  — people only (8 columns: field/role/era/gender/status/domain_type/output_context/region)
+ *   • Dem Nah  — people only (8 columns: field/role/associations/gender/status/reach/details/origin)
  *   • Ting Nah — food/drink/objects (7 columns: kind/heritage/era/material/occasion/sense/reach)
- *
- * Dem Nah uses a hybrid system:
- *   - Basic columns (field, role, era, gender, status)
- *   - Critical discriminators (domain_type, output_context)
- *   - Optional (region)
  *
  * Partial (orange) matching: values in the same group show orange, exact = green, unrelated = red.
  */
@@ -37,7 +32,7 @@ export type TingEra = (typeof TING_ERAS)[number];
 
 export type EntityEra = DemEra | TingEra;
 
-// Ting uses `reach`; Dem uses `domain_type` for tier-level discrimination.
+// Reach scale is shared by Dem and Ting.
 export const ENTITY_REACHES = [
   "local_legend",
   "trinidad_wide",
@@ -79,8 +74,8 @@ export const FIELD_GROUPS: Record<EntityField, string> = {
 };
 
 // Role — free-text specific role (cricketer, soca_artist, prime_minister, etc.)
-// role_group is the parent bucket for orange matching.
-export const ENTITY_ROLE_GROUPS = [
+// Affiliations is the parent bucket for orange matching.
+export const ENTITY_AFFILIATIONS = [
   "athlete",
   "musician",
   "politician",
@@ -89,7 +84,7 @@ export const ENTITY_ROLE_GROUPS = [
   "creator",
   "public_figure",
 ] as const;
-export type EntityRoleGroup = (typeof ENTITY_ROLE_GROUPS)[number];
+export type EntityAffiliation = (typeof ENTITY_AFFILIATIONS)[number];
 
 export const ENTITY_GENDERS = ["male", "female"] as const;
 export type EntityGender = (typeof ENTITY_GENDERS)[number];
@@ -101,29 +96,8 @@ export const ENTITY_STATUSES = [
 ] as const;
 export type EntityStatus = (typeof ENTITY_STATUSES)[number];
 
-// Domain Type — CRITICAL discriminator. Separates tier/stature.
-export const ENTITY_DOMAIN_TYPES = [
-  "elite_global_performer",
-  "international_professional",
-  "regional_icon",
-  "national_figure",
-  "local_creator",
-  "cultural_legend",
-] as const;
-export type EntityDomainType = (typeof ENTITY_DOMAIN_TYPES)[number];
-
-/** Domain types in the same tier → orange partial match. */
-export const DOMAIN_TYPE_GROUPS: Record<EntityDomainType, string> = {
-  elite_global_performer: "global_tier",
-  international_professional: "global_tier",
-  regional_icon: "national_tier",
-  national_figure: "national_tier",
-  local_creator: "local_tier",
-  cultural_legend: "local_tier",
-};
-
-// Output Context — CRITICAL discriminator. Separates *how* they're known.
-export const ENTITY_OUTPUT_CONTEXTS = [
+// Details — separates how someone is primarily known.
+export const ENTITY_DETAILS = [
   "stadium_sport",
   "studio_music",
   "live_performance",
@@ -132,10 +106,10 @@ export const ENTITY_OUTPUT_CONTEXTS = [
   "radio_media",
   "stage_comedy",
 ] as const;
-export type EntityOutputContext = (typeof ENTITY_OUTPUT_CONTEXTS)[number];
+export type EntityDetail = (typeof ENTITY_DETAILS)[number];
 
-/** Output contexts in the same group → orange partial match. */
-export const OUTPUT_CONTEXT_GROUPS: Record<EntityOutputContext, string> = {
+/** Details in the same group → orange partial match. */
+export const DETAIL_GROUPS: Record<EntityDetail, string> = {
   studio_music: "performance",
   live_performance: "performance",
   stage_comedy: "performance",
@@ -145,15 +119,15 @@ export const OUTPUT_CONTEXT_GROUPS: Record<EntityOutputContext, string> = {
   political_office: "political_office",
 };
 
-// Region — optional geographic column.
-export const ENTITY_REGIONS = [
+// Origin — optional geographic column.
+export const ENTITY_ORIGINS = [
   "tobago",
   "trinidad_north",
   "trinidad_south",
   "trinidad_central",
   "caribbean_wide",
 ] as const;
-export type EntityRegion = (typeof ENTITY_REGIONS)[number];
+export type EntityOrigin = (typeof ENTITY_ORIGINS)[number];
 
 // ── Ting Nah ────────────────────────────────────────────────────────────────
 export const ENTITY_KINDS = [
@@ -213,19 +187,17 @@ export interface Entity {
   first_letter: string;
   description: string | null;
   image_url: string | null;
-  audio_url: string | null;
   difficulty: EntityDifficulty;
   guess_nah_enabled: boolean;
   draw_nah_enabled: boolean;
   // Dem-only (people) — all arrays for multi-select
   field: string[] | null;
   role: string[] | null;
-  role_group: string[] | null;
+  affiliations: string[] | null;
   gender: string[] | null;
   status: string[] | null;
-  domain_type: string[] | null;
-  output_context: string[] | null;
-  region: string[] | null;
+  details: string[] | null;
+  origin: string[] | null;
   // Ting-only — all arrays for multi-select
   kind: string[] | null;
   heritage: string[] | null;

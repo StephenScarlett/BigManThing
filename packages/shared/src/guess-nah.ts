@@ -6,12 +6,12 @@ export type FeedbackState = "exact" | "partial" | "wrong" | "higher" | "lower";
 export interface DemFeedback {
   field: FeedbackState;
   role: FeedbackState;
-  era: FeedbackState;
+  associations: FeedbackState;
   gender: FeedbackState;
   status: FeedbackState;
-  domain_type: FeedbackState;
-  output_context: FeedbackState;
-  region: FeedbackState;
+  reach: FeedbackState;
+  details: FeedbackState;
+  origin: FeedbackState;
 }
 
 /** Ting Nah feedback (food + drink + objects). */

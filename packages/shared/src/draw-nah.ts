@@ -1,31 +1,44 @@
 import type { GuessNahMode } from "./entities.js";
 
-/** Granular word categories for Draw Nah, derived from entity domain/kind/type. */
+/**
+ * Word categories for Draw Nah — these mirror entity `field` (dem) and
+ * `kind` (ting) values 1:1 so filtering uses the entity's primary attribute.
+ */
 export const DRAW_NAH_CATEGORIES = [
-  "sports",      // dem: domain=sports
-  "music",       // dem: domain=music
-  "culture",     // dem: domain=politics|culture|media|religion
-  "folklore",    // dem: type=folklore
-  "nature",      // dem: domain=nature
-  "food",        // ting: kind=food
-  "drink",       // ting: kind=drink
-  "instrument",  // ting: kind=instrument
-  "wearable",    // ting: kind=wearable
-  "object",      // ting: kind=tool_object
+  // dem fields
+  "sports",
+  "music",
+  "politics",
+  "comedy",
+  "media",
+  "business",
+  "activism",
+  "entertainment",
+  "social_media",
+  // ting kinds
+  "food",
+  "drink",
+  "instrument",
+  "wearable",
+  "tool_object",
 ] as const;
 export type DrawNahCategory = (typeof DRAW_NAH_CATEGORIES)[number];
 
 export const DRAW_NAH_CATEGORY_LABELS: Record<DrawNahCategory, string> = {
-  sports:     "Sports",
-  music:      "Music",
-  culture:    "Culture & Politics",
-  folklore:   "Folklore",
-  nature:     "Nature",
-  food:       "Food",
-  drink:      "Drink",
-  instrument: "Instruments",
-  wearable:   "Wearables",
-  object:     "Objects & Tools",
+  sports:        "Sports",
+  music:         "Music",
+  politics:      "Politics",
+  comedy:        "Comedy",
+  media:         "Media",
+  business:      "Business",
+  activism:      "Activism",
+  entertainment: "Entertainment",
+  social_media:  "Social Media",
+  food:          "Food",
+  drink:         "Drink",
+  instrument:    "Instruments",
+  wearable:      "Wearables",
+  tool_object:   "Objects & Tools",
 };
 
 /**
@@ -64,6 +77,7 @@ export interface DrawWordOption {
   difficulty: "easy" | "medium" | "hard";
   category: DrawNahCategory;
   mode: GuessNahMode;
+  image_url: string | null;
 }
 
 export type DrawEvent =
@@ -108,6 +122,8 @@ export interface RoundSummary {
   drawer_nickname: string;
   guessers: { player_id: string; nickname: string; points: number }[];
   scores: Record<string, number>;
+  /** Reference image of the entity, for the round summary. */
+  image_url?: string | null;
   /** dataURL contributed by the drawer client when round ends, optional */
   snapshot_data_url?: string | null;
 }
@@ -118,7 +134,7 @@ export interface ServerToClientEvents {
   "game:state": (state: DrawGameState) => void;
   "word:options": (options: DrawWordOption[]) => void;
   "word:current": (payload: { length: number; mask: string }) => void; // guessers
-  "word:current:drawer": (payload: { word: string }) => void; // drawer only
+  "word:current:drawer": (payload: { word: string; image_url: string | null }) => void; // drawer only
   "hint:reveal": (payload: { mask: string }) => void; // updated mask for guessers
   draw: (event: DrawEvent) => void;
   "draw:replay": (events: DrawEvent[]) => void;

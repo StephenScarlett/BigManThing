@@ -113,23 +113,28 @@ export function Canvas({ canDraw }: { canDraw: boolean }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="rounded-lg border border-line bg-white overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          data-draw-canvas="1"
-          width={CANVAS_W}
-          height={CANVAS_H}
-          onPointerDown={onDown}
-          onPointerMove={onMove}
-          onPointerUp={onUp}
-          onPointerLeave={onUp}
-          className={`w-full ${canDraw ? (tool === "fill" ? "cursor-pointer" : "cursor-crosshair") : "cursor-not-allowed"}`}
-          style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}`, touchAction: "none" }}
-        />
+    <div className="flex flex-col gap-2 min-h-0 flex-1">
+      <div className="flex-1 min-h-0 min-w-0 flex items-center justify-center">
+        <div
+          className="rounded-2xl border border-line bg-white overflow-hidden shadow-sm h-full max-w-full"
+          style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
+        >
+          <canvas
+            ref={canvasRef}
+            data-draw-canvas="1"
+            width={CANVAS_W}
+            height={CANVAS_H}
+            onPointerDown={onDown}
+            onPointerMove={onMove}
+            onPointerUp={onUp}
+            onPointerLeave={onUp}
+            className={`block w-full h-full ${canDraw ? (tool === "fill" ? "cursor-pointer" : "cursor-crosshair") : "cursor-not-allowed"}`}
+            style={{ touchAction: "none" }}
+          />
+        </div>
       </div>
       {canDraw && (
-        <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 md:gap-2 shrink-0 justify-center">
           <div className="grid grid-cols-8 md:flex gap-1">
             {COLORS.map((c) => (
               <button

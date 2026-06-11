@@ -36,13 +36,16 @@ function arrGrouped(g, a, groupLookup) {
   return "wrong";
 }
 
-/** Compare era ranges. exact = identical, higher/lower based on midpoint. */
+/** Compare era ranges. null era_end is treated as current year (ongoing). */
 function eraOrdered(gStart, gEnd, aStart, aEnd) {
-  if (gStart == null || gEnd == null || aStart == null || aEnd == null) return "wrong";
-  if (gStart === aStart && gEnd === aEnd) return "exact";
-  const gMid = (gStart + gEnd) / 2;
-  const aMid = (aStart + aEnd) / 2;
-  if (gStart <= aEnd && gEnd >= aStart) return "partial";
+  if (gStart == null || aStart == null) return "wrong";
+  const cur = new Date().getUTCFullYear();
+  const ge = gEnd ?? cur;
+  const ae = aEnd ?? cur;
+  if (gStart === aStart && ge === ae) return "exact";
+  const gMid = (gStart + ge) / 2;
+  const aMid = (aStart + ae) / 2;
+  if (gStart <= ae && ge >= aStart) return "partial";
   return gMid < aMid ? "higher" : "lower";
 }
 
@@ -70,12 +73,7 @@ const FIELD_GROUPS = {
   politics: "civic", activism: "civic",
   sports: "sports", business: "business",
 };
-const DOMAIN_TYPE_GROUPS = {
-  elite_global_performer: "global_tier", international_professional: "global_tier",
-  regional_icon: "national_tier", national_figure: "national_tier",
-  local_creator: "local_tier", cultural_legend: "local_tier",
-};
-const OUTPUT_CONTEXT_GROUPS = {
+const DETAIL_GROUPS = {
   studio_music: "performance", live_performance: "performance", stage_comedy: "performance",
   digital_content: "media", radio_media: "media",
   stadium_sport: "stadium_sport", political_office: "political_office",
@@ -96,12 +94,12 @@ function computeFeedback(guess, answer) {
   return {
     field: arrGrouped(guess.field, answer.field, FIELD_GROUPS),
     role: arrEq(guess.role, answer.role),
-    era: eraOrdered(guess.era_start, guess.era_end, answer.era_start, answer.era_end),
+    associations: arrEq(guess.affiliations, answer.affiliations),
     gender: arrEq(guess.gender, answer.gender),
     status: arrEq(guess.status, answer.status),
-    domain_type: arrGrouped(guess.domain_type, answer.domain_type, DOMAIN_TYPE_GROUPS),
-    output_context: arrGrouped(guess.output_context, answer.output_context, OUTPUT_CONTEXT_GROUPS),
-    region: arrEq(guess.region, answer.region),
+    reach: reachOrdered(guess.reach, answer.reach),
+    details: arrGrouped(guess.details, answer.details, DETAIL_GROUPS),
+    origin: arrEq(guess.origin, answer.origin),
   };
 }
 
