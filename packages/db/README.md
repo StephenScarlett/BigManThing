@@ -1,55 +1,32 @@
 # BigManThing Database (Supabase)
 
-This package owns the Postgres schema, RLS policies, Edge Functions, and seed data
-for BigManThing. Both `apps/web` (via the Supabase JS SDK) and `apps/game-server`
-(via service-role key, server-only) read from these tables.
+This package owns the versioned schema, RPCs, legacy Edge endpoint and content records. See [Guess implementation](../../docs/GUESS_NAH_IMPLEMENTATION.md) for the current people game and its development status.
 
-## Layout
+## Development setup
 
-```
-packages/db/
-  supabase/
-    migrations/        # SQL migrations, applied in order
-      0001_init.sql
-      0002_rls.sql
-    functions/         # Edge Functions (Deno)
-      submit-guess/
-      pick-daily/
-    seed.sql           # Optional starter content
-  README.md
-```
-
-## Setup
+From this directory, use the installed Supabase CLI and Docker:
 
 ```sh
-# install Supabase CLI: https://supabase.com/docs/guides/cli
-supabase init               # one-time, only if supabase/config.toml missing
-supabase start              # spins up local stack on Docker
-pnpm --filter @bmt/db supabase:reset   # apply migrations + seed
+supabase start
+pnpm --filter @bmt/db supabase:reset
 ```
 
-Local URLs (default):
-- API:    http://localhost:54321
-- DB:     postgresql://postgres:postgres@localhost:54322/postgres
-- Studio: http://localhost:54323
+The local configuration matches PostgreSQL 17 and enables authenticated anonymous guests. Google OAuth is optional locally: enable it after supplying credentials. Configure the web client with the local API URL and public key printed by the CLI. Server credentials belong only in the game server's private configuration.
 
-Copy the printed `anon` and `service_role` keys into the relevant `.env.local` files
-in `apps/web` and `apps/game-server`.
+A reset applies migrations and creates the 32 research drafts. It does not mark them reviewed, assign an editor, or publish a daily. Existing hosted data is preserved by the additive people migrations; a local reset is destructive to that local database. Assign the intended editor account through your database administration tools, then use Admin → People editor and Guess Nah → draft practice.
 
-## Production deploy
+## Verify without Docker
 
 ```sh
-supabase link --project-ref <ref>
-supabase db push
-supabase functions deploy submit-guess
-supabase functions deploy pick-daily
+pnpm --filter @bmt/db test
 ```
 
-## Security model
+The PGlite integration suite applies the migration chain to a disposable PostgreSQL engine with Supabase Auth/role fixtures. It checks feedback, unknowns, attempts, duplicates, clue unlocks, edition freezing, publication, role boundaries and identity-scoped history. Unused pgcrypto installation is skipped in that engine; hosted checks verify the actual project's behavior. `test/hosted-guess-smoke.sql` performs a transactional development check and rolls its fixture back. It requires an existing editor.
 
-- All tables default-deny via RLS.
-- The daily puzzle answer (`daily_puzzles.entity_id`) is **never** queryable from
-  the client during an active game. The only path to validate a guess is the
-  `submit-guess` Edge Function, which uses the service-role key server-side.
-- Anonymous players use a generated `anon_session_id` (cookie/localStorage) for
-  stat tracking until they sign in.
+## Current authority
+
+People v1 uses public authenticated RPC wrappers, a single private SQL comparator, and private frozen editions/sessions/attempts. Source review and vocabulary validation run when profiles are saved and dailies are published. Anonymous guests are authenticated Supabase users. There is no client history/result write path or identity-header fallback for this game. The legacy `entities` library and Ting Edge endpoint remain separate.
+
+The dated `content/people-draft.json` is the nomination/source record. Applied migrations are immutable; future content changes should use the editor or a new reviewed migration. Create migration files with `supabase migration new <name>`, test them, then apply to the intended environment. Local filenames must match applied remote versions. Database migrations deploy the people RPCs; no new people Edge deployment is required.
+
+Do not use legacy `seed_today.sql` to publish the new people game. Use the editor's frozen edition publisher after facts and clue review. Picture/folklore packs and full account progression remain later work.

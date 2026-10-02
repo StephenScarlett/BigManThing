@@ -3,14 +3,17 @@ import { useAuth } from "@/lib/auth";
 import { Link } from "react-router-dom";
 import EntityList from "@/features/admin/EntityList";
 import AdminTools from "@/features/admin/AdminTools";
+import PeopleEditor from "@/features/admin/PeopleEditor";
 
 export default function AdminPage() {
   const { user, profile, loading } = useAuth();
-  const [tab, setTab] = useState<"entities" | "tools">("entities");
+  const [tab, setTab] = useState<"people" | "entities" | "tools">("people");
 
   if (loading) {
     return <div className="text-center py-20 text-ink-muted">Loading…</div>;
   }
+
+  if (user && profile && profile.id !== user.id) return <p>Loading profile…</p>;
 
   if (!user || !profile?.is_admin) {
     return (
@@ -33,7 +36,7 @@ export default function AdminPage() {
       <div className="flex items-center gap-4">
         <h1 className="text-3xl font-display tracking-wider">Admin Panel</h1>
         <div className="flex gap-1 ml-auto">
-          {(["entities", "tools"] as const).map((t) => (
+          {(["people", "entities", "tools"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -43,12 +46,12 @@ export default function AdminPage() {
                   : "bg-surface-2 text-ink-muted border border-line hover:text-ink"
               }`}
             >
-              {t === "entities" ? "Entities" : "🛠 DB Tools"}
+              {t === "people" ? "People editor" : t === "entities" ? "Draw / legacy content" : "Legacy tools"}
             </button>
           ))}
         </div>
       </div>
-      {tab === "entities" ? <EntityList /> : <AdminTools />}
+      {tab === "people" ? <PeopleEditor /> : tab === "entities" ? <EntityList /> : <AdminTools />}
     </div>
   );
 }
