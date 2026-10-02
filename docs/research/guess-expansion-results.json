@@ -1,0 +1,296 @@
+{
+  "status": "exploratory model of draft facts; not measured player performance",
+  "limitations": [
+    "All candidates equally likely; both strategies know the entire roster and its facts.",
+    "Optimal strategy minimizes expected guesses using only still-plausible names; reported worst follows that strategy, not a separate minimax search.",
+    "Random strategy chooses uniformly among still-plausible names, not human guesses.",
+    "No clues, recognition errors, search time, images, accessibility or subjective fun simulated.",
+    "Birth years and memberships are draft proposals. Thirteen new years and six existing years are withheld; review can change results.",
+    "Identical stored profiles and neutral-feedback ambiguity are different; no stored collision does not imply every feedback row distinguishes identity.",
+    "Four/five comparisons use the same expanded comedy taxonomy to isolate the extra column."
+  ],
+  "current_32_four_columns": {
+    "size": 32,
+    "optimal_expected_guesses": 2.469,
+    "worst_along_optimal_expected_strategy": 3,
+    "random_consistent_expected_guesses": 3.002,
+    "mean_candidates_after_uniform_wrong_first_guess": 7.129,
+    "largest_wrong_first_guess_bucket": 20,
+    "identical_stored_profile_groups": [
+      [
+        "Certified Sampson",
+        "Ro’dey"
+      ]
+    ],
+    "unknown_birth_years": 6
+  },
+  "expanded_64_four_columns": {
+    "size": 64,
+    "optimal_expected_guesses": 2.844,
+    "worst_along_optimal_expected_strategy": 4,
+    "random_consistent_expected_guesses": 3.468,
+    "mean_candidates_after_uniform_wrong_first_guess": 14.962,
+    "largest_wrong_first_guess_bucket": 42,
+    "identical_stored_profile_groups": [
+      [
+        "Certified Sampson",
+        "Ro’dey",
+        "KyleBoss"
+      ],
+      [
+        "Ian Alleyne",
+        "Adonai Dieu"
+      ],
+      [
+        "Patrice Roberts",
+        "Destra Garcia",
+        "Nailah Blackman"
+      ],
+      [
+        "Ravi B",
+        "KI Persad",
+        "Raymond Ramnarine"
+      ]
+    ],
+    "unknown_birth_years": 19
+  },
+  "expanded_64_five_columns": {
+    "size": 64,
+    "optimal_expected_guesses": 2.531,
+    "worst_along_optimal_expected_strategy": 4,
+    "random_consistent_expected_guesses": 2.988,
+    "mean_candidates_after_uniform_wrong_first_guess": 9.886,
+    "largest_wrong_first_guess_bucket": 37,
+    "identical_stored_profile_groups": [
+      [
+        "Ian Alleyne",
+        "Adonai Dieu"
+      ],
+      [
+        "Patrice Roberts",
+        "Nailah Blackman"
+      ]
+    ],
+    "unknown_birth_years": 19
+  },
+  "expanded_64_without_birth_four_design": {
+    "size": 64,
+    "optimal_expected_guesses": 4.0,
+    "worst_along_optimal_expected_strategy": 7,
+    "random_consistent_expected_guesses": 4.706,
+    "mean_candidates_after_uniform_wrong_first_guess": 25.258,
+    "largest_wrong_first_guess_bucket": 44,
+    "identical_stored_profile_groups": [
+      [
+        "Machel Montano",
+        "Kees Dieffenthaller",
+        "Bunji Garlin"
+      ],
+      [
+        "Fay-Ann Lyons",
+        "Patrice Roberts",
+        "Destra Garcia",
+        "Nailah Blackman"
+      ],
+      [
+        "Mighty Sparrow",
+        "David Rudder",
+        "Lord Kitchener",
+        "Black Stalin"
+      ],
+      [
+        "Brian Lara",
+        "Sunil Narine",
+        "Dwayne Bravo",
+        "Kieron Pollard",
+        "Nicholas Pooran"
+      ],
+      [
+        "Dwight Yorke",
+        "Levi García",
+        "Kenwyne Jones",
+        "Stern John",
+        "Shaka Hislop"
+      ],
+      [
+        "Kelly-Ann Baptiste",
+        "Michelle-Lee Ahye"
+      ],
+      [
+        "Keith Rowley",
+        "Eric Williams",
+        "Patrick Manning",
+        "Basdeo Panday"
+      ],
+      [
+        "Wendy Fitzwilliam",
+        "Janelle Penny Commissiong"
+      ],
+      [
+        "Certified Sampson",
+        "Ro’dey",
+        "KyleBoss"
+      ],
+      [
+        "Ian Alleyne",
+        "Adonai Dieu"
+      ],
+      [
+        "V. S. Naipaul",
+        "Michael Anthony",
+        "Earl Lovelace",
+        "Sam Selvon"
+      ],
+      [
+        "Ravi B",
+        "KI Persad",
+        "Raymond Ramnarine"
+      ],
+      [
+        "Richard Thompson",
+        "Jereem Richards"
+      ]
+    ],
+    "unknown_birth_years": 19
+  },
+  "expanded_64_without_birth_five_design": {
+    "size": 64,
+    "optimal_expected_guesses": 3.031,
+    "worst_along_optimal_expected_strategy": 5,
+    "random_consistent_expected_guesses": 3.505,
+    "mean_candidates_after_uniform_wrong_first_guess": 15.607,
+    "largest_wrong_first_guess_bucket": 44,
+    "identical_stored_profile_groups": [
+      [
+        "Mighty Sparrow",
+        "Lord Kitchener"
+      ],
+      [
+        "Sunil Narine",
+        "Dwayne Bravo"
+      ],
+      [
+        "Dwight Yorke",
+        "Shaka Hislop"
+      ],
+      [
+        "Eric Williams",
+        "Basdeo Panday"
+      ],
+      [
+        "Ian Alleyne",
+        "Adonai Dieu"
+      ],
+      [
+        "V. S. Naipaul",
+        "Sam Selvon"
+      ],
+      [
+        "Patrice Roberts",
+        "Nailah Blackman"
+      ],
+      [
+        "David Rudder",
+        "Black Stalin"
+      ]
+    ],
+    "unknown_birth_years": 19
+  },
+  "primary_speciality_counts": {
+    "acting": 2,
+    "broadcasting": 3,
+    "calypso": 5,
+    "chutney": 6,
+    "comedy": 6,
+    "cooking": 1,
+    "cricket": 5,
+    "cycling": 1,
+    "dance": 1,
+    "football": 5,
+    "javelin": 1,
+    "mas_design": 1,
+    "musical_theatre": 1,
+    "pageantry": 2,
+    "political_leadership": 5,
+    "rap": 1,
+    "rb_pop": 1,
+    "soca": 7,
+    "sprinting": 5,
+    "writing": 5
+  },
+  "primary_lane_counts": {
+    "arts_literature": 7,
+    "food_cooking": 1,
+    "music": 20,
+    "online_broadcast": 8,
+    "public_life": 5,
+    "screen_stage": 6,
+    "sport": 17
+  },
+  "letters": {
+    "Machel Montano": 13,
+    "Kees Dieffenthaller": 18,
+    "Fay-Ann Lyons": 11,
+    "Calypso Rose": 11,
+    "Mighty Sparrow": 13,
+    "Sundar Popo": 10,
+    "Nicki Minaj": 10,
+    "Billy Ocean": 10,
+    "Brian Lara": 9,
+    "Sunil Narine": 11,
+    "Dwight Yorke": 11,
+    "Ato Boldon": 9,
+    "Kelly-Ann Baptiste": 16,
+    "Keshorn Walcott": 14,
+    "Nicholas Paul": 12,
+    "Kamla Persad-Bissessar": 20,
+    "Keith Rowley": 11,
+    "Eric Williams": 12,
+    "Winston Duke": 11,
+    "Heather Headley": 14,
+    "Wendy Fitzwilliam": 16,
+    "Janelle Penny Commissiong": 23,
+    "Learie Joseph": 12,
+    "Certified Sampson": 16,
+    "Ro’dey": 5,
+    "Errol Fabien": 11,
+    "Ian Alleyne": 10,
+    "V. S. Naipaul": 9,
+    "Michael Anthony": 14,
+    "Earl Lovelace": 12,
+    "Peter Minshall": 13,
+    "Beryl McBurnie": 13,
+    "Patrice Roberts": 14,
+    "Bunji Garlin": 11,
+    "Destra Garcia": 12,
+    "Nailah Blackman": 14,
+    "David Rudder": 11,
+    "Lord Kitchener": 13,
+    "Black Stalin": 11,
+    "Rikki Jai": 8,
+    "Ravi B": 5,
+    "Drupatee Ramgoonai": 17,
+    "KI Persad": 8,
+    "Raymond Ramnarine": 16,
+    "Dwayne Bravo": 11,
+    "Kieron Pollard": 13,
+    "Nicholas Pooran": 14,
+    "Levi García": 10,
+    "Kenwyne Jones": 12,
+    "Stern John": 9,
+    "Shaka Hislop": 11,
+    "Richard Thompson": 15,
+    "Michelle-Lee Ahye": 15,
+    "Jereem Richards": 14,
+    "KyleBoss": 8,
+    "Jr Lee": 5,
+    "Simmy de Trini": 12,
+    "Patrick Manning": 14,
+    "Basdeo Panday": 12,
+    "Sam Selvon": 9,
+    "Monique Roffey": 13,
+    "Adonai Dieu": 10,
+    "Geoffrey Holder": 14,
+    "Chef Jason Peru": 13
+  }
+}

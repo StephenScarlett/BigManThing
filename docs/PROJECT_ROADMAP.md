@@ -3,16 +3,17 @@
 Updated: 2026-10-02. Owner: project maintainer, assisted by Codex.
 Context: [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 Guess design proposal: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
-Status: people-v1 development implementation and database rollout complete; content/recognition and device playtests pending.
+Latest expansion research: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
+Status: people-v1 development implementation and database rollout complete; 64-person/fifth-column research recorded; expanded prototype/content and device playtests pending.
 
-The owner permits restarting Guess Nah's content structure. The owner subsequently authorized implementation in the personal development environment. The unranked draft prototype is now available; recognition and source review remain the next product tasks. Engineering safeguards are independent; Where Nah coverage/provider/reliability guidance remains planned. Public documents describe goals and acceptance gates; detailed live security/environment audit evidence belongs in the private project reference.
+The owner permits restarting Guess Nah's content structure and authorized implementation in the personal development environment. The four-field draft prototype is available. Latest owner steering explores an additional column and roughly five recognisable people per speciality, including KyleBoss and Levi García. The expansion report nominates 64 people and recommends an unranked Letters comparison trial; source/recognition review remains necessary. This research does not update Supabase or applied rules. Where Nah guidance remains planned. Detailed live security/environment evidence belongs in the private reference.
 
 ## Work order and acceptance gates
 
 | Step | Status | Work | Done when |
 | --- | --- | --- | --- |
-| G0a | Research complete | Compare public guessing-game rules; nominate balanced T&T people; model comparisons and identify uncertain facts | 32-person draft/source sheet, feature-removal model and explicit uncertainty recorded; not an approved seed |
-| G0b | Prototype available; human validation pending | Recognition review and small unranked Guess prototype; agree roster, clues and rules before rewrite | Answers recognised by target users; finite/hinted gameplay meets agreed goals; sources/unknowns/aliases/rights reviewed; vocabulary and schema contract approved |
+| G0a | Initial and expansion research complete | Compare guessing games, source T&T nominations, model fields and uncertain facts | Initial 32 plus 32 additions, nine core groups at five-plus, fifth-column alternatives and reproducible model recorded; not an approved seed |
+| G0b | Four-field prototype available; expanded comparison trial pending | Recognition review, stable larger roster and four/five-field comparison before final rules | Target users recognise answers; finite/hinted gameplay works; public labels, unknowns, overlap, aliases, clues and rights reviewed; fifth column/contract selected |
 | 0 | Content restore rehearsed; wider recovery runbook pending | Document environment ownership privately; export schema/content/assets and verify recovery | Disposable restore verified and configuration ownership recorded without publishing secrets |
 | 1 | People role/history checks, exports, tests/CI implemented; legacy cleanup pending | Permission/identity/history safeguards; production package verification; reviewed seed; lint/tests/CI | Approved role and write boundaries verified; clean setup/build/reset/start passes; meaningful regression checks run |
 | 2 | Pending | 30-start imagery/provider comparison across Trinidad and Tobago; movement/difficulty/format choice; attribution and cost | Provider selected from usable content; Tobago/fallback limitations and budget recorded |
@@ -23,7 +24,7 @@ The owner permits restarting Guess Nah's content structure. The owner subsequent
 | 7 | Pending | Guest upgrade/merge; server history; daily stats/streaks; friend/weekly per-mode boards | Same-day/missed-day/midnight/outage behavior verified; progress survives upgrades/devices; replay cannot improve rank |
 | 8 | Pending | Currency ledger, inventory/cosmetics/caps, correction tools, closed pilot and launch runbook | Atomic earn/spend/retry and reversal paths verified; retention/cost reviewed; support and rollback ready |
 
-Integrate UI work into each game iteration. A 25–50-location beta bank, a 32-person Guess shortlist and a 50-player platform pilot are planning targets. Do not pad the roster or map bank to meet a number. Ads, premium currency, paid competitive advantages and multi-server Draw scaling are deferred.
+Integrate UI work into each game iteration. A 25–50-location beta bank, a proposed 64-person Guess pool and a 50-player platform pilot are planning targets. Do not pad rosters/maps to meet numbers. Smaller iconic Guess specialities can remain below five. Ads, premium currency, paid competitive advantages and multi-server Draw scaling are deferred.
 
 ## Verification register
 
@@ -48,10 +49,10 @@ These IDs preserve continuity with the detailed private audit. Entries remain op
 
 ## Next product batch
 
-1. Try the 32-person draft in Guess Nah → People → draft practice. Use the [implementation guide](GUESS_NAH_IMPLEMENTATION.md).
-2. Review recognition with target users and refine the shortlist within the caps. Compare the no-Gender design during playtests.
-3. Complete source, biography, T&T connection and fifth-miss clue reviews, including the six unknown years and Sampson/Ro’dey distinction.
-4. Publish a varied reviewed development daily and verify mobile/keyboard, retries, account switches and Trinidad rollover with the running application.
+1. Build an unranked expanded trial using the [64-person proposal](GUESS_NAH_EXPANSION.md): compare four fields with five/Letters, review public labels and aliases, and test recognition. The current 32-draft practice remains available through the implementation guide.
+2. Review all retained/new facts and clues, including 19 withheld model years, substantial overlapping careers, KyleBoss identity/work evidence and the two remaining matching profiles. Keep a no-Gender variant available; compare career era as the biographical alternative.
+3. Implement an additive people-v2 rules/vocabulary migration after choosing the comparison: broader Comedy, food/cooking, revised caps/membership limit, version-dispatched comparator/editor/client and immutable counts. Existing v1 caps reject the proposed larger pool; do not edit applied migrations.
+4. Complete browser/mobile/keyboard, retry/history/account-switch and Trinidad rollover checks; publish a varied reviewed development daily. Test recognition and clue usefulness before rewards/ranking.
 
 The separate map coverage/provider work and account progression plan remain on the roadmap.
 
@@ -60,7 +61,10 @@ The separate map coverage/provider work and account progression plan remain on t
 | Topic | State |
 | --- | --- |
 | Restart Guess structure in development | Owner authorized the researched implementation before human playtests; legacy history retained |
-| 32-person shortlist, two cricketers, primary speciality cap three | Proposal; recognition decides admission |
+| Initial 32-person shortlist, two cricketers, primary cap three | Implemented as development v1; earlier editorial recommendation revised by latest owner request |
+| Expanded 64 nominees; five-plus in nine core specialities; primary cap seven/cricket five | New proposal; recognise/review candidates and retain smaller iconic groups |
+| Fifth column: Letters; career era as thematic alternative | Research recommendation for an unranked comparison, not selected/applied production rules |
+| Broad Comedy; genuine careers across lanes; up to three major specialities | New vocabulary/profile proposal; Rikki Jai evidence motivates limit review |
 | Four fields; eight attempts; hints after 3/5/7 misses | Implemented as people-v1; human playtesting pending |
 | Unknown neutral; genuine career overlap partial | Implemented/tested people-v1 contract |
 | People, folklore and Ting use distinct profiles | Recommendation |
@@ -91,4 +95,12 @@ Passed: 14 regression checks; typecheck; build; disposable content restore; host
 
 GUESS-01/02/03 and DAY-01 now have implementation/test evidence for people-v1. RUN-01 exports/startup are corrected. GUESS-04/CONT-01/UI-01 await human/content/device review. Administrative role-edit checks pass; remaining cross-mode permission/history and account/streak checks remain open. Where, Draw and reward milestones are unchanged in scope.
 
-Next action: playtest draft practice and complete content reviews, then publish the first varied development daily. Do not equate validated code with validated recognition or fun.
+Implementation PR [#2](https://github.com/StephenScarlett/BigManThing/pull/2) was merged at `c5af3151013448eee8df3f799c1d47e24f28b762`; [CI run 37065479911](https://github.com/StephenScarlett/BigManThing/actions/runs/37065479911) passed. This updates the earlier statement that remote CI had not yet been observed.
+
+### Expanded roster research — 2 October 2026
+
+Affected: G0a/G0b, GUESS-03/04, CONT-01 and UI-01. The owner requested a fifth column and about five popular people per speciality. Added the sourced 32-addition nomination file, 64-person group proposal, comparison alternatives and reproducible standard-library Python model. KyleBoss is conditional with no verified legal name/year/hometown; Levi has official UEFA nationality/year evidence. Nineteen model years are withheld. Broad Comedy and genuine multi-career profiles avoid forcing creators into false categories. No content was approved/imported and no database/gameplay changes were made.
+
+Validation: 64 unique canonical nominations; primary memberships and HTTPS sources checked; sourced-year pointers present for every supplied new year; accent/punctuation/count examples and neutral/directional comparator invariants checked; model regenerated. On the same expanded pool, Letters changes fully informed optimal mean from 2.844 to 2.531 and average candidates after a wrong opening from 14.962 to 9.886 (about 34% fewer). Two identical stored profiles remain; human recognition/fun are not modelled. Existing source review and free clues remain necessary.
+
+Next action: expanded unranked four/five-column comparison, followed by reviewed content and an additive people-v2 implementation. Do not equate solver statistics with human fun or silently replace v1 rules.

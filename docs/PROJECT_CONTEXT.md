@@ -4,12 +4,13 @@ Updated: 2026-10-02.
 Working plan: [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md).
 Guess research: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
 Current implementation: [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.md).
+Latest expansion proposal: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
 
 ## Product intent and current direction
 
 BMT is a Trinidad and Tobago browser-game platform: a short cultural daily challenge, result sharing, and a drawing game for friends. Trustworthy local content and reliable mobile gameplay are the priority. Where Nah needs careful imagery/provider guidance; accounts, leaderboards, streaks and cosmetic rewards follow validated gameplay.
 
-The owner authorized restarting Guess Nah's data structure and implementing the researched design in the personal development application. The people-v1 prototype now supports four comparisons, eight attempts and free recognition clues. The immediate product task is recognition review and playtesting of its 32 draft nominees, followed by source/clue review and the first balanced development daily. The roster and gameplay targets remain subject to change.
+The owner authorized restarting Guess Nah's data structure and implementing the researched design in the personal development application. The people-v1 prototype supports four comparisons, eight attempts and free recognition clues. The owner's latest request explores a fifth column and roughly five recognisable people per speciality, explicitly including KyleBoss and Levi García. Research proposes 64 nominees, nine core groups with five-plus members, broader Comedy and a Letters comparison prototype. This is not yet applied to code/Supabase; the database still has 32 drafts. Next is an expanded unranked comparison/recognition trial and source/clue review. The roster and gameplay targets remain subject to change.
 
 The existing monorepo remains a usable base; openness to a new Guess contract does not by itself require replacing the platform framework. Preserve the latest user steering. README.md and BIGMANTHING_PLAN.md contain historical rules.
 
@@ -28,7 +29,9 @@ Detailed environment information and security audit evidence belong in the priva
 
 The legacy content snapshot contains 12 people and 69 allowed attribute values. Seven people are cricketers, 11 carry a sport field, and all use the male option. Legacy people: Ato Boldon, Brian Lara, Daren Ganga, Denesh Ramdin, Dwayne Bravo, Dwight Yorke, Hasely Crawford, Kieron Pollard, Machel Montano, Nicholas Pooran, Richard Thompson and Sunil Narine.
 
-Proposed v2: 32 recognition-tested people, only two cricketers, and at most three sharing a primary speciality. Test Known for, Speciality, confirmed Born year and public Gender, eight daily attempts and free hints after 3/5/7 misses. Real major-career overlap is partial; unconfirmed comparisons are neutral.
+Implemented people-v1: 32 drafts; publication caps two cricket memberships and three per primary speciality; Known for, Speciality, confirmed Born year and public Gender, eight attempts and free hints after 3/5/7 misses. Real major-career overlap is partial; unconfirmed comparisons are neutral. These development caps implement an earlier editorial proposal, not an immutable owner preference.
+
+Latest proposed people-v2: retain the 32 drafts and nominate 32 additions; target five in core groups, cap seven primary members/five cricket memberships; preserve smaller iconic fields; test Letters as a fifth comparison. Nineteen combined draft years are withheld. Stage/digital comedy would merge into Comedy, food/cooking would become explicit vocabulary, and Rikki Jai's three speciality memberships need a revised limit. Two identical model profiles remain with Letters and need discriminating clues. See the expansion report/reproducible files; none is approved content or an import.
 
 Six draft years remain withheld, and Sampson/Ro’dey share a current categorical profile. Resolve factual/source/alias and discriminating clue paths before publication. All 32 nominees were imported as drafts, with no approved daily. Human recognition and gameplay need validation; the mathematical model assumes complete candidate knowledge.
 
@@ -69,4 +72,4 @@ Recheck current provider terms, source claims and deployed behavior before imple
 
 ## People v1 development checkpoint — 2 October 2026
 
-Owner-authorized implementation is complete for the people prototype: four comparisons, eight attempts, canonical aliases, server history, free 3/5/7 clues, draft review and frozen Trinidad-date editions. New tables hold 32 drafts and 29 controlled vocabulary values. Six years stay unconfirmed, portrait rights remain uncleared, and no daily has been published. The owner confirms this is a personal development environment. Existing entities and historical records are preserved. See [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.md) for the concrete usage, schema, checks and remaining validation. The primary next task is content/recognition review and playtesting of this implementation.
+Owner-authorized implementation is complete for the people prototype: four comparisons, eight attempts, canonical aliases, server history, free 3/5/7 clues, draft review and frozen Trinidad-date editions. New tables hold 32 drafts and 29 controlled vocabulary values. Six years stay unconfirmed, portrait rights remain uncleared, and no daily has been published. The owner confirms this is a personal development environment. Existing entities and historical records are preserved. See [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.md) for concrete usage/schema/checks. The implementation was merged in PR #2 with passing CI. The latest research is [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md); next is its expanded comparison/recognition prototype, without redefining historical v1 rules.
