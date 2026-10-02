@@ -3,11 +3,15 @@
 Last updated: 2026-10-02. Main audit baseline: 9adedd237df403fe6893289c46b338c6043ac3f5.
 Working plan: [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md).
 
+Current Guess design gate: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
+
 ## Product intent
 
 A Trinidad and Tobago browser-game platform with a short cultural daily challenge, result sharing, and a drawing game for friends. Trustworthy local content and reliable mobile gameplay are the priority. The user particularly wants strong guidance on Where Nah, accurate guessing attributes, distinctive UI, and later accounts, leaderboards, streaks and cosmetic rewards.
 
 The existing monorepo is a suitable base. Do not infer that the old README or BIGMANTHING_PLAN.md describes current behavior: those documents predate Where Nah, unlimited guesses, and the final entity schema.
+
+Latest owner steering (2026-10-02): restarting Guess Nah's content structure is acceptable. The cricket-heavy experience is insufficiently fun; settle recognisable people, meaningful comparison fields and finite/hinted rules before rewriting Guess schema/admin/scoring/UI. A researched 32-person proposal and offline model are available, but roster and rules are not approved. Next product task is recognition review plus a small unranked prototype. This does not imply an immediate production wipe or cancel the separate Where Nah guidance/reliability work. Urgent security repairs retain priority independent of the design gate.
 
 ## What actually exists
 
@@ -32,6 +36,7 @@ Current vocabulary: field 3; role 7; gender 1; status 2; reach 2; origin 12; aff
 ## Existing constraints and open definitions
 
 - Every imported tag must exist under the correct attribute in attribute_options. Vocabulary changes precede entity imports; no ad-hoc strings.
+- The owner permits a redesigned vocabulary/schema. The current 69 values constrain current-version imports, not the design of the next reviewed version.
 - Avoid different answers producing all-green feedback through redundant/synonymous tags. Refine truthful attributes instead of inventing unique identity tags.
 - Dem is people-only. Folklore can be drawing content or a separately designed pack.
 - Birth/death dates should express lifespan, not fame era. Birth-year scoring remains a proposal.
@@ -41,6 +46,8 @@ Current vocabulary: field 3; role 7; gender 1; status 2; reach 2; origin 12; aff
 - regional is a valid live reach value but unsupported by hardcoded feedback ordering.
 - cricket_allrounder and cricket_allrounded overlap; olympic_medalist has an inappropriate Sports Commentator parent group.
 - Current attempts are unlimited. Finite picture/competitive rules remain undecided.
+- Guess v2 proposal: 32 recognition-tested people, two cricketers, maximum three per primary speciality; four columns (Known for, Speciality, confirmed Born year, public Gender), eight attempts and free scheduled hints. Exact secondary-career overlap is supported; unknowns are neutral. These remain hypotheses pending human playtests.
+- Six draft years are withheld; Sampson/Ro’dey share the present categorical profile. Do not turn the shortlist into an automated seed or invent facts to separate them. Missing years need a reviewed fair clue path.
 - Use server business dates in America/Port_of_Spain for intended Trinidad midnight.
 - Draw Nah stays server-authoritative Socket.IO.
 
