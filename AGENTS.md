@@ -12,3 +12,5 @@ Treat pending roadmap recommendations as proposals, not fixed user decisions. Pr
 
 
 For the implemented people game, also read [docs/GUESS_NAH_IMPLEMENTATION.md](docs/GUESS_NAH_IMPLEMENTATION.md). The owner authorized implementation before playtests in a personal development environment. Keep nominations as drafts until claim/clue review is complete. Existing accounts/history must not be reset as part of content iteration.
+
+The latest roster/fifth-column direction is in [docs/GUESS_NAH_EXPANSION.md](docs/GUESS_NAH_EXPANSION.md). It proposes 64 nominees, five-plus people in nine core specialities and a Letters comparison prototype. It supersedes the earlier editorial cap-two/cap-three recommendation, but does not change applied people-v1 rules. Further implementation requires a new rules/vocabulary version.
