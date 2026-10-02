@@ -59,7 +59,7 @@ function Header() {
   const { pathname } = useLocation();
   return (
     <header className="sticky top-0 z-30 backdrop-blur bg-surface/80 border-b border-line">
-      <div className="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
+      <div className="mx-auto max-w-5xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <Link to="/" className="font-display text-2xl tracking-wider flex items-baseline gap-1">
           <span className="text-brand-red">BIG</span>
           <span className="text-ink">MAN</span>

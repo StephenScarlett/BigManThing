@@ -14,7 +14,7 @@ max_rows = 1000
 [db]
 port = 54322
 shadow_port = 54320
-major_version = 15
+major_version = 17
 
 [studio]
 enabled = true
@@ -26,6 +26,7 @@ site_url = "http://localhost:5173"
 additional_redirect_urls = ["http://localhost:5173"]
 jwt_expiry = 3600
 enable_signup = true
+enable_anonymous_sign_ins = true
 
 [auth.email]
 enable_signup = true
@@ -35,7 +36,7 @@ enable_confirmations = false   # local dev convenience; production should be tru
 # Google OAuth — set real credentials via env vars or Supabase Dashboard in production.
 # For local dev, OAuth redirects won't work without real Google credentials.
 [auth.external.google]
-enabled = true
+enabled = false # opt in locally after providing Google credentials
 client_id = "env(GOOGLE_CLIENT_ID)"
 secret = "env(GOOGLE_CLIENT_SECRET)"
 redirect_uri = "http://localhost:54321/auth/v1/callback"

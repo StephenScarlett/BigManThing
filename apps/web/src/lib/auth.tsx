@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 
@@ -38,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const activeUid = useRef<string | null>(null);
 
   const isGuest = !!(user?.is_anonymous);
 
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .select("id, username, avatar_url, is_admin")
       .eq("id", uid)
       .single();
-    setProfile(data as Profile | null);
+    if (activeUid.current === uid) setProfile(data as Profile | null);
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -74,6 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   function handleSession(session: Session | null) {
     const u = session?.user ?? null;
+    if (activeUid.current !== (u?.id ?? null)) setProfile(null);
+    activeUid.current = u?.id ?? null;
     setUser(u);
     if (u) {
       fetchProfile(u.id);
@@ -83,7 +86,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInAsGuest = useCallback(async () => {
-    await supabase.auth.signInAnonymously();
+    const { error } = await supabase.auth.signInAnonymously();
+    if (error) throw error;
   }, []);
 
   const signInWithGoogle = useCallback(async () => {

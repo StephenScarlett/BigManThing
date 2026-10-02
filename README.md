@@ -1,5 +1,7 @@
 # BigManThing
 
+Current people-game setup and development checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md). The roadmap/context in `docs/` supersede historical rules below.
+
 A Trinidadian-themed browser game platform. Currently ships two games:
 
 - **Guess Nah** — daily word-guessing game (Wordle-style) built around T&T culture, folklore, people, food, and more.
