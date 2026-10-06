@@ -31,3 +31,7 @@ yarn-error.log*
 .branches
 .temp
 supabase/.temp/
+
+# Browser test output
+test-results/
+playwright-report/

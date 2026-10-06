@@ -1,6 +1,6 @@
 # Farm and home asset contract
 
-Proposed production contract, **6 October 2026**. Applies to the latest Stardew-adjacent farm direction in [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). It replaces the previous **isometric** production brief. The current `/room` prototype still renders procedural placeholders; no production farm rig or engine integration has been validated yet.
+Proposed production contract, **6 October 2026**. Applies to the latest Stardew-adjacent farm direction in [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). It replaces the previous **isometric** production brief. The current `/room` and new [walkable `/farm/demo`](FARM_PROTOTYPE.md) render procedural placeholders. The farm spike exercises these anchors/views; no production layered rig or physical-device art validation is claimed.
 
 **First produce one rig and a small environment set, then validate them in the walking prototype.** Do not generate hundreds of outfits before feet anchors, layering, animation and camera scale work. Keep original art and source/licence records. Inspiration concerns view, proportions and readable pixels; do not reuse Stardew/Habbo/Nintendo assets, recognisable characters or UI.
 

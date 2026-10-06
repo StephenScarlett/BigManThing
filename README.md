@@ -1,13 +1,13 @@
 # BigManThing
 
-Current setup/checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md), [implemented room pilot](docs/REWARDS_AND_ROOMS.md), [latest farm/home design](docs/FARM_AND_HOME_DESIGN.md), [farm asset guide](docs/FARM_ASSET_GUIDE.md), and [roadmap](docs/PROJECT_ROADMAP.md). The farm is the latest development direction, not a shipped game yet.
+Current setup/checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md), [implemented room pilot](docs/REWARDS_AND_ROOMS.md), [walkable farm prototype](docs/FARM_PROTOTYPE.md), [latest farm/home design](docs/FARM_AND_HOME_DESIGN.md), [farm asset guide](docs/FARM_ASSET_GUIDE.md), and [roadmap](docs/PROJECT_ROADMAP.md). `/farm/demo` is a temporary movement/house preview; persistent farming is not shipped yet.
 
 A Trinidad and Tobago browser-game platform with:
 
 - **Guess Nah** — daily word-guessing game (Wordle-style) built around T&T culture, folklore, people, food, and more.
 - **Draw Nah** — real-time multiplayer sketch-and-guess game with a Trini word bank.
 - **Where Nah** — a Street View location-guessing prototype.
-- **My lime** — a development character/room collection and earned-roll economy, Pan Memory daily and Coconut Catch practice. Try `/room/demo` for an isolated offline sample; final art and device playtests remain pending.
+- **My lime** — a development character/room collection and earned-roll economy, Pan Memory daily and Coconut Catch practice. Try `/room/demo` for the isolated collection sample and `/farm/demo` for the new walkable farm/house. Final art, persistent crops/fishing and physical-device playtests remain pending.
 
 Built with a pnpm monorepo, React + Vite frontend, Express + Socket.io game server, and Supabase for persistence.
 

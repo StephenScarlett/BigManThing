@@ -5,9 +5,9 @@ Context: [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 Guess design proposal: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
 Latest expansion research: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
 Active progression plan: [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). Active asset contract: [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md). Historical implemented pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md).
-Status: people-v2/64-draft expansion and room/reward foundation implemented and applied to development. Latest owner pivot is a Stardew-adjacent farm/house; its research/economy model and new art contract are complete, while the walkable renderer and persistent farming/fishing are pending. Content review, devices, linking and boards remain open.
+Status: people-v2/64-draft expansion and room/reward foundation implemented and applied to development. Latest owner pivot is a Stardew-adjacent farm/house; research/economy model, new art contract and isolated [F0 walkable renderer](FARM_PROTOTYPE.md) are implemented. Persistent farming/fishing, physical devices, content review, linking and boards remain open.
 
-The owner wants Stardew-adjacent camera/movement/characters, an owned walkable farm with an enterable furnished house, farming/fishing first, mystery seeds/random fish, coin-funded upgrades, useful harvests and persistent main-game incentives. Proposed home/main-streak bonuses affect bounded coin earnings. Square-tile farm art supersedes the old isometric brief. The existing locked wallet/inventory/guarantees and Guess people-v2 are retained foundations; no farm migration or gameplay has been applied. Source/recognition review remains necessary and no people daily is published. Single player comes first, with read-only farm snapshots then live friend visits later. Where Nah provider/coverage guidance remains planned. Detailed live evidence belongs in the private reference.
+The owner wants Stardew-adjacent camera/movement/characters, an owned walkable farm with an enterable furnished house, farming/fishing first, mystery seeds/random fish, coin-funded upgrades, useful harvests and persistent main-game incentives. Proposed home/main-streak bonuses affect bounded coin earnings. Square-tile farm art supersedes the old isometric brief. The existing locked wallet/inventory/guarantees and Guess people-v2 are retained foundations. `/farm/demo` now exercises movement/house entry with temporary state; no farm migration, crops/fish or proposed economic rule has been applied. Source/recognition review remains necessary and no people daily is published. Single player comes first, with read-only farm snapshots then live friend visits later. Where Nah provider/coverage guidance remains planned. Detailed live evidence belongs in the private reference.
 
 ## Work order and acceptance gates
 
@@ -23,7 +23,7 @@ The owner wants Stardew-adjacent camera/movement/characters, an owned walkable f
 | 5 | Pending | BMT design decisions; distinct game previews; compact mobile and accessible flows | Target-user tests resolve major confusion; touch/keyboard/focus/reduced-motion/colour checks pass |
 | 6 | Pending | Draw identity, reconnection, lifecycle, bounded input, timing/hints/summaries and persistence | Two/four/twelve-player and host-exit/rejoin flows pass; input/resource boundaries and saved results verified |
 | 7 | Completion streak foundation implemented; account/boards pending | Guest upgrade/merge; server history; daily stats/streaks; friend/weekly per-mode boards | Same-day/missed-day/midnight/outage behavior verified; progress survives upgrades/devices; replay cannot improve rank |
-| 8 | Historical earned-roll/room pilot implemented; farm pivot designed | Farm F0–F6, item/growth/quest economy, art, corrections and closed pilot | Persistent farm loop, bounded main-game bridge, device/economy and restore gates pass |
+| 8 | Historical earned-roll/room pilot and F0 renderer implemented; farm persistence pending | Farm F0–F6, item/growth/quest economy, art, corrections and closed pilot | Persistent farm loop, bounded main-game bridge, device/economy and restore gates pass |
 
 Integrate UI work into each iteration. A 25–50-location beta bank, the 64-person draft Guess pool and a 50-player platform pilot are planning targets. Do not pad rosters/maps to meet numbers. Smaller iconic specialities may stay below five. Rolls/prices/guarantees are hypotheses; paid rolls/trading are not implemented. Unranked companion powers, friend visits and further activities are staged work. Multi-server Draw scaling remains deferred.
 
@@ -51,12 +51,12 @@ These IDs preserve continuity with the detailed private audit. Entries remain op
 | HOME-01 | P1; server checks implemented | Verify owned quantities, room geometry/revisions, avatar composition, actual devices and asset fallback |
 | GACHA-01 | P1 pilot | Verify odds/guarantees/duplicates, coin choices and collection pacing using real play |
 | SIDE-01 | P1 before more rewarded games | Verify daily caps, round/equipment snapshots and shared side-activity reward budget |
-| FARM-01–03 | P1; design/model complete | Verify walkable square-tile farm/house, concealed server-timed crops, inventory-producing fishing and one-time consumption |
+| FARM-01–03 | P1; F0 renderer and automated checks implemented; persistence/devices open | Verify walkable square-tile farm/house, concealed server-timed crops, inventory-producing fishing and one-time consumption |
 | FARM-04/HOME-02 | P1 before farm reward rollout | Verify optional orders, main-only activity, rating/coin caps, bonus rounding, grants and proposed direct prices |
 
 ## Next product batch
 
-1. **F0:** build the disposable square-tile farm/house movement spike, using the current Phaser candidate and original placeholders. Verify camera, touch/keyboard, collisions, house enter/exit and scene cleanup before commissioning a large asset batch.
+1. **F1:** add persistent farm/house/avatar, starter ownership and explicit world/layout revisions with an additive migration and restore path. `/farm/demo` now implements F0 with the pinned Phaser candidate and original placeholders; physical Android/Safari and master-rig checks remain before full engine/art adoption.
 2. In parallel, review a varied Guess bank and publish the first development daily; retain the 64-person drafts and 19 unknown years until sourced review. Test recognition/Letters and both remaining profile collisions.
 3. **F1–F3:** additive persistent farm/house/character state, mystery seed purchase/water/offline maturity/harvest/storage/selling, then one pond fishing loop. Preserve existing inventory/balances/receipts/history and verify authority/retry/conservation paths.
 4. **F4–F5:** useful goods, weekly orders, discovery track and display; connect main-only supplies/streak and capped house coin bonuses. The proposed economy/prices are not active until implemented as explicit new versions.
@@ -85,7 +85,7 @@ The separate map coverage/provider work and account progression plan remain on t
 | Guest-preserving history; completion streak; friend/weekly boards | History/streak foundations implemented; linking/boards still planned |
 | Rolls plus Lime Coins; idempotent ledger; character/room collections | Owner direction implemented as a development pilot; amounts remain experiments |
 | Permanent coin-based side-game unlock; unranked companion powers | Pan unlock implemented; companion/equipment system planned |
-| Stardew-adjacent outdoor farm and enterable house; farming/fishing first | Latest owner pivot; researched design, engine candidate and model complete; gameplay/schema pending |
+| Stardew-adjacent outdoor farm and enterable house; farming/fishing first | Latest owner pivot; F0 movement/house preview implemented, persistent gameplay/schema pending |
 | Square orthogonal tiles, four-facing layered avatar, new farm asset guide | Active art direction supersedes earlier isometric dimensions; master rig needs validation |
 | Useful goods: sell/store/orders/journal/projects/displays; processing later | Proposed first progression flow; capped two weekly farm rolls protects main incentive |
 | House + main-streak coin bonuses, proposed maximum +25% with sale allowance | Modelled hypothesis; separate main activity and additive migration required |
@@ -144,3 +144,13 @@ Latest owner steering supersedes the isometric-only room/arcade direction. Added
 Research anchors include the official Stardew site/linked wiki (Mixed Seeds, shipping, bundles, quests, processing, house/fishing), Nintendo home ratings and Palia's home/skill philosophy. Phaser's current release list identifies 4.2.1 as the renderer candidate, with current official scene/camera/tilemap documentation checked. Supabase guidance informs private outcomes, transactional goods and explicit API grants. All farm rates, bonuses, species and asset dimensions remain adjustable hypotheses.
 
 Affected: FARM-01–04, HOME-02, REWARD-01/GACHA-01, SIDE-01, UI-01 and existing CONT-01/STREAK-01. This checkpoint changes design/reference/model files only; no app package, migration, account or live item price changed. Existing code validation from the preceding checkpoint remains separate. Next is F0 plus the first reviewed Guess daily, not a full simulated town/multiplayer rewrite.
+
+### F0 walkable farm and house — 6 October 2026, after the design checkpoint
+
+Affected: FARM-01, HOME-02 and UI-01. Delivered on branch `feat/guess-v2-room-rewards`, [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4). Added `/farm/demo`, the square-tile farm/house, original twenty-frame placeholder rig, colour choices, follow camera, foot collisions/sliding, explicit door transitions, keyboard/multi-pointer controls, modal menus and renderer cleanup. React owns the controls and preview dialogs; Phaser 4.2.1 is pinned and lazy-loaded. See [FARM_PROTOTYPE.md](FARM_PROTOTYPE.md) for use and the exact scope.
+
+No Supabase/data/account/economic mutation or frontend hosting release. No persistent plants/fish or farm reward claim is implemented. Existing rules/receipts remain intact. Browser tests use dummy local configuration and confirm no economic RPC calls. Renderer/type/model checks do not close real phone/Safari, final assets or retention gates.
+
+Validation: 40 regression checks, typecheck/build, twelve browser cases across desktop/mobile-sized Chromium, and a Canvas fallback path. Checks cover repeated doors, foot blockers/dock, input cancellation/blur/pause, modal typing/focus, resizing and route teardown/recreation. The first browser pass found stale stop-position reporting; final-stop/input-clear publication fixes it and retains the regression. Current production engine chunk is about 385 KB gzip, separately loaded; existing bundle/lint limitations remain. Local lifecycle scripts stay disabled; the bundled platform esbuild executable successfully builds.
+
+Next: F1 saved farm/house/avatar and additive restore/isolation checks; F2 hidden crops/offline maturity/inventory/selling; F3 pond fishing. In parallel, test the renderer on physical devices and source/review the first Guess daily. Do not connect client-only prototype interactions to economic rewards.

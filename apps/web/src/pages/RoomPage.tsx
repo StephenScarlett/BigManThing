@@ -365,6 +365,7 @@ export default function RoomPage({ demo = false }: { demo?: boolean }) {
         <div>
           <span className="home-eyebrow">A place for your daily wins</span>
           <h1>My lime</h1>
+          <Link to="/farm/demo" className="text-sm underline underline-offset-4">Try the walkable farm preview →</Link>
           <p>Play a little. Collect something. Make this place yours.</p>
         </div>
         <Link to="/guess" className="home-text-link">

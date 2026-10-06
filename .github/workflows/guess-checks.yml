@@ -16,3 +16,11 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm --filter @bmt/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @bmt/web test:farm
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: farm-browser-checks
+          path: apps/web/test-results/
+          retention-days: 7
