@@ -1,5 +1,7 @@
 # BigManThing working references
 
+Latest art direction: [docs/FARM_ART_STANDARD.md](docs/FARM_ART_STANDARD.md) governs every asset. Batch 01 is integrated at two art pixels/world unit (64×64 terrain, 64×128 rig) with modular starter choices and rough walking. The earlier low-detail F0 exports are superseded; logical geometry stays unchanged. Retain sources/prompts and manifest/exporter compatibility before expanding clothing or species.
+
 Before making project changes, read:
 - [docs/PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md) for current intent, observed state, constraints and open definitions.
 - [docs/PROJECT_ROADMAP.md](docs/PROJECT_ROADMAP.md) for issue IDs, dependencies and acceptance gates.

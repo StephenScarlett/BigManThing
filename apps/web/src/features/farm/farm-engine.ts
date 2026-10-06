@@ -1,8 +1,9 @@
 import Phaser from "phaser";
 import { FarmInput } from "./farm-input";
+import { ART_PROPS, ART_ROOT, composeAvatar } from "./farm-avatar";
 import { DEFAULT_APPEARANCE, TILE, WORLDS, cameraLayout, moveActor, nearestInteraction, propCanvas, transitionSpawn, type Actor, type Appearance, type Interaction, type Prop, type SceneId } from "./farm-world";
 
-export type FarmSnapshot = { scene: SceneId; actor: Actor; nearby: Interaction | null; zoom: number; paused: boolean };
+export type FarmSnapshot = { scene: SceneId; actor: Actor; nearby: Interaction | null; zoom: number; paused: boolean; missingArt?: string[] };
 export type FarmController = { destroy(): void; resize(width: number, height: number): void; releaseInput(): void; setPaused(paused: boolean): void; setAppearance(appearance: Appearance): void; jump(id: string): void };
 type Options = { input: FarmInput; onSnapshot(snapshot: FarmSnapshot): void; onInspect(item: Interaction): void; onReady(): void };
 const colour = (hex: string) => Number.parseInt(hex.replace("#", ""), 16);
@@ -21,7 +22,15 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
     private walkTime = 0;
     private wasMoving = false;
     private nearbyId: string | null = null;
+    private missingArt: string[] = [];
     constructor() { super("farm-preview"); }
+    preload() {
+      this.load.on("loaderror", (file: { key: string }) => this.missingArt.push(file.key));
+      this.load.image("farm-avatar-source", ART_ROOT + "character-base.png");
+      this.load.image("farm-hair-source", ART_ROOT + "hair.png");
+      this.load.image("farm-terrain", ART_ROOT + "terrain.png");
+      for (const id of ART_PROPS) this.load.image(`farm-art-${id}`, ART_ROOT + `${id}.png`);
+    }
     create() {
       scene = this;
       this.makeGroundTextures();
@@ -56,33 +65,46 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       this.children.removeAll(true);
       const world = WORLDS[this.region];
       const tiles = Array.from({ length: world.rows }, (_, y) => Array.from({ length: world.columns }, (_, x) => {
-        if (x === 0 || y === 0 || x === world.columns - 1 || y === world.rows - 1) return 7;
+        if (x === 0 || y === 0 || x === world.columns - 1 || y === world.rows - 1) return this.region === "house" && this.textures.exists("farm-terrain") ? 10 : 7;
         if (this.region === "house") return 6;
         if (x >= 36 && x < 48 && y >= 20 && y < 30) return (x + y) % 2 ? 4 : 5;
         if ((x >= 21 && x < 24 && y >= 19 && y < 33) || (y >= 25 && y < 28 && x >= 17 && x < 36) || (x >= 25 && x < 30 && y >= 21 && y < 26)) return 3;
         return (x * 13 + y * 7) % 3;
       }));
-      this.ground = this.make.tilemap({ data: tiles, tileWidth: TILE, tileHeight: TILE });
-      const tileset = this.ground.addTilesetImage("farm-ground", "farm-ground", TILE, TILE, 0, 0)!;
-      this.ground.createLayer(0, tileset, 0, 0)!.setDepth(-10000);
+      const density = this.textures.exists("farm-terrain") ? 2 : 1, groundKey = density === 2 ? "farm-terrain" : "farm-ground";
+      this.ground = this.make.tilemap({ data: tiles, tileWidth: TILE*density, tileHeight: TILE*density });
+      const tileset = this.ground.addTilesetImage(groundKey, groundKey, TILE*density, TILE*density, 0, 0)!;
+      this.ground.createLayer(0, tileset, 0, 0)!.setScale(1/density).setDepth(-10000);
       for (const p of world.props) {
         const key = this.makePropTexture(p), canvas = propCanvas(p);
         this.add.image((p.x + p.w / 2) * TILE, (p.y + p.h) * TILE, key)
           .setOrigin(canvas.pivot.x / canvas.width, canvas.pivot.y / canvas.height)
+          .setScale(key.startsWith("farm-art-") ? .5 : 1)
           .setDepth(["plot", "rug", "dock"].includes(p.kind) ? -100 : (p.y + p.h) * TILE);
       }
       if (this.region === "house") {
-        this.add.rectangle(5 * TILE, 7 * TILE + 2, TILE, 10, 0xcea877).setDepth(-10);
-        this.add.rectangle(5 * TILE, 7 * TILE - 7, 40, 18, 0x78513e).setDepth(-10);
+        if (this.textures.exists("farm-art-threshold")) this.add.image(5*TILE,7*TILE,"farm-art-threshold").setOrigin(.5,160/192).setScale(.5).setDepth(-10);
+        else { this.add.rectangle(5 * TILE, 7 * TILE + 2, TILE, 10, 0xcea877).setDepth(-10); this.add.rectangle(5 * TILE, 7 * TILE - 7, 40, 18, 0x78513e).setDepth(-10); }
       }
       this.shadow = this.add.ellipse(this.actor.x, this.actor.y - 1, 22, 8, 0x263b31, 0.24);
-      this.player = this.add.sprite(this.actor.x, this.actor.y, "farm-avatar", `${this.actor.facing}-0`).setOrigin(0.5, 60 / 64);
+      this.player = this.add.sprite(this.actor.x, this.actor.y, "farm-avatar", `${this.actor.facing}-0`).setOrigin(0.5, 60 / 64).setScale(this.hasAvatarArt() ? .5 : 1);
       this.fitCamera();
       this.cameras.main.startFollow(this.player, true, 1, 1, 0, 24);
       this.cameras.main.centerOn(this.actor.x, this.actor.y - 24);
       this.walkTime = 0; this.wasMoving = false; this.nearbyId = null;
     }
     private makePropTexture(p: Prop): string {
+      if (this.textures.exists(`farm-art-${p.kind}`)) return `farm-art-${p.kind}`;
+      if (p.kind === "plot" && this.textures.exists("farm-terrain")) {
+        const key = "farm-art-plot";
+        if (!this.textures.exists(key)) {
+          const texture = this.textures.createCanvas(key,128,192)!;
+          texture.context.imageSmoothingEnabled=false;
+          texture.context.drawImage(this.textures.get("farm-terrain").getSourceImage() as CanvasImageSource,8*64,0,64,64,32,96,64,64);
+          texture.refresh();
+        }
+        return key;
+      }
       const key = `farm-prop-${p.kind}-${p.w}-${p.h}`;
       if (this.textures.exists(key)) return key;
       const { width: w, height: h } = propCanvas(p), bottom = h - 16, left = 16, right = w - 16;
@@ -130,7 +152,18 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       }
       g.generateTexture(key, w, h); g.destroy(); return key;
     }
+    private hasAvatarArt() { return this.textures.exists("farm-avatar-source") && this.textures.exists("farm-hair-source"); }
     drawAvatar() {
+      if (!this.hasAvatarArt()) { this.drawAvatarFallback(); return; }
+      const sheet=composeAvatar(appearance,this.textures.get("farm-avatar-source").getSourceImage() as CanvasImageSource,this.textures.get("farm-hair-source").getSourceImage() as CanvasImageSource);
+      const texture = !this.textures.exists("farm-avatar") ? this.textures.createCanvas("farm-avatar",320,512)! : this.textures.get("farm-avatar") as Phaser.Textures.CanvasTexture;
+      texture.context.clearRect(0,0,320,512); texture.context.imageSmoothingEnabled=false; texture.context.drawImage(sheet,0,0);
+      (["down","left","right","up"] as const).forEach((facing,row) => {
+        for (let frame=0;frame<5;frame++) if (!texture.has(`${facing}-${frame}`)) texture.add(`${facing}-${frame}`,0,frame*64,row*128,64,128);
+      });
+      texture.refresh();
+    }
+    private drawAvatarFallback() {
       const texture = !this.textures.exists("farm-avatar") ? this.textures.createCanvas("farm-avatar", 160, 256)! : this.textures.get("farm-avatar") as Phaser.Textures.CanvasTexture;
       const ctx = texture.context; ctx.clearRect(0, 0, 160, 256);
       const facings = ["down", "left", "right", "up"] as const;
@@ -172,7 +205,7 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       const now = performance.now();
       if (!force && now - this.lastPublished < 100) return;
       this.lastPublished = now;
-      options.onSnapshot({ scene: this.region, actor: { ...this.actor }, nearby: nearestInteraction(WORLDS[this.region], this.actor), zoom: this.cameras.main.zoom, paused });
+      options.onSnapshot({ scene: this.region, actor: { ...this.actor }, nearby: nearestInteraction(WORLDS[this.region], this.actor), zoom: this.cameras.main.zoom, paused, missingArt:[...this.missingArt] });
     }
     override update(_time: number, delta: number) {
       if (paused || destroyed) return;

@@ -5,7 +5,9 @@ Working plan: [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md).
 Guess research: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
 Current implementation: [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.md).
 Latest expansion proposal: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
-Latest progression design: [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). Current renderer: [FARM_PROTOTYPE.md](FARM_PROTOTYPE.md). Active art contract: [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md). Implemented historical pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md); its isometric asset brief is superseded for future farm art.
+Latest progression design: [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). Current renderer: [FARM_PROTOTYPE.md](FARM_PROTOTYPE.md). Active art standard: [FARM_ART_STANDARD.md](FARM_ART_STANDARD.md), delivery: [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md). Implemented historical pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md); its isometric asset brief is superseded for future farm art.
+
+Latest owner art direction: detailed shaded pixel art matching the supplied bottle/taller-human references across all assets. Starter batch 01 is integrated into `/farm/demo`: two artwork pixels/world unit, 64×64 terrain and 64×128 character layers, modular starter identity/clothing choices and rough four-direction walking. The retained PNG sources, exact generation prompts, JSON manifest and exporter/compositor make future batches reproducible. Current body builds use a shared-rig width transform; bespoke anatomy/action layers and owner/physical-device art review remain future work. No farm persistence/economic state is introduced by this visual batch.
 
 Current delivery: [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4), branch `feat/guess-v2-room-rewards`; the implementation commit `fb535f51572eda6ab71627f9ecc7e73c97f95cbf` passed [remote CI](https://github.com/StephenScarlett/BigManThing/actions/runs/37487290506). Development database migrations are applied; the frontend PR remains open.
 

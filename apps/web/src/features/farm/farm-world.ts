@@ -10,12 +10,32 @@ export type PropKind = "house" | "tree" | "rock" | "plot" | "stall" | "counter" 
 export type Prop = { id: string; kind: PropKind; x: number; y: number; w: number; h: number; solid: boolean };
 export type Interaction = { id: string; label: string; position: Point; approach: Actor; transition?: SceneId; description: string };
 export type World = { id: SceneId; columns: number; rows: number; spawn: Actor; blockers: Rect[]; props: Prop[]; interactions: Interaction[] };
-export type Appearance = { skin: string; hair: string; shirt: string };
-export const DEFAULT_APPEARANCE: Appearance = { skin: "#b8774e", hair: "#302724", shirt: "#b74437" };
+export type Appearance = {
+  skin: string; hair: string; shirt: string; eyes: string; pants: string; shoes: string; hat: string;
+  bodyType: "slim" | "regular" | "broad";
+  hairStyle: "bald" | "crop" | "curls" | "bob" | "ponytail";
+  eyeStyle: "round" | "soft" | "sharp";
+  topStyle: "tee" | "work-shirt" | "overshirt";
+  bottomStyle: "jeans" | "shorts";
+  hatStyle: "none" | "cap";
+};
+export const DEFAULT_APPEARANCE: Appearance = { skin: "#b8774e", hair: "#704532", shirt: "#d5a33d", eyes: "#437c68", pants: "#4773a2", shoes: "#73463e", hat: "#546e79", bodyType: "regular", hairStyle: "ponytail", eyeStyle: "soft", topStyle: "tee", bottomStyle: "jeans", hatStyle: "none" };
 export const APPEARANCE_CHOICES = {
   skin: ["#f0c5a0", "#d99c69", "#b8774e", "#8b553a", "#603c2d", "#3d2925"],
   hair: ["#302724", "#704532", "#be8346", "#d7cec0"],
   shirt: ["#b74437", "#3a7770", "#e0b655", "#686992", "#eee0c0"],
+  eyes: ["#437c68", "#5176aa", "#794b31", "#392925", "#a07b3b"],
+  pants: ["#4773a2", "#405444", "#5a455d", "#836442", "#34363b"],
+  shoes: ["#73463e", "#483c34", "#94764a", "#ded3b7"],
+  hat: ["#546e79", "#ae543d", "#ccad67", "#49455c"],
+} as const;
+export const APPEARANCE_STYLES = {
+  bodyType: [{ id: "slim", label: "Slim" }, { id: "regular", label: "Regular" }, { id: "broad", label: "Broad" }],
+  hairStyle: [{ id: "bald", label: "Bald" }, { id: "crop", label: "Short crop" }, { id: "curls", label: "Curls" }, { id: "bob", label: "Bob" }, { id: "ponytail", label: "Ponytail" }],
+  eyeStyle: [{ id: "round", label: "Round" }, { id: "soft", label: "Soft" }, { id: "sharp", label: "Sharp" }],
+  topStyle: [{ id: "tee", label: "Tee" }, { id: "work-shirt", label: "Work shirt" }, { id: "overshirt", label: "Overshirt" }],
+  bottomStyle: [{ id: "jeans", label: "Jeans" }, { id: "shorts", label: "Shorts" }],
+  hatStyle: [{ id: "none", label: "No hat" }, { id: "cap", label: "Cap" }],
 } as const;
 const at = (x: number, y: number): Point => ({ x: x * TILE, y: y * TILE });
 const actor = (x: number, y: number, facing: Facing): Actor => ({ ...at(x, y), facing });

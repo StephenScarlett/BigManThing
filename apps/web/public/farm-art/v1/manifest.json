@@ -1,0 +1,539 @@
+{
+  "visualVersion": "farm-detail-v1",
+  "artPixelsPerWorldUnit": 2,
+  "worldTile": 32,
+  "artTile": 64,
+  "character": {
+    "image": "character-base.png",
+    "frame": [
+      64,
+      128
+    ],
+    "sheet": [
+      320,
+      512
+    ],
+    "rows": [
+      "down",
+      "left",
+      "right",
+      "up"
+    ],
+    "columns": [
+      "idle",
+      "walk-contact-a",
+      "walk-pass-a",
+      "walk-contact-b",
+      "walk-pass-b"
+    ],
+    "pivot": [
+      32,
+      120
+    ],
+    "headAnchors": [
+      {
+        "frame": 0,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 1,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 2,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 3,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 4,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 5,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 6,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 7,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 8,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 9,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 10,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 11,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 12,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 13,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 14,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 15,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 16,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 17,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 18,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      },
+      {
+        "frame": 19,
+        "head": [
+          32,
+          23
+        ],
+        "feet": [
+          32,
+          120
+        ]
+      }
+    ]
+  },
+  "hair": {
+    "image": "hair.png",
+    "frame": [
+      64,
+      64
+    ],
+    "styles": [
+      "crop",
+      "curls",
+      "bob",
+      "ponytail"
+    ],
+    "rows": [
+      "down",
+      "left",
+      "right",
+      "up"
+    ]
+  },
+  "terrain": {
+    "image": "terrain.png",
+    "frame": [
+      64,
+      64
+    ],
+    "tiles": [
+      "grass-a",
+      "grass-b",
+      "grass-c",
+      "path",
+      "water-a",
+      "water-b",
+      "floor",
+      "perimeter",
+      "soil",
+      "wet-soil",
+      "wall",
+      "decking"
+    ]
+  },
+  "props": {
+    "house": {
+      "image": "house.png",
+      "canvas": [
+        448,
+        384
+      ],
+      "pivot": [
+        224,
+        352
+      ],
+      "footprint": [
+        6,
+        4
+      ],
+      "groundY": 352
+    },
+    "tree": {
+      "image": "tree.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    },
+    "rock": {
+      "image": "rock.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    },
+    "stall": {
+      "image": "stall.png",
+      "canvas": [
+        192,
+        192
+      ],
+      "pivot": [
+        96,
+        160
+      ],
+      "footprint": [
+        2,
+        1
+      ],
+      "groundY": 160
+    },
+    "counter": {
+      "image": "counter.png",
+      "canvas": [
+        192,
+        192
+      ],
+      "pivot": [
+        96,
+        160
+      ],
+      "footprint": [
+        2,
+        1
+      ],
+      "groundY": 160
+    },
+    "board": {
+      "image": "board.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    },
+    "dock": {
+      "image": "dock.png",
+      "canvas": [
+        512,
+        256
+      ],
+      "pivot": [
+        256,
+        224
+      ],
+      "footprint": [
+        7,
+        2
+      ],
+      "groundY": 224
+    },
+    "bed": {
+      "image": "bed.png",
+      "canvas": [
+        192,
+        320
+      ],
+      "pivot": [
+        96,
+        288
+      ],
+      "footprint": [
+        2,
+        3
+      ],
+      "groundY": 288
+    },
+    "table": {
+      "image": "table.png",
+      "canvas": [
+        192,
+        192
+      ],
+      "pivot": [
+        96,
+        160
+      ],
+      "footprint": [
+        2,
+        1
+      ],
+      "groundY": 160
+    },
+    "chair": {
+      "image": "chair.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    },
+    "chest": {
+      "image": "chest.png",
+      "canvas": [
+        192,
+        192
+      ],
+      "pivot": [
+        96,
+        160
+      ],
+      "footprint": [
+        2,
+        1
+      ],
+      "groundY": 160
+    },
+    "plant": {
+      "image": "plant.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    },
+    "lamp": {
+      "image": "lamp.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    },
+    "rug": {
+      "image": "rug.png",
+      "canvas": [
+        256,
+        256
+      ],
+      "pivot": [
+        128,
+        224
+      ],
+      "footprint": [
+        3,
+        2
+      ],
+      "groundY": 224
+    },
+    "threshold": {
+      "image": "threshold.png",
+      "canvas": [
+        128,
+        192
+      ],
+      "pivot": [
+        64,
+        160
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "groundY": 160
+    }
+  },
+  "source": "Original built-in image generation; retained PNG sources/prompts. Normalized with nearest sampling; customization is composed in farm-avatar.ts."
+}

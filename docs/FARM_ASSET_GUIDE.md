@@ -1,133 +1,53 @@
-# Farm and home asset contract
+# Farm and home asset guide
 
-Proposed production contract, **6 October 2026**. Applies to the latest Stardew-adjacent farm direction in [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). It replaces the previous **isometric** production brief. The current `/room` and new [walkable `/farm/demo`](FARM_PROTOTYPE.md) render procedural placeholders. The farm spike exercises these anchors/views; no production layered rig or physical-device art validation is claimed.
+Updated 6 October 2026 for the owner's detailed pixel-art references. The active standard is [FARM_ART_STANDARD.md](FARM_ART_STANDARD.md). It replaces both the earlier isometric brief and the F0 low-detail 32×64 **art export** proposal. Logical world dimensions remain unchanged.
 
-**First produce one rig and a small environment set, then validate them in the walking prototype.** Do not generate hundreds of outfits before feet anchors, layering, animation and camera scale work. Keep original art and source/licence records. Inspiration concerns view, proportions and readable pixels; do not reuse Stardew/Habbo/Nintendo assets, recognisable characters or UI.
+## Current contract
 
-## View and scale
+| Element | Artwork | World/display |
+| --- | --- | --- |
+| View | Top-down three-quarter, orthogonal squares | Following camera; separate enterable house |
+| Tile | 64×64 pixels | 32×32 world units |
+| Character frame | 64×128 pixels | 32×64 units |
+| Feet anchor | (32,120) | (16,60) |
+| Character sheet | 320×512; five columns, four rows | Idle + four walk poses; down/left/right/up |
+| Action sheet | 256×512 per four-frame action | Same anchors and facings; crop/fishing batches later |
+| 1×1 prop | 128×192; pivot (64,160) | 64×96 units; foot blocker separate |
+| W×H prop | (64W+64)×(64H+128); pivot at (width/2,height−32) | 32W×32H ground footprint |
+| Icons | 128×128 transparent | Normally 64×64 in UI |
+| Sampling | Crisp deliberate clusters; nearest; no dithering | Integer zoom where practical; small screens may downsample |
 
-| Element | Proposed contract |
-| --- | --- |
-| World projection | Top-down three-quarter view, square orthogonal tiles; no diamond-grid/isometric projection |
-| Logical world tile | **32×32 px**, shared outside and inside |
-| Character frame | **32×64 px**, including transparent margin; one original neutral body rig initially |
-| Character feet anchor | **(16,60)** within every frame; same anchor for all wardrobe/body/action layers |
-| Character facing rows | **Down, Left, Right, Up**, in that order |
-| Walk sheet | **160×256 px**: five columns × four rows; idle, walk 1, walk 2, walk 3, walk 4 |
-| Separate action sheet | **128×256 px** per action: four columns × four direction rows |
-| Inventory icons | **64×64 px**, transparent, readable silhouette and consistent lighting |
-| Default object canvas | Width `32 × footprint_width + 32`; height `32 × footprint_height + 64` |
-| Object front-ground pivot | `(canvas_width / 2, canvas_height - 16)`; visual art may rise above its ground footprint |
-| Filtering | Nearest neighbour, consistent pixel density, integer camera zoom where practical |
+Characters, clothes, props, house, crops, seeds, fish, tools and icons use the same pixel density, upper-left lighting, shaded material ramps and warm coloured outlines. Adult human proportions and readable materials follow the supplied references. No mass wardrobe/species production before the first batch is reviewed in motion.
 
-The earlier 64×32 diamond tiles, 32×48 character frames, SE/SW/NW/NE rows and 224×192 isometric furnishing canvas are **not** the active farm contract. The old item IDs, names and wardrobe slots can be retained; their new visuals must follow the farm rig. Old inventory icons may be reused only if their style reads consistently.
+## Implemented starter batch
 
-Square tiles define space; sprites show vertical height. A character can walk behind a tree/sofa because the engine sorts by ground feet, not by the top of the image. Tall furniture should not have a huge collision rectangle simply because its texture is tall.
+Open `/farm/demo` and use **Character**. Its live four-facing preview shows starter body builds, hairstyles, eyes, tops, bottoms, cap and colour choices. All state is temporary. The shared-rig body builds change width while preserving head size and feet; they are not three independently authored anatomy sets. Garment cuts/eye/cap detail use editable aligned overlays. Rough generated contact poses combine with neutral passing legs for the first walk loop.
 
-## Character creation and wardrobe
+The existing demo now loads the house, tree, rock, stall, counter, board, dock, bed, table, chair, chest, plant, lamp, rug and threshold. The terrain sheet contains three grass variants, path, two waters, floor, perimeter, dry/wet soil, wall and decking. This is a visual batch, not persisted plants, fishing, furniture placement or new economy rules.
 
-Free first creation should offer skin tones, eye/hair colours, several familiar hairstyles and basic tops/bottoms/shoes. Later outfits, hats and hairstyle forms can be collection rewards. Identity colours remain freely editable; a rare item should not be the only way to represent yourself. Keep the initial rig neutral and compatible with all free/earned garments. Additional body rigs need a complete garment/action compatibility plan.
+Runtime: `apps/web/public/farm-art/v1/` (18 PNG files plus manifest). Sources/prompts: `art/farm/v1/`. Export: `scripts/farm/export-art.mjs`. Composition: `apps/web/src/features/farm/farm-avatar.ts`. Source layouts have measured extraction rectangles; generated prop sheets are not perfectly uniform grids. Runtime PNGs use indexed palettes without dithering, with alpha and nearest conversion. The first pack totals about 350 KB of PNGs; retained source PNGs are excluded from browser downloads.
 
-Draw layers, bottom to top:
+Editable delivery is PNG + JSON + exporter/compositor; no Aseprite/PSD source is claimed. Built-in image generation created original artwork using the references for style. No third-party game sprites are included.
 
-1. Shadow, rendered separately on the floor.
-2. Rear hair/accessories.
-3. Skin/body.
-4. Shoes and bottoms in their agreed overlap order.
-5. Top/outfit.
-6. Face/eyes and front hair.
-7. Hat/accessories.
-8. Hand/tool overlays, with per-action front/rear ordering when needed.
+## Compatibility rules
 
-Each layer has identical frame bounds, facing order, frame count and anchor. Do not resize/crop a hat differently per frame. Hats need a hair-occlusion mask or an explicit compatible hair variant; hiding the entire hair layer is a fallback, not a universal solution. Shirt and hand order can change during watering/casting. Put that in animation metadata rather than painting detached hands into every outfit arbitrarily.
+- Every body/garment/hair/action layer shares frame bounds, anchors and facing order. Future bespoke body shapes require compatible clothes/actions or authored masks.
+- Stable appearance shape IDs are separate from palette colours. Identity options remain freely editable; later collection items add designs.
+- Existing item IDs and room ownership semantics remain unchanged. A full-body outfit needs explicit equipment rules; art alone cannot silently fill several owned slots.
+- Ground-Y sorts actors/props. Rugs/dock belong below actors. Texture padding and tall roofs/foliage do not define collision.
+- Door/spawn/interaction cells remain safe. Placement and four furniture rotations require matching footprint/approach metadata plus ownership checks in later milestones.
+- Generic packets/sprouts remain identical across hidden seed outcomes. Rarity belongs in UI/catalogue metadata, not a permanently baked outline.
+- Fish names/habitats must be reviewed before species art; marine and pond collections stay distinct.
 
-For the first playable batch, make down/left/right/up idle and walk, plus four-frame **plant/interact**, **water**, **cast**, **reel** and **celebrate** actions. It is acceptable for cast/reel to use a simple held pose plus a separately animated line/bobber while the rig is validated. Right-facing art should not be generated by mirroring when it reverses logos, asymmetrical hats or handed tools. No combat/run/jump set is required initially.
+## Next controlled batches
 
-All outlines/highlights use a shared light direction and palette rules. Aim for expressive, readable humans with a small pixel face and clear silhouette. Avoid doll-like 3D renders, airbrushed gradients, random noisy pixelation, excessive glossy accents or identical smiling stock poses. Use warm original Caribbean colours with restrained contrast; scene objects should have the same scale and light as the character.
+1. Review the starter demo in motion, including all facings, clothes, foot baseline, door scale and home furniture. Physical Android/Safari remain open.
+2. One crop loop: mystery packet, generic sprouts, two approved mature crops/produce icons, watering and interaction actions.
+3. One pond: rod, casting/reeling, bobber/bite/land effects and a small reviewed fish set.
+4. Additional body/wardrobe/furniture families and four rotations after compatibility is demonstrated.
 
-The existing item `suit-sunset` currently fills the **top** slot only. A real full-body outfit requires a new bundle/slot rule and matching bottoms; the art alone cannot silently change ownership or equip multiple slots.
+Saved farm/avatar is still F1. Planting, server-timed growth, harvest/store/sell is F2. This art delivery does not imply either milestone is implemented.
 
-## Outside world and house transitions
+## Copy-ready brief
 
-Pilot farm map: 64×48 tiles. Place one starter house, a small crop area that can grow from six to twenty-four plots, a pond with a safe dock, a selling counter, seed stall and noticeboard. Use a separate 10×8-tile house interior; later 14×10 and 18×12 templates use the same tile size. The world does not need a whole town or many independently loaded houses.
-
-Initial environment pack:
-
-- Ground/autotile families: grass, dirt/path, tilled dry soil, watered soil, pond water, shoreline edge and interior floor.
-- Static blockers: house base, fence, one tree, one rock and water boundary. Render a separate upper/roof/foreground layer where it must occlude a player.
-- Interactive objects: house door, selling counter/bin, seed stall, noticeboard, storage chest and dock marker.
-- House pieces: exterior facade/roof/door, interior wall corners/edges, floor and doorway. A roof/wall cutaway is an optional presentation effect; room entry is an actual scene transition.
-- Four generic crop states before reveal: empty/tilled, planted, small shoot, larger unidentified plant; then unique mature crops. Generic shoots must not reveal the server's hidden species.
-- Fishing: rod held overlay, line, cast/bobber/bite/land effects and fish icons. Keep the first effect set small and legible.
-
-Define map layers as ground, ground decor, collision, interactables, sortable props/actors and foreground. Static collision shapes and interactable anchors are metadata, not guessed from texture opacity. A door needs an exterior trigger, interior spawn, safe exit spawn and facing. The saved farm/house templates need stable IDs and a schema version. Decorations cannot occupy the reserved door/spawn/path cells.
-
-If using Tiled, export a fixed-size orthogonal JSON map with explicit tile dimensions and object layers; follow its [official JSON format](https://doc.mapeditor.org/en/stable/reference/json-map-format/). Renderer integration must preserve tile offsets and object alignment, rather than treating every texture's top-left as its physical location. Validate a small exported map against the pinned engine before expanding the scenery.
-
-## Furniture and props
-
-Each prop needs a stable item/design-family ID, logical ground footprint, walkability mask, interaction approach cells, art dimensions/pivot, draw category, interior/exterior compatibility and rotation variants. For example:
-
-| Footprint | Default art canvas | Pivot | Typical use |
-| --- | --- | --- | --- |
-| 1×1 | 64×96 | (32,80) | Chair, lamp, small plant |
-| 2×1 | 96×96 | (48,80) | Small sofa/table |
-| 2×2 | 96×128 | (48,112) | Bed, large rug/table |
-| 3×1 | 128×96 | (64,80) | Wide sofa/counter |
-
-The logical footprint starts at texture `(16,48)` and extends to `(width-16,height-16)`. These are proposal anchors for the renderer spike, not coordinates already consumed by the current SVG room. Oversized/tall scenery can use a larger explicitly declared canvas and pivot; do not squeeze a tree or house into a chair envelope.
-
-Produce four furnishing orientations when direction matters: down/right/up/left. A rotation changes the footprint metadata consistently (a 2×1 sofa becomes 1×2 for a side view). Round plants or symmetric rugs can declare shared art for orientations; directional furniture needs actual suitable views. The current prototype permits only two orientations, so four-direction placement requires an additive rules/API change. No arbitrary free-angle rotation is needed.
-
-Solids and rugs use separate layers. Furniture front faces can occlude feet; lamps/art may have a narrow ground blocker. A functional bed/storage/chair needs a reachable approach tile. A display shelf/aquarium reserves an owned specimen; an icon painted in a tank does not create a second fish inventory item.
-
-Keep the existing 28 item IDs from [the historical guide](AVATAR_ROOM_ASSET_GUIDE.md#the-28-current-item-ids) and `packages/db/content/home-items.json` where useful. Add a versioned `farm` visual manifest rather than renaming inventory IDs because the camera changed. New floor/wall art, aquariums and crop/fish definitions need their own approved IDs and catalog metadata.
-
-## Crops, fish and collection art
-
-For a mature crop, provide a world sprite with a 1×1 ground slot and consistent ground pivot, a produce icon, a readable palette and a stable definition ID. Species rarity is a game catalogue property; do not bake an irreversible rarity-coloured frame into the produce image. The eight illustrative economy crop names are not a final data bank. Do not assign real-world scarcity or actual 24-hour growing claims.
-
-For fish, begin with eight coherent pond placeholders for the minigame spike. Before production species art, verify actual selected fish names/habitats; freshwater and marine pools stay separate. Later a caught specimen can use an aquarium display pose and a catch-card icon. An item can have a collection badge/rarity label in UI without being surrounded by glowing effects inside every world sprite.
-
-Mystery packets and all generic pre-reveal plant sprites must look consistent across hidden tiers. A guaranteed Rare+/Epic+/Legendary milestone packet can show its disclosed floor, but must not reveal which species it contains. Use the same ordinary growth timing until the reveal rule deliberately changes.
-
-## Asset manifest and source delivery
-
-Deliver transparent PNGs and editable source (Aseprite or equivalent), plus creator/licence records, frame names, palette, sprite dimensions and pivot metadata. Group files under world/character/wardrobe/furniture/crops/fish/icons without duplicating the whole body into each wearable.
-
-An illustrative manifest entry, not a deployed schema:
-
-```json
-{
-  "visual_version": "farm-v1",
-  "item_id": "chair-basic",
-  "design_family_id": "wood-chair",
-  "tile_size": 32,
-  "orientations": {
-    "down": {"image": "furniture/chair-basic-down.png", "footprint": [1, 1], "canvas": [64, 96], "pivot": [32, 80]},
-    "right": {"image": "furniture/chair-basic-right.png", "footprint": [1, 1], "canvas": [64, 96], "pivot": [32, 80]}
-  },
-  "solid_cells": [[0, 0]],
-  "approach_cells": [[0, 1]],
-  "comfort_roles": ["seating"],
-  "placement": ["interior", "exterior"]
-}
-```
-
-A production entry includes all supported orientation variants and corresponding approach cells. The map loader interprets grid coordinates, while the renderer uses the pivot. Runtime validation rechecks the owned quantity and legal geometry. Future rating metadata is curated, not supplied by a player editing the manifest.
-
-Export to atlas files with names/pivots/trim offsets preserved; pixel outlines can disappear if a packing tool trims frames without metadata. A character's logical frame remains 32×64 even when its image content is smaller. Cap an initial atlas around 1024×1024, split bundles by scene, and test download/decode cost on actual devices. These are production targets, not benchmarked limits or a promise that every phone needs the same texture size.
-
-## Copy-ready brief for the other asset chat
-
-> We are creating original pixel art for BigManThing's browser farm, “My lime.” The camera should feel Stardew-adjacent: top-down three-quarter human sprites walking on square orthogonal tiles, with a following camera and a separate enterable house. Do not use an isometric diamond grid or copy Stardew characters, sprites, scenery, logos or UI.
->
-> First help us establish one master neutral character and a tiny matching farm/home pack before expanding the wardrobe. Tiles are 32×32. Character layers use 32×64 frames with feet at (16,60), five columns (idle plus four walk frames) and four rows in down/left/right/up order, making a 160×256 sheet. Body, rear/front hair, eyes, shoes, pants, shirt and hat must align across every frame. Free identity choices and basic outfits come first; future items reuse the same rig. Separate action sheets use four frames per direction for interaction, watering, casting/reeling and celebration.
->
-> We want warm, readable original Caribbean-yard art: grass/path/tilled and watered soil, a pond/dock, a small enterable house, chest, seed stall and selling counter. Start with a bed, chair, table, storage, lamp, rug and plant. Furniture uses square ground footprints and front-ground pivots; a 1×1 prop defaults to 64×96 with pivot (32,80), 2×1 to 96×96 with pivot (48,80), and 2×2 to 96×128 with pivot (48,112). Directional furniture needs down/right/up/left views.
->
-> Mystery seeds should remain unidentified until mature: use generic early stages and unique mature produce. Fish are discovered when caught; species/habitats will be reviewed separately. Give concept/style trials first. Do not assume image-generated sprite sheets have frame-perfect alignment; finalise the approved rig/animation in a pixel editor and test it in the walking prototype. Deliver transparent PNGs, editable source, palette, frame/pivot metadata and original-art provenance. Avoid blurred gradients, noisy random pixelation and 3D-looking objects that clash with the character.
-
-## First batch checks
-
-Verify one character walks all directions without foot jitter; hair/clothes/hats remain aligned; a held rod/watering can meets the hand; nearest filtering remains readable at mobile scale; the character passes behind a chair/tree correctly; house door/spawn is safe; rotated furniture footprints agree with art; and a generic seedling does not disclose its hidden crop. Only then expand the collection.
+> Create original detailed pixel art for BigManThing's My lime farm, matching our approved starter pack. Use crisp clusters, warm coloured outlines, about 4–6 shades per material, one upper-left light and readable adult human proportions. Terrain art is 64×64 per 32-unit square tile; no isometric diamonds. Character layers are 64×128, feet (32,120), five columns (idle then four walk poses), four rows (down/left/right/up), making 320×512 sheets. Keep the same head/hand/foot anchors for body, eyes, rear/front hair, shoes, pants, tops, hats and tools. Four-frame actions use 256×512 sheets. Props use 64 pixels per ground tile with declared padding/pivots; a 1×1 prop is 128×192 at pivot (64,160). Icons are 128×128. Require genuine alpha, no checkerboard, blur, smooth 3D shading or arbitrary extra detail. Retain source PNGs, frame/pivot metadata and editable layers. Show a small coherent batch in the actual walking game before expanding. Generic mystery seedlings cannot reveal the hidden crop; fish/species names and all economic rarities are separate reviewed catalogue data.

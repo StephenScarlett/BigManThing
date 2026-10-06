@@ -1,6 +1,6 @@
 # Walkable farm and house: F0
 
-Development checkpoint: **6 October 2026**. This implements the isolated renderer spike from [the farm/home design](FARM_AND_HOME_DESIGN.md), not the persistent farming economy. The active art contract is [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md).
+Development checkpoint: **6 October 2026**, including detailed art batch 01. This implements the isolated renderer spike from [the farm/home design](FARM_AND_HOME_DESIGN.md), not the persistent farming economy. The active art contract is [FARM_ART_STANDARD.md](FARM_ART_STANDARD.md), with delivery guidance in [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md).
 
 ## Try it
 
@@ -10,11 +10,15 @@ On the current development branch, install with the committed lockfile, run `pnp
 - Press **E** or the context action button near a door to enter/exit. Entering is an explicit action, not an automatic proximity trigger.
 - Hold the direction buttons on touch devices. Two fingers can combine directions; cancellation/release clears the appropriate pointer.
 - Use **Jump to test** for the house door, six plots, seed stall, selling counter, noticeboard or dock. Inside, jump to the door, chest or furniture. These are prototype navigation aids, not future teleport upgrades.
-- Try **Character** for skin/hair/shirt colours. Changes appear in the world when the menu closes. Bag/help/object descriptions explain later systems without pretending to award inventory.
+- Try **Character** for a live four-facing preview: body build, hairstyle, eye shape, top/bottom style, cap and skin/hair/eye/clothing colours. Changes appear in the world when the menu closes. These are temporary starter choices, not saved ownership.
 - Pause or open a menu to stop movement. Menus use a native modal dialog with focus containment, Escape dismissal and return focus. Leaving the page/tab or moving focus outside the farm clears held inputs.
 - Open **Movement diagnostics** to inspect feet position, facing, scene and camera zoom.
 
 ## Implemented scope
+
+**Art batch 01:** the demo now loads original detailed pixel art at two art pixels per world unit: 64×64 terrain, 64×128 rig frames and aligned prop pivots. Three shared-rig body builds, four hairstyles plus bald, three eye shapes, three top overlays, jeans/shorts, cap and palette choices compose all four facings. The walk is a rough generated contact/neutral-passing loop, not hand-polished production animation. Eighteen runtime PNGs total about 350 KB; retained sources/prompts and the export recipe are in `art/farm/v1/` and `scripts/farm/`. Missing art has a reported procedural fallback. Keyboard/touch collision and economy isolation stay unchanged.
+
+The following paragraph records the original F0 geometry/placeholder baseline; detailed assets now replace its visible procedural shapes when loaded.
 
 The farm is 64×48 square tiles; the house is a separate 10×8 interior. It contains an original procedural 32×64, twenty-frame placeholder character, house, trees, rocks, six soil plots, market props, a pond and walkable dock. Inside are bed/table/chair/chest/lamp/plant/rug placeholders. Solid foot-level metadata is separate from texture size; trees/furniture and actors use ground-Y depth, and rugs/dock remain below them. The camera follows the actor and centres a small house within larger viewports. Integer zoom adapts between mobile and desktop; ResizeObserver updates the renderer on layout changes.
 

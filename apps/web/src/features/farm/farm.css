@@ -46,6 +46,16 @@
 .farm-swatches { margin-top:1rem; }.farm-swatches legend { font-size:.8rem; padding-bottom:.5rem; }
 .farm-page .farm-swatches button { width:36px; height:36px; padding:0; margin:0 .5rem .35rem 0; border:2px solid #b7a180; }
 .farm-page .farm-swatches button[aria-pressed=true] { outline:2px solid #40392b; outline-offset:2px; }
+.farm-character-preview { margin:.8rem 0; padding:.7rem; background:#e6dbbc; border:1px solid var(--farm-line); text-align:center; }
+.farm-character-preview canvas { width:100%; max-width:400px; image-rendering:pixelated; }
+.farm-preview-facings { display:grid; grid-template-columns:repeat(4,1fr); font-size:.7rem; color:#695c44; margin-bottom:.5rem; }
+.farm-style-controls { display:grid; grid-template-columns:1fr 1fr; gap:.6rem 1rem; margin-top:1rem; }
+.farm-style-controls label { font-size:.8rem; }
+.farm-style-controls select { display:block; width:100%; padding:.45rem .4rem; border:1px solid var(--farm-line); background:#fffaeb; color:var(--farm-ink); border-radius:3px; font:inherit; }
+.farm-page select:focus-visible { outline:3px solid #437c87; outline-offset:3px; }
+.farm-palette-controls { display:grid; grid-template-columns:1fr 1fr; gap:.25rem .7rem; }
+.farm-dialog header { position:sticky; top:0; background:var(--farm-paper); z-index:3; }
+.farm-character-preview { position:sticky; top:64px; z-index:2; }
 @media (max-width:600px) {
   .farm-heading { align-items:start; flex-direction:column; gap:.7rem; }.farm-toolbar { padding:.6rem; gap:.5rem; }.farm-toolbar-actions { gap:.25rem; }
   .farm-toolbar-actions button { padding:.4rem .45rem; font-size:.72rem; }.farm-location { font-size:.8rem; }.farm-location small { font-size:.6rem; }

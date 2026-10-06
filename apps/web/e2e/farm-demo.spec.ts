@@ -129,3 +129,51 @@ test("Canvas fallback draws the world and keeps the dock outside blocked water",
     return colours.size;
   })).toBeGreaterThan(10);
 });
+
+test("detailed art loads and starter customization changes the aligned four-facing rig", async ({ page }, testInfo) => {
+  const errors:string[]=[]; page.on("pageerror",error=>errors.push(error.message));
+  await start(page);
+  await expect(page.getByText("Some artwork could not load",{exact:false})).toHaveCount(0);
+  const manifest=await (await page.request.get("/farm-art/v1/manifest.json")).json();
+  expect(manifest.artPixelsPerWorldUnit).toBe(2); expect(manifest.character.frame).toEqual([64,128]);
+  const stopped=await position(page);
+  await page.getByRole("button",{name:"Character",exact:true}).click();
+  await page.getByRole("button",{name:"Show idle",exact:true}).click();
+  const preview=page.getByTestId("farm-character-preview");
+  const signature=()=>preview.evaluate(element=>{
+    const c=element as HTMLCanvasElement, data=c.getContext("2d")!.getImageData(0,0,c.width,c.height).data;
+    let hash=2166136261; for(let i=0;i<data.length;i++) hash=Math.imul(hash^data[i]!,16777619);
+    return hash>>>0;
+  });
+  await expect.poll(()=>preview.evaluate(element=>{
+    const c=element as HTMLCanvasElement, data=c.getContext("2d")!.getImageData(0,0,c.width,c.height).data;
+    let opaque=0; for(let i=3;i<data.length;i+=4) if(data[i]!>128) opaque++; return opaque;
+  })).toBeGreaterThan(500);
+  const select=async(label:string,value:string)=>{ const before=await signature(); await page.getByRole("combobox",{name:label,exact:true}).selectOption(value); await expect.poll(signature).not.toBe(before); };
+  await select("Body build","broad"); await select("Body build","slim");
+  for(const style of ["crop","curls","bob","bald","ponytail"]) await select("Hairstyle",style);
+  await select("Eye shape","sharp"); await select("Top","work-shirt"); await select("Top","overshirt");
+  await select("Bottoms","shorts"); await select("Hat","cap");
+  for(const slot of ["skin","hair","shirt","eyes","pants","shoes","hat"]) {
+    const before=await signature();
+    await page.getByRole("button",{name:`${slot} colour ${slot==="hair"?3:2}`,exact:true}).click();
+    await expect.poll(signature).not.toBe(before);
+  }
+  expect(await position(page)).toEqual(stopped);
+  await preview.screenshot({path:testInfo.outputPath("character.png")});
+  await page.keyboard.press("Escape"); await page.getByTestId("farm-world").focus(); await page.keyboard.press("e");
+  await expect(page.getByTestId("farm-location")).toContainText("Your house");
+  await page.screenshot({path:testInfo.outputPath("house.png"),fullPage:true});
+  expect(errors).toEqual([]);
+});
+
+test("missing artwork has a readable fallback and does not break movement or doors", async({page})=>{
+  const errors:string[]=[]; page.on("pageerror",error=>errors.push(error.message));
+  await page.route("**/farm-art/v1/*.png",route=>route.abort());
+  await start(page); await expect(page.getByRole("status")).toContainText("Some artwork could not load");
+  const before=await position(page); await page.keyboard.down("d");
+  await expect.poll(async()=> (await position(page)).x).toBeGreaterThan(before.x+8); await page.keyboard.up("d");
+  await page.getByRole("navigation",{name:"Preview jump points"}).getByRole("button",{name:"House door",exact:true}).click();
+  await page.keyboard.press("e"); await expect(page.getByTestId("farm-location")).toContainText("Your house");
+  expect(errors).toEqual([]);
+});

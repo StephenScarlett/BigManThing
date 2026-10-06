@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import FarmViewport from "@/features/farm/FarmViewport";
+import FarmCharacterPreview from "@/features/farm/FarmCharacterPreview";
 import { FarmInput, isTypingTarget, type Direction } from "@/features/farm/farm-input";
-import { APPEARANCE_CHOICES, DEFAULT_APPEARANCE, WORLDS, type Appearance, type Interaction } from "@/features/farm/farm-world";
+import { APPEARANCE_CHOICES, APPEARANCE_STYLES, DEFAULT_APPEARANCE, WORLDS, type Appearance, type Interaction } from "@/features/farm/farm-world";
 import type { FarmController, FarmSnapshot } from "@/features/farm/farm-engine";
 import "@/features/farm/farm.css";
 
@@ -52,6 +53,7 @@ export default function FarmDemoPage() {
         </div>
       </div>
       <FarmViewport input={input} controller={controller} paused={paused} appearance={appearance} onSnapshot={setSnapshot} onInspect={inspect} onReady={setReady} />
+      {!!snapshot.missingArt?.length && <p className="farm-preview-note" role="status">Some artwork could not load. Basic preview art is being used; reload to try again.</p>}
       {paused && <p className="farm-paused-label" aria-live="polite">{panel ? "Movement paused while the menu is open." : "Paused. Resume when you’re ready."}</p>}
       <div className="farm-controls">
         <div className="farm-dpad" role="group" aria-label="Movement controls">
@@ -72,9 +74,11 @@ export default function FarmDemoPage() {
     <details className="farm-diagnostics"><summary>Movement diagnostics</summary><output data-testid="farm-position" data-scene={snapshot.scene} data-x={snapshot.actor.x.toFixed(2)} data-y={snapshot.actor.y.toFixed(2)} data-facing={snapshot.actor.facing} data-paused={String(snapshot.paused)}>{snapshot.scene} · feet {snapshot.actor.x.toFixed(1)}, {snapshot.actor.y.toFixed(1)} · facing {snapshot.actor.facing} · zoom {snapshot.zoom}×</output></details>
     {panel && <FarmDialog title={panel.kind === "character" ? "Your character" : panel.kind === "bag" ? "Your bag" : panel.kind === "help" ? "Make yourself at home" : panel.item!.label} onClose={() => setPanel(null)}>
       {panel.kind === "character" && <>
-        <p>Try the starter colours. This is a temporary rig preview, not your saved wardrobe.</p>
+        <p>Try your look in every direction. These starter choices are temporary in this demo.</p>
+        <FarmCharacterPreview appearance={appearance} />
         <label className="farm-name-label">Nickname (preview only)<input value={nickname} maxLength={20} onChange={e => setNickname(e.target.value)} /></label>
-        {(Object.keys(APPEARANCE_CHOICES) as (keyof Appearance)[]).map(slot => <fieldset className="farm-swatches" key={slot}><legend>{slot === "shirt" ? "Shirt" : slot === "skin" ? "Skin" : "Hair"}</legend>{APPEARANCE_CHOICES[slot].map((hex, i) => <button key={hex} type="button" aria-label={`${slot} colour ${i + 1}`} aria-pressed={appearance[slot] === hex} style={{ backgroundColor: hex }} onClick={() => setAppearance(a => ({ ...a, [slot]: hex }))} />)}</fieldset>)}
+        <div className="farm-style-controls">{(Object.keys(APPEARANCE_STYLES) as (keyof typeof APPEARANCE_STYLES)[]).map(slot => <label key={slot}>{({bodyType:"Body build",hairStyle:"Hairstyle",eyeStyle:"Eye shape",topStyle:"Top",bottomStyle:"Bottoms",hatStyle:"Hat"})[slot]}<select aria-label={({bodyType:"Body build",hairStyle:"Hairstyle",eyeStyle:"Eye shape",topStyle:"Top",bottomStyle:"Bottoms",hatStyle:"Hat"})[slot]} value={appearance[slot]} onChange={e=>setAppearance(a=>({...a,[slot]:e.target.value}))}>{APPEARANCE_STYLES[slot].map(option=><option key={option.id} value={option.id}>{option.label}</option>)}</select></label>)}</div>
+        <div className="farm-palette-controls">{(Object.keys(APPEARANCE_CHOICES) as (keyof typeof APPEARANCE_CHOICES)[]).map(slot => <fieldset className="farm-swatches" key={slot}><legend>{({skin:"Skin",hair:"Hair",shirt:"Shirt",eyes:"Eyes",pants:"Bottoms",shoes:"Shoes",hat:"Hat"})[slot]}</legend>{APPEARANCE_CHOICES[slot].map((hex, i) => <button key={hex} type="button" aria-label={`${slot} colour ${i + 1}`} aria-pressed={appearance[slot] === hex} style={{ backgroundColor: hex }} onClick={() => setAppearance(a => ({ ...a, [slot]: hex }))} />)}</fieldset>)}</div>
       </>}
       {panel.kind === "bag" && <><p>These describe the starter kit planned for your first farm. They are not account inventory.</p><ul><li>Watering can — water a planted mystery seed.</li><li>Fishing rod — cast at the pond.</li><li>Six starter plots — land upgrades come later.</li></ul><p>Storage, crop and fish stacks, protected favourites and selling arrive with persistence.</p></>}
       {panel.kind === "help" && <><p>Click the world, then use WASD or arrow keys. Hold the on-screen direction buttons on touch devices. Press E or the action button near a door to enter or leave.</p><p>The jump points help test the house, plots and pond without walking the whole map. Furniture, trees, water and the farm edges block your feet; rugs and the dock do not.</p><p>Menus, pause, losing focus and leaving the tab release movement. No preview interaction grants an economic reward.</p></>}
