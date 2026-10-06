@@ -1,6 +1,6 @@
 # My lime: farm, fishing and home
 
-Research/design checkpoint: **6 October 2026**. This is the owner's latest direction. It supersedes the earlier isometric-room-plus-arcade proposal for future development. The existing Guess people-v2 and room/reward pilot remain implemented. A later [F0 movement/house prototype](FARM_PROTOTYPE.md) now exists at `/farm/demo`; persistent farming, fishing and the economy below remain proposals, not changes to the development database.
+Research/design checkpoint: **6 October 2026**. This is the owner's latest direction. It supersedes the earlier isometric-room-plus-arcade proposal for future development. The existing Guess people-v2 and room/reward pilot remain implemented. [F0](FARM_PROTOTYPE.md) keeps the temporary `/farm/demo`; the later [F1 checkpoint](FARM_PERSISTENCE.md) now saves an owned farm/house, character and starter kit at `/farm`, with an additive development migration. Crops, fishing, furniture placement, upgrades and the economy below remain proposals.
 
 Companion files: [roadmap](PROJECT_ROADMAP.md), [farm asset contract](FARM_ASSET_GUIDE.md), [economy inputs](research/farm-economy-inputs.json), [reproducible model](research/farm-economy-model.py), [results](research/farm-economy-results.json). All prices/rates below are pilot hypotheses, not immutable user decisions.
 

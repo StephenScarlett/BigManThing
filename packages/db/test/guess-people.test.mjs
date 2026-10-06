@@ -3,12 +3,14 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import { citext } from '@electric-sql/pglite/contrib/citext';
+import { DEFAULT_APPEARANCE, WORLDS, terrainTiles, isWalkable } from '../../shared/dist/index.js';
 
 let db;
 const admin = '10000000-0000-4000-8000-000000000001';
 const player = '10000000-0000-4000-8000-000000000002';
 let people;
 let legacyEdition;
+let farmRestoreProof;
 const scalar = async (sql, args = []) => (await db.query(sql, args)).rows[0]?.value;
 const uid = async id => db.query("select set_config('request.jwt.claim.sub',$1,false)", [id]);
 const rpc = async (name, args = [], casts = args.map(() => 'uuid')) => scalar(`select public.${name}(${args.map((_, i) => `$${i + 1}::${casts[i]}`).join(',')}) as value`, args);
@@ -33,6 +35,19 @@ before(async () => {
     alter default privileges in schema public grant all on tables to anon,authenticated,service_role;`);
   const files = (await readdir(new URL('../supabase/migrations/', import.meta.url))).filter(f => f.endsWith('.sql')).sort();
   for (const file of files) {
+    let farmBefore;
+    const farmFingerprint=()=>scalar(`select jsonb_build_object(
+      'profiles',(select md5(coalesce(jsonb_agg(to_jsonb(t) order by id)::text,'')) from public.profiles t),
+      'players',(select md5(coalesce(jsonb_agg(to_jsonb(t) order by user_id)::text,'')) from private.home_players t),
+      'inventory',(select md5(coalesce(jsonb_agg(to_jsonb(t) order by user_id,item_id)::text,'')) from private.home_inventory t),
+      'ledger',(select md5(coalesce(jsonb_agg(to_jsonb(t) order by user_id,event_key)::text,'')) from private.home_ledger t),
+      'pity',(select md5(coalesce(jsonb_agg(to_jsonb(t) order by user_id,family)::text,'')) from private.home_pity t),
+      'editions',(select md5(coalesce(jsonb_agg(to_jsonb(t) order by id)::text,'')) from private.guess_people_editions t)
+    ) as value`);
+    if(file.endsWith('_farm_persistence_v1.sql')) {
+      await uid(admin);await rpc('bmt_home_context');
+      farmBefore=await farmFingerprint();
+    }
     if (file.endsWith('_guess_people_v2.sql')) {
       await db.exec(`insert into public.entities(name,mode,guess_nah_enabled,draw_nah_enabled)
         values('Brian Lara','dem',false,true),('Legacy Draw Person','dem',false,true);`);
@@ -41,6 +56,7 @@ before(async () => {
     // PGlite uses PostgreSQL's native gen_random_uuid; unused pgcrypto isn't bundled.
     if (file === '0001_init.sql') sql = sql.replace('create extension if not exists "pgcrypto";', '');
     await db.exec(sql);
+    if(farmBefore)farmRestoreProof={before:farmBefore,after:await farmFingerprint()};
     if (file.endsWith('_guess_people_draft_roster.sql')) {
       await db.query('insert into auth.users(id,email) values($1,$2),($3,$4)', [admin, 'editor@example.test', player, 'player@example.test']);
       await db.query('update public.profiles set is_admin=true where id=$1', [admin]);
@@ -55,6 +71,10 @@ before(async () => {
   people = await rpc('guess_people_editor_catalog');
 });
 after(async () => { await db?.close(); });
+
+test('additive farm migration preserves restored identities, old room/wallet/inventory/receipts and frozen editions',()=>{
+  assert.ok(farmRestoreProof);assert.deepEqual(farmRestoreProof.after,farmRestoreProof.before);
+});
 
 test('fresh reset applies all migrations; nominations remain drafts and legacy identities survive', async () => {
   assert.equal(people.length, 64);
@@ -370,4 +390,107 @@ test('Pan unlock, viewing time, ownership and retries are enforced; shared strea
   assert.equal((await rpc('bmt_home_finish_pan',[started.pan.id,[1,1,1,1,1,1]],['uuid','integer[]'])).tickets,6);
   await db.exec('reset role');
   assert.equal(await scalar("select count(*)::int as value from private.home_ledger where user_id=$1 and event_key like 'streak:%'",[player]),1);
+}));
+
+const farmRead=(owner=admin)=>rpc('bmt_farm_context',[owner]);
+const farmCreate=(owner=admin,appearance=DEFAULT_APPEARANCE,name='My lime',request=crypto.randomUUID())=>rpc('bmt_farm_create',[owner,appearance,name,request],['uuid','jsonb','text','uuid']);
+const characterSave=(appearance,name,revision,request=crypto.randomUUID(),owner=admin)=>rpc('bmt_farm_save_character',[owner,appearance,name,revision,request],['uuid','jsonb','text','integer','uuid']);
+const positionSave=(position,revision,world=1,request=crypto.randomUUID(),owner=admin)=>rpc('bmt_farm_save_position',[owner,position,revision,world,request],['uuid','jsonb','integer','integer','uuid']);
+
+test('farm read is passive; creation and retries grant one kit and preserve an existing wallet/inventory',()=>transaction(async()=>{
+  await uid(admin);
+  assert.equal(await farmRead(),null);
+  const wallet=await rpc('bmt_home_context');
+  const before=await scalar("select md5(to_jsonb(p)::text) as value from private.home_players p where user_id=$1",[admin]);
+  await db.exec('set local role authenticated');
+  const state=await farmCreate();
+  assert.equal(state.owner_id,admin);assert.equal(state.world_version,1);
+  assert.equal(state.starter_grant.key,'farm-starter-v1');
+  assert.deepEqual(state.inventory.map(i=>[i.item_id,i.quantity]),[['mystery-seed-basic',6],['fishing-rod-basic',1],['watering-can-basic',1]]);
+  assert.equal(state.worlds.farm.props.filter(p=>p.kind==='plot').length,6);
+  assert.deepEqual(await farmCreate(admin,{...DEFAULT_APPEARANCE,bodyType:'broad'},'Retry'),state);
+  assert.deepEqual(await farmRead(),state);
+  const after=await rpc('bmt_home_context');assert.deepEqual(after.inventory,wallet.inventory);assert.deepEqual(after.wallet,wallet.wallet);
+  await db.exec('reset role');
+  assert.equal(await scalar("select md5(to_jsonb(p)::text) as value from private.home_players p where user_id=$1",[admin]),before);
+  assert.equal(await scalar('select count(*)::int as value from private.farm_grants'),1);
+  await db.exec("update private.farm_inventory set quantity=2 where item_id='mystery-seed-basic'");
+  assert.equal((await farmCreate()).inventory.find(i=>i.kind==='seed').quantity,2);
+}));
+
+test('farm character save validates all identity fields, replays lost responses and rejects stale changes',()=>transaction(async()=>{
+  await uid(admin);let state=await farmCreate();await db.exec('set local role authenticated');
+  const appearance={...DEFAULT_APPEARANCE,bodyType:'broad',hairStyle:'curls',eyeStyle:'sharp',topStyle:'overshirt',bottomStyle:'shorts',hatStyle:'cap',skin:'#603c2d',shirt:'#3a7770'};
+  const request=crypto.randomUUID(),saved=await characterSave(appearance,'  Farmer  ',state.character_revision,request);
+  assert.equal(saved.nickname,'Farmer');assert.equal(saved.character_revision,2);assert.deepEqual(saved.appearance,appearance);
+  assert.deepEqual(await characterSave(appearance,'  Farmer  ',1,request),saved);
+  await blocked(()=>characterSave(appearance,'Different',1,request),/request_payload_changed/);
+  await blocked(()=>characterSave(DEFAULT_APPEARANCE,'Overwrite',1),/character_changed_reload/);
+  for(const bad of [{...appearance,skin:'#ffffff'},{...appearance,hairStyle:'legendary'},{...appearance,extra:'coins'},Object.fromEntries(Object.entries(appearance).filter(([k])=>k!=='eyes')),null])
+    await blocked(()=>characterSave(bad,'Farmer',2),/invalid_character/);
+  for(const name of ['', ' ', 'A'.repeat(21), 'bad\nname'])await blocked(()=>characterSave(appearance,name,2),/invalid_nickname/);
+  state=await farmRead();assert.equal(state.character_revision,2);assert.equal(state.position_revision,1);
+  assert.equal(state.inventory.find(i=>i.kind==='seed').quantity,6);
+}));
+
+test('farm checkpoints use server geometry and independent revisions without changing identity or grants',()=>transaction(async()=>{
+  await uid(admin);const state=await farmCreate();await db.exec('set local role authenticated');
+  const pos={scene:'house',actor:{...WORLDS.house.spawn}},request=crypto.randomUUID();
+  const ack=await positionSave(pos,1,1,request);assert.equal(ack.position_revision,2);assert.deepEqual(ack.position,pos);
+  assert.deepEqual(await positionSave(pos,1,1,request),ack);
+  await blocked(()=>positionSave({...pos,actor:{...pos.actor,facing:'down'}},1,1,request),/request_payload_changed/);
+  await blocked(()=>positionSave(pos,1),/position_changed_reload/);
+  await blocked(()=>positionSave(pos,2,99),/world_changed_reload/);
+  for(const bad of [null,{scene:null,actor:pos.actor},{...pos,actor:{x:160,y:202,facing:null}},{...pos,actor:{x:NaN,y:202,facing:'up'}},{scene:'farm',actor:{x:0,y:0,facing:'down'}},{scene:'farm',actor:{x:37*32,y:22*32,facing:'up'}},{scene:'house',actor:{x:64,y:64,facing:'down'}}])
+    await blocked(()=>positionSave(bad,2),/invalid_position/);
+  await characterSave({...DEFAULT_APPEARANCE,hairStyle:'bob'},'Saved character',1);
+  const after=await farmRead();assert.equal(after.position_revision,2);assert.equal(after.character_revision,2);assert.deepEqual(after.inventory,state.inventory);
+}));
+
+test('farm identity is checked for every call; clients cannot inspect private worlds, grants or inventory',()=>transaction(async()=>{
+  await uid(admin);await farmCreate();await uid(player);await db.exec('set local role authenticated');
+  assert.equal(await farmRead(player),null);
+  await blocked(()=>farmRead(admin),/owner_changed/);
+  await blocked(()=>farmCreate(admin),/owner_changed/);
+  await blocked(()=>characterSave(DEFAULT_APPEARANCE,'Other user',1,crypto.randomUUID(),admin),/owner_changed/);
+  await blocked(()=>positionSave({scene:'farm',actor:WORLDS.farm.spawn},1,1,crypto.randomUUID(),admin),/owner_changed/);
+  for(const table of ['farm_players','farm_inventory','farm_grants','farm_world_versions','farm_save_receipts'])
+    await blocked(()=>db.query(`select * from private.${table}`),/permission denied/);
+  await blocked(()=>db.query('select private.farm_prune_receipts($1)',[admin]),/permission denied/);
+  const own=await farmCreate(player);assert.equal(own.owner_id,player);assert.equal(own.character_revision,1);
+  await uid(null);await blocked(()=>farmRead(player),/sign_in_required/);
+  await db.exec('set local role anon');await blocked(()=>farmRead(player),/permission denied/);
+}));
+
+test('farm restore repairs blocked checkpoints once, preserving the character, kit and old room',()=>transaction(async()=>{
+  await uid(admin);const before=await farmCreate();
+  await db.query("update private.farm_players set position=$1 where user_id=$2",[{scene:'house',actor:{x:0,y:0,facing:'up'}},admin]);
+  await db.exec('set local role authenticated');
+  const after=await farmRead();assert.equal(after.position_recovered,true);assert.equal(after.position_revision,2);
+  assert.deepEqual(after.position,{scene:'house',actor:WORLDS.house.spawn});assert.deepEqual(after.appearance,before.appearance);assert.deepEqual(after.inventory,before.inventory);
+  const again=await farmRead();assert.equal(again.position_recovered,false);assert.equal(again.position_revision,2);
+}));
+
+test('frozen farm definition matches shared renderer tiles, object IDs, safe spawns and collision decisions',()=>transaction(async()=>{
+  await uid(admin);const state=await farmCreate();
+  for(const id of ['farm','house']) {
+    const expected={...WORLDS[id],terrain:terrainTiles(WORLDS[id])};assert.deepEqual(state.worlds[id],expected);
+    assert.equal(new Set(expected.props.map(p=>p.id)).size,expected.props.length);
+    assert.equal(expected.terrain.length,expected.rows);assert.ok(expected.terrain.every(r=>r.length===expected.columns));
+    for(const point of [expected.spawn,...expected.interactions.map(i=>i.approach),{x:0,y:0,facing:'up'},{x:64,y:64,facing:'down'},{x:37*32,y:22*32,facing:'right'},{x:38*32,y:26*32,facing:'right'}]) {
+      const valid=await scalar('select private.farm_position_valid($1,1) as value',[{scene:id,actor:point}]);
+      assert.equal(valid,isWalkable(expected,point));
+    }
+  }
+}));
+
+test('cosmetic checkpoint receipts are bounded; repeat reads/creation cannot replace stored farm state',()=>transaction(async()=>{
+  await uid(admin);await farmCreate();await db.exec('set local role authenticated');
+  let revision=1,last,request;
+  const position={scene:'farm',actor:WORLDS.farm.spawn};
+  for(let n=0;n<66;n++){request=crypto.randomUUID();last=await positionSave(position,revision,1,request);revision=last.position_revision;}
+  assert.deepEqual(await positionSave(position,revision-1,1,request),last);
+  const restored=await farmCreate();assert.equal(restored.position_revision,67);assert.equal(restored.character_revision,1);
+  await db.exec('reset role');assert.equal(await scalar('select count(*)::int as value from private.farm_save_receipts'),64);
+  assert.equal(await scalar('select count(*)::int as value from private.farm_grants'),1);
 }));

@@ -40,7 +40,7 @@ export default function HomePage() {
           title="Where Nah"
           tagline="Dropped in Trinidad. Look around. Guess where."
         />
-        <ModeTile to="/room" title="My lime" tagline="Your character. Your room. Something to collect." />
+        <ModeTile to="/farm" title="My lime" tagline="Your character. Your farm. Your little place." />
       </motion.section>
 
       <motion.section className="card" variants={fadeUp}>

@@ -2,6 +2,8 @@
 
 Development checkpoint: **6 October 2026**, including detailed art batch 01. This implements the isolated renderer spike from [the farm/home design](FARM_AND_HOME_DESIGN.md), not the persistent farming economy. The active art contract is [FARM_ART_STANDARD.md](FARM_ART_STANDARD.md), with delivery guidance in [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md).
 
+**Later F1 checkpoint:** [saved farm/house/character](FARM_PERSISTENCE.md) now exists at `/farm` with an additive development migration. This document records the isolated `/farm/demo` scope; its temporary/no-write behavior remains unchanged.
+
 ## Try it
 
 On the current development branch, install with the committed lockfile, run `pnpm dev:web`, and open **`/farm/demo`** on the local web server (normally `http://localhost:5173/farm/demo`). The room preview also links to it. No login is required. Nothing here buys seeds, grants fish, spends coins, saves a house or changes an account. Appearance and location are temporary and reset on leaving/reloading.
@@ -52,6 +54,6 @@ Checkpoint results: **40 regression checks, twelve Chromium browser cases, typec
 
 ## Explicitly unfinished
 
-No real crop instances, timers, fish/minigame, saved farm/avatar, furniture placement, house score, quests, rolls or daily supply bridge exist in this renderer. Bag entries and interactable descriptions are explanatory placeholders. No original production asset pack, real phone/Safari playtest, measured low-end frame-rate budget or frontend hosting release is claimed. Existing lint/package and broader platform issues remain separate.
+No real crop instances, timers, fish/minigame, furniture placement, house score, quests, rolls or daily supply bridge exist in this renderer. The isolated demo's bag entries and interactable descriptions remain explanatory placeholders; `/farm` uses saved F1 inventory. Art batch 01 is integrated, with rough walking that needs owner/device review. No real phone/Safari playtest, measured low-end frame-rate budget or frontend hosting release is claimed. Existing lint/package and broader platform issues remain separate.
 
-Next is **F1**: additive saved farm/house/avatar state, starter ownership and migration/restore checks, preserving existing accounts/inventory/history. Then **F2**: private mystery outcomes, server-timed watering/maturity, atomic harvest/storage/selling; **F3**: the pond catch loop. In parallel, the first Guess daily still requires factual/clue review. Do not connect client-only preview positions or interactions to rewards.
+**F1 is now implemented**; see [the saved-farm contract/test guide](FARM_PERSISTENCE.md). Next is **F2**: private mystery outcomes, server-timed watering/maturity, atomic harvest/storage/selling; **F3**: the pond catch loop. In parallel, the first Guess daily still requires factual/clue review. Do not connect client-only preview positions or interactions to rewards.

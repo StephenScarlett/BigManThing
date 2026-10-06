@@ -1,20 +1,21 @@
 import Phaser from "phaser";
 import { FarmInput } from "./farm-input";
 import { ART_PROPS, ART_ROOT, composeAvatar } from "./farm-avatar";
-import { DEFAULT_APPEARANCE, TILE, WORLDS, cameraLayout, moveActor, nearestInteraction, propCanvas, transitionSpawn, type Actor, type Appearance, type Interaction, type Prop, type SceneId } from "./farm-world";
+import { DEFAULT_APPEARANCE, TILE, WORLDS, cameraLayout, moveActor, nearestInteraction, propCanvas, transitionSpawn, safeFarmPosition, terrainTiles, type Actor, type Appearance, type Interaction, type Prop, type SceneId, type World, type FarmPosition } from "./farm-world";
 
 export type FarmSnapshot = { scene: SceneId; actor: Actor; nearby: Interaction | null; zoom: number; paused: boolean; missingArt?: string[] };
 export type FarmController = { destroy(): void; resize(width: number, height: number): void; releaseInput(): void; setPaused(paused: boolean): void; setAppearance(appearance: Appearance): void; jump(id: string): void };
-type Options = { input: FarmInput; onSnapshot(snapshot: FarmSnapshot): void; onInspect(item: Interaction): void; onReady(): void };
+type Options = { input: FarmInput; onSnapshot(snapshot: FarmSnapshot): void; onInspect(item: Interaction): void; onReady(): void; worlds?: Record<SceneId,World>; initialPosition?: FarmPosition };
 const colour = (hex: string) => Number.parseInt(hex.replace("#", ""), 16);
 
-/** Loaded only by /farm/demo. All geometry/interaction authority here is cosmetic. */
+/** Cosmetic movement renderer shared by the saved farm and isolated demo. */
 export function mountFarm(host: HTMLElement, options: Options): FarmController {
   let scene: FarmScene | undefined, paused = false, destroyed = false;
   let appearance = { ...DEFAULT_APPEARANCE };
+  const worlds=options.worlds ?? WORLDS, initial=safeFarmPosition(options.initialPosition ?? {scene:"farm",actor:worlds.farm.spawn},worlds);
   class FarmScene extends Phaser.Scene {
-    private region: SceneId = "farm";
-    private actor: Actor = { ...WORLDS.farm.spawn };
+    private region: SceneId = initial.scene;
+    private actor: Actor = { ...initial.actor };
     private player!: Phaser.GameObjects.Sprite;
     private shadow!: Phaser.GameObjects.Ellipse;
     private ground?: Phaser.Tilemaps.Tilemap;
@@ -63,14 +64,8 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       this.cameras.main.stopFollow();
       this.ground?.destroy(); this.ground = undefined;
       this.children.removeAll(true);
-      const world = WORLDS[this.region];
-      const tiles = Array.from({ length: world.rows }, (_, y) => Array.from({ length: world.columns }, (_, x) => {
-        if (x === 0 || y === 0 || x === world.columns - 1 || y === world.rows - 1) return this.region === "house" && this.textures.exists("farm-terrain") ? 10 : 7;
-        if (this.region === "house") return 6;
-        if (x >= 36 && x < 48 && y >= 20 && y < 30) return (x + y) % 2 ? 4 : 5;
-        if ((x >= 21 && x < 24 && y >= 19 && y < 33) || (y >= 25 && y < 28 && x >= 17 && x < 36) || (x >= 25 && x < 30 && y >= 21 && y < 26)) return 3;
-        return (x * 13 + y * 7) % 3;
-      }));
+      const world = worlds[this.region];
+      const tiles = terrainTiles(world).map(row=>row.map(tile=>this.textures.exists("farm-terrain")?tile:tile>7?7:tile));
       const density = this.textures.exists("farm-terrain") ? 2 : 1, groundKey = density === 2 ? "farm-terrain" : "farm-ground";
       this.ground = this.make.tilemap({ data: tiles, tileWidth: TILE*density, tileHeight: TILE*density });
       const tileset = this.ground.addTilesetImage(groundKey, groundKey, TILE*density, TILE*density, 0, 0)!;
@@ -83,8 +78,9 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
           .setDepth(["plot", "rug", "dock"].includes(p.kind) ? -100 : (p.y + p.h) * TILE);
       }
       if (this.region === "house") {
-        if (this.textures.exists("farm-art-threshold")) this.add.image(5*TILE,7*TILE,"farm-art-threshold").setOrigin(.5,160/192).setScale(.5).setDepth(-10);
-        else { this.add.rectangle(5 * TILE, 7 * TILE + 2, TILE, 10, 0xcea877).setDepth(-10); this.add.rectangle(5 * TILE, 7 * TILE - 7, 40, 18, 0x78513e).setDepth(-10); }
+        const door=world.interactions.find(item=>item.transition==="farm")?.position ?? {x:world.spawn.x,y:world.spawn.y+22};
+        if (this.textures.exists("farm-art-threshold")) this.add.image(door.x,door.y,"farm-art-threshold").setOrigin(.5,160/192).setScale(.5).setDepth(-10);
+        else { this.add.rectangle(door.x,door.y + 2,TILE,10,0xcea877).setDepth(-10); this.add.rectangle(door.x,door.y - 7,40,18,0x78513e).setDepth(-10); }
       }
       this.shadow = this.add.ellipse(this.actor.x, this.actor.y - 1, 22, 8, 0x263b31, 0.24);
       this.player = this.add.sprite(this.actor.x, this.actor.y, "farm-avatar", `${this.actor.facing}-0`).setOrigin(0.5, 60 / 64).setScale(this.hasAvatarArt() ? .5 : 1);
@@ -187,13 +183,13 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       texture.refresh();
     }
     fitCamera() {
-      const { zoom, bounds } = cameraLayout(WORLDS[this.region], this.scale.width, this.scale.height);
+      const { zoom, bounds } = cameraLayout(worlds[this.region], this.scale.width, this.scale.height);
       this.cameras.main.setZoom(zoom).setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
       if (this.player) this.cameras.main.centerOn(this.actor.x, this.actor.y - 24);
       this.publish(true);
     }
     jump(id: string) {
-      const item = WORLDS[this.region].interactions.find(i => i.id === id);
+      const item = worlds[this.region].interactions.find(i => i.id === id);
       if (!item) return;
       options.input.clear(); this.actor = { ...item.approach }; this.placePlayer(0); this.cameras.main.centerOn(this.actor.x, this.actor.y - 24); this.publish(true);
     }
@@ -205,19 +201,19 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       const now = performance.now();
       if (!force && now - this.lastPublished < 100) return;
       this.lastPublished = now;
-      options.onSnapshot({ scene: this.region, actor: { ...this.actor }, nearby: nearestInteraction(WORLDS[this.region], this.actor), zoom: this.cameras.main.zoom, paused, missingArt:[...this.missingArt] });
+      options.onSnapshot({ scene: this.region, actor: { ...this.actor }, nearby: nearestInteraction(worlds[this.region], this.actor), zoom: this.cameras.main.zoom, paused, missingArt:[...this.missingArt] });
     }
     override update(_time: number, delta: number) {
       if (paused || destroyed) return;
       const before = this.actor, movement = options.input.movement();
-      this.actor = moveActor(WORLDS[this.region], this.actor, movement, delta);
+      this.actor = moveActor(worlds[this.region], this.actor, movement, delta);
       const moving = Math.hypot(this.actor.x - before.x, this.actor.y - before.y) > 0.01;
       this.walkTime = moving ? this.walkTime + Math.min(delta, 100) : 0;
       this.placePlayer(moving ? 1 + Math.floor(this.walkTime / 130) % 4 : 0);
-      const nearby = nearestInteraction(WORLDS[this.region], this.actor);
+      const nearby = nearestInteraction(worlds[this.region], this.actor);
       if (options.input.consumeAction() && nearby) {
         options.input.clear();
-        if (nearby.transition) { this.region = nearby.transition; this.actor = transitionSpawn(this.region); this.buildRegion(); }
+        if (nearby.transition) { this.region = nearby.transition; this.actor = transitionSpawn(this.region,worlds); this.buildRegion(); }
         else options.onInspect(nearby);
         this.publish(true); return;
       }
