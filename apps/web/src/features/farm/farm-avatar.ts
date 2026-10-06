@@ -51,7 +51,7 @@ export function composeAvatar(appearance: Appearance, base: CanvasImageSource, h
     o.clearRect(frame*64,row*128+78,64,50);
     o.drawImage(original,0,row*128+78,64,50,frame*64,row*128+78,64,50);
   }
-  const result = makeCanvas(320,512), ctx = result.getContext("2d")!; ctx.imageSmoothingEnabled = false;
+  const result = makeCanvas(320,512), resultCtx = result.getContext("2d")!; resultCtx.imageSmoothingEnabled = false;
   const tintedHair = makeCanvas(256,256), hctx = tintedHair.getContext("2d", { willReadFrequently:true })!;
   hctx.drawImage(hair,0,0); const hp = hctx.getImageData(0,0,256,256);
   for (let i = 0; i < hp.data.length; i += 4) if (hp.data[i+3]! > 80) {
@@ -61,11 +61,14 @@ export function composeAvatar(appearance: Appearance, base: CanvasImageSource, h
   hctx.putImageData(hp,0,0);
   for (let row = 0; row < 4; row++) for (let frame = 0; frame < 5; frame++) {
     const ox = frame * 64, oy = row * 128;
+    // A broad contact pose can reach the frame edge. Clip each composed
+    // frame independently so its pixels never spill into a neighbour's idle.
+    const cell = makeCanvas(64,128), ctx = cell.getContext("2d")!; ctx.imageSmoothingEnabled = false;
     for (let y = 0; y < 128; y++) {
       const width = Math.round(64 * bodyWidth(appearance,y));
-      ctx.drawImage(original,ox,oy+y,64,1,ox+Math.round((64-width)/2),oy+y,width,1);
+      ctx.drawImage(original,ox,oy+y,64,1,Math.round((64-width)/2),y,width,1);
     }
-    const rect = (colour: string,x: number,y: number,w: number,h: number) => { ctx.fillStyle=colour; ctx.fillRect(ox+x,oy+y,w,h); };
+    const rect = (colour: string,x: number,y: number,w: number,h: number) => { ctx.fillStyle=colour; ctx.fillRect(x,y,w,h); };
     // Small authored face/collar overlays use the same pixel grid as the rig.
     const front = row === 0, back = row === 3;
     if (!back) {
@@ -91,12 +94,13 @@ export function composeAvatar(appearance: Appearance, base: CanvasImageSource, h
       if (!back) {
         hc.clearRect(front?25:row===1?21:36,24,front?16:8,12);
       }
-      ctx.drawImage(overlay,ox,oy);
+      ctx.drawImage(overlay,0,0);
     }
     if (appearance.hatStyle === "cap") {
       rect("#332b31",21,8,22,9); rect(appearance.hat,22,9,20,8); rect("#bfc6ac",25,10,9,2);
       rect(appearance.hat,row===1?18:row===2?35:20,17,front?25:back?23:12,3);
     }
+    resultCtx.drawImage(cell,ox,oy);
   }
   return result;
 }
