@@ -2,6 +2,8 @@
 
 Updated **6 October 2026**. The owner authorised the expanded roster/fifth comparison and reward implementation in the personal development application. The new frontend is on `feat/guess-v2-room-rewards`. The additive Supabase migrations below are applied. No existing account or game history was reset.
 
+Delivered in [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4), currently open. [Remote CI run 37487290506](https://github.com/StephenScarlett/BigManThing/actions/runs/37487290506) passed for implementation commit `fb535f51572eda6ab71627f9ecc7e73c97f95cbf`.
+
 ## Try the current prototype
 
 1. Check out `feat/guess-v2-room-rewards`, install with `pnpm install --frozen-lockfile`, and provide the web client's Supabase URL/public key in the normal local configuration.

@@ -7,6 +7,8 @@ Current implementation: [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.m
 Latest expansion proposal: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
 Progression research/pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md). Art production: [AVATAR_ROOM_ASSET_GUIDE.md](AVATAR_ROOM_ASSET_GUIDE.md).
 
+Current delivery: [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4), branch `feat/guess-v2-room-rewards`; the implementation commit `fb535f51572eda6ab71627f9ecc7e73c97f95cbf` passed [remote CI](https://github.com/StephenScarlett/BigManThing/actions/runs/37487290506). Development database migrations are applied; the frontend PR remains open.
+
 ## Product intent and current direction
 
 BMT is a Trinidad and Tobago browser-game platform: a short cultural daily challenge, result sharing, and a drawing game for friends. Trustworthy local content and reliable mobile gameplay are the priority. Where Nah needs careful imagery/provider guidance; accounts, leaderboards, streaks and cosmetic rewards follow validated gameplay.

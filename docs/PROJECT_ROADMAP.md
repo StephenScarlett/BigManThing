@@ -116,6 +116,8 @@ Next action: expanded unranked four/five-column comparison, followed by reviewed
 
 Affected: G0b, GUESS-02/03/04, CONT-01, HIST-01/STREAK-01, REWARD-01, HOME-01, GACHA-01 and SIDE-01. Branch: `feat/guess-v2-room-rewards`. Applied development migrations: `20261006144857_guess_people_expansion_v2` and `20261006144912_room_rewards_foundation`; local/history filenames align.
 
+Delivery: open [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4). The implementation commit is `fb535f51572eda6ab71627f9ecc7e73c97f95cbf`; its [Guess Nah checks run 37487290506](https://github.com/StephenScarlett/BigManThing/actions/runs/37487290506) completed successfully. The PR is not merged and no frontend hosting release has been performed.
+
 Implemented 64 draft people, five comparisons, frozen name counts, current taxonomy/caps, Kes/aliases and version dispatch. Existing four editions/four sessions/thirteen attempts retain exact before/after fingerprints, and the account count remains one. There are zero reviewed profiles, 19 unknown years and no people daily. Source/clue and human recognition review remain open.
 
 My lime implements starter identity/room items, server-owned Rolls/Lime Coins, two collection pools, explicit odds, persistent 10/40 guarantees, duplicate coins, direct buys, ownership/geometry/revision-checked room saves, shared completion-streak bonuses and atomic published Guess rewards. Pan Memory is a permanently unlocked daily; Coconut Catch is local free practice without currency claims. Final visuals are procedural placeholders; `/room/demo` is isolated sample state.
