@@ -5,7 +5,7 @@ Working plan: [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md).
 Guess research: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
 Current implementation: [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.md).
 Latest expansion proposal: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
-Progression research/pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md). Art production: [AVATAR_ROOM_ASSET_GUIDE.md](AVATAR_ROOM_ASSET_GUIDE.md).
+Latest progression design: [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). Active art contract: [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md). Implemented historical pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md); its isometric asset brief is superseded for future farm art.
 
 Current delivery: [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4), branch `feat/guess-v2-room-rewards`; the implementation commit `fb535f51572eda6ab71627f9ecc7e73c97f95cbf` passed [remote CI](https://github.com/StephenScarlett/BigManThing/actions/runs/37487290506). Development database migrations are applied; the frontend PR remains open.
 
@@ -15,7 +15,7 @@ BMT is a Trinidad and Tobago browser-game platform: a short cultural daily chall
 
 The owner authorised restarting Guess Nah's data structure and the expanded implementation. People-v2 now supports five comparisons, eight attempts, free clues and 64 draft nominees, including KyleBoss and Levi García. Broad Comedy/Food vocabulary and revised membership/caps are applied in development. Frozen people-v1 editions retain their old four-column contract. There are 19 unconfirmed years and zero reviewed profiles/no people daily. Next is recognition/device testing and sourced clue/claim review; roster/fields remain adjustable.
 
-Latest direction: main games/streaks/leaderboards reward **rolls**, which grant character/room collection outcomes. An isometric browser room, free identity basics, two collection families, visible guarantees, duplicate coins, direct buys and a permanently unlocked daily side game are implemented as a pilot. **Rolls + Lime Coins** replaces the earlier one-currency proposal. Future gacha companion powers can apply to unranked side activities; main ranked results stay independent. Full assets, linking, boards, social visits and broader side-game powers remain planned.
+Latest owner pivot: a **Stardew-adjacent top-down farm**, a character that walks on square tiles, farming/fishing first, an enterable house with editable props/furniture, mystery seeds and random fish, and coin-funded land/house upgrades. Harvests/fish can be sold, stored, delivered, collected or displayed. Gacha outfits/furniture and main-game streak rewards remain central; the proposed comfort/main-streak bonuses boost bounded coin income, not main scores or roll odds. The farm and new rates are not implemented yet. The existing isometric room, locked wallet/inventory, two collection pools/guarantees and Pan prototype are reusable foundations. **Rolls + Lime Coins** remains the proposed two-resource system. Single player comes first; friend farm snapshots/visits are later. Produce/fish data, final art, linking and boards remain acceptance work.
 
 The existing monorepo remains a usable base; openness to a new Guess contract does not by itself require replacing the platform framework. Preserve the latest user steering. README.md and BIGMANTHING_PLAN.md contain historical rules.
 
@@ -59,7 +59,7 @@ Provider selection is provisional: compare actual Trinidad/Tobago imagery covera
 
 Keep BMT's bold red/black direction with local copy and distinct game previews. Test compact mobile guessing, touch/keyboard map controls, dialog focus and feedback that does not rely on colour alone.
 
-The pilot ledger grants welcome rewards once, published Guess completion rewards atomically, one daily Pan reward and shared completion-streak bonuses. Server locks, receipts and room revisions protect retries and concurrent edits. Guest-preserving linking, outage grace, correction tools and friend/weekly boards remain next work. Use coin-based predictable game unlocks; explore gacha sidegrades in unranked activities. Hint access stays free in ranked Guess. Rates/prices/guarantees remain pilot hypotheses.
+The pilot ledger grants welcome rewards once, published Guess completion rewards atomically, one daily Pan reward and shared completion-streak bonuses. The farm proposal requires additive world/growth/goods/quest state, data-driven house dimensions and a separate main-game activity counter. Reuse locks/receipts, preserve existing inventory/Guess history and leave current applied migrations intact. Next is a walkable farm/house renderer spike plus the reviewed first Guess daily, then persistent crops/selling/fishing and the bridge. Guest-preserving linking, outage grace, corrections and friend/weekly boards remain open. Hint access stays free in ranked Guess. All farm prices/rates/bonuses are hypotheses requiring real playtests.
 
 ## Research anchors
 

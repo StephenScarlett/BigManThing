@@ -1,5 +1,7 @@
 # Avatar and room asset brief
 
+**Historical isometric prototype brief.** The owner pivoted on 6 October 2026 to a Stardew-adjacent farm with square tiles and an enterable house. Use [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md) for new production and [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md) for the plan. This older brief documents the implemented placeholder room and stable item IDs; its projection/frame specifications are superseded for farm art.
+
 Version 1, **6 October 2026**. This is a production brief for the owner's separate asset-creation chat. The development app currently uses procedural SVG placeholders. The brief describes the **next sprite renderer**, not an already-completed asset pipeline. Keep the database item IDs in [home-items.json](../packages/db/content/home-items.json) stable when art replaces placeholders.
 
 ## Art direction

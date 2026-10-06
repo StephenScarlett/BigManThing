@@ -1,0 +1,173 @@
+{
+  "config_version": "farm-economy-proposal-1",
+  "seed": 20261006,
+  "players_per_scenario": 5000,
+  "days": 28,
+  "assumptions": [
+    "One harvest/replant session every 24 hours, every simulated day; each is watered immediately, and initial six plants are mature on day one.",
+    "Every rewarded fish attempt succeeds; no paid bait, processing, crop quality or additional main modes.",
+    "Main players finish one eligible main daily each day; no missed days or grace days are simulated.",
+    "A fixed house bonus is an input, not a simulation of obtaining or arranging furniture.",
+    "Sell all surplus; orders consume five crops and five fish with two species each, once each week, and pay their base value plus the stated bonus.",
+    "Try weekly orders on days 7, 14, 21 and 28 only; rare same-species failures are recorded, not magically fulfilled.",
+    "Buy land as soon as affordable while reserving the current day's seed budget; ignore house/tool/decor spending and duplicate-roll income.",
+    "Discovery-track seeds are claimed and planted first; regular mystery seeds have static odds and no hidden pity counter.",
+    "Claimed free seeds and unplanted milestone seeds carry in inventory; only unused dated catch allowance expires.",
+    "Rarity labels and prices are game design hypotheses, not botanical scarcity or ecological classifications.",
+    "Eight species per pool are arithmetic placeholders, not the intended final collection size."
+  ],
+  "regular_seed_expected_sale": 16.7,
+  "regular_seed_expected_net": 6.7,
+  "regular_fish_expected_sale": 7.12,
+  "paid_bait_expected_net_no_bonus": -2.88,
+  "paid_bait_expected_net_if_fully_max_boosted": -1.1,
+  "regular_seed_no_legendary_probability": {
+    "30": 0.7397,
+    "60": 0.547157,
+    "120": 0.29938
+  },
+  "separate_vs_additive_max_multiplier": {
+    "separate": 1.265,
+    "recommended_additive": 1.25
+  },
+  "scenarios": {
+    "farm_only_6_plots": {
+      "wallet_mean": 3302.824,
+      "net_earned_mean": 3212.824,
+      "seed_spend_mean": 1040,
+      "land_investment_mean": 0,
+      "rolls_mean": 10.999,
+      "plots_mean": 6,
+      "matured_mean": 168,
+      "legendary_crops_mean": 2.997,
+      "orders_mean": 7.999,
+      "failed_orders_mean": 0.001,
+      "unplanted_free_seeds_mean": 0,
+      "12_plots": {
+        "fraction_reached": 0.0,
+        "median_day": null,
+        "p90_day": null
+      },
+      "24_plots": {
+        "fraction_reached": 0.0,
+        "median_day": null,
+        "p90_day": null
+      }
+    },
+    "main_and_farm_6_plots": {
+      "wallet_mean": 6375.481,
+      "net_earned_mean": 6285.481,
+      "seed_spend_mean": 0,
+      "land_investment_mean": 0,
+      "rolls_mean": 50,
+      "plots_mean": 6,
+      "matured_mean": 168,
+      "legendary_crops_mean": 2.981,
+      "orders_mean": 8,
+      "failed_orders_mean": 0,
+      "unplanted_free_seeds_mean": 8,
+      "12_plots": {
+        "fraction_reached": 0.0,
+        "median_day": null,
+        "p90_day": null
+      },
+      "24_plots": {
+        "fraction_reached": 0.0,
+        "median_day": null,
+        "p90_day": null
+      }
+    },
+    "farm_only_land_progression": {
+      "wallet_mean": 2707.298,
+      "net_earned_mean": 5017.298,
+      "seed_spend_mean": 3640.3,
+      "land_investment_mean": 2400,
+      "rolls_mean": 11.0,
+      "plots_mean": 24,
+      "matured_mean": 422.924,
+      "legendary_crops_mean": 7.986,
+      "orders_mean": 8.0,
+      "failed_orders_mean": 0.0,
+      "unplanted_free_seeds_mean": 0,
+      "12_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 6.0,
+        "p90_day": 6
+      },
+      "24_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 18.0,
+        "p90_day": 19
+      }
+    },
+    "main_and_farm_land_progression": {
+      "wallet_mean": 6697.741,
+      "net_earned_mean": 9007.741,
+      "seed_spend_mean": 3520.582,
+      "land_investment_mean": 2400,
+      "rolls_mean": 50,
+      "plots_mean": 24,
+      "matured_mean": 527.988,
+      "legendary_crops_mean": 10.197,
+      "orders_mean": 8,
+      "failed_orders_mean": 0,
+      "unplanted_free_seeds_mean": 0,
+      "12_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 3.0,
+        "p90_day": 3
+      },
+      "24_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 10.0,
+        "p90_day": 11
+      }
+    },
+    "farm_only_max_house_land_progression": {
+      "wallet_mean": 3121.575,
+      "net_earned_mean": 5431.575,
+      "seed_spend_mean": 3808.794,
+      "land_investment_mean": 2400,
+      "rolls_mean": 11.0,
+      "plots_mean": 24,
+      "matured_mean": 440.327,
+      "legendary_crops_mean": 8.234,
+      "orders_mean": 8.0,
+      "failed_orders_mean": 0.0,
+      "unplanted_free_seeds_mean": 0,
+      "12_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 5.0,
+        "p90_day": 6
+      },
+      "24_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 17.0,
+        "p90_day": 17
+      }
+    },
+    "main_and_farm_max_house_land_progression": {
+      "wallet_mean": 7107.245,
+      "net_earned_mean": 9417.245,
+      "seed_spend_mean": 3580.352,
+      "land_investment_mean": 2400,
+      "rolls_mean": 50,
+      "plots_mean": 24,
+      "matured_mean": 534.05,
+      "legendary_crops_mean": 10.313,
+      "orders_mean": 8,
+      "failed_orders_mean": 0,
+      "unplanted_free_seeds_mean": 0,
+      "12_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 3.0,
+        "p90_day": 3
+      },
+      "24_plots": {
+        "fraction_reached": 1.0,
+        "median_day": 10.0,
+        "p90_day": 10
+      }
+    }
+  }
+}

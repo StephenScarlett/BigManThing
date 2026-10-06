@@ -1,6 +1,6 @@
 # BigManThing
 
-Current setup/checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md), [rewards and rooms](docs/REWARDS_AND_ROOMS.md), [asset guide](docs/AVATAR_ROOM_ASSET_GUIDE.md), and [roadmap](docs/PROJECT_ROADMAP.md).
+Current setup/checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md), [implemented room pilot](docs/REWARDS_AND_ROOMS.md), [latest farm/home design](docs/FARM_AND_HOME_DESIGN.md), [farm asset guide](docs/FARM_ASSET_GUIDE.md), and [roadmap](docs/PROJECT_ROADMAP.md). The farm is the latest development direction, not a shipped game yet.
 
 A Trinidad and Tobago browser-game platform with:
 

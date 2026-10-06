@@ -1,5 +1,7 @@
 # My lime: rewards, character, room and little arcade
 
+**Implemented historical pilot, with a newer direction.** The owner pivoted on 6 October 2026 to an outdoor Stardew-adjacent farm, fishing and enterable house. Read [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md) for the active proposal and [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md) for new art. This document preserves the existing room/arcade implementation, rates and research; the farm and its proposed multipliers are not implemented yet.
+
 Researched and implemented in development: **6 October 2026**. Owner direction: reward play with **rolls**, collect character/room items through gacha, unlock small browser games with earned currency, and explore powers in those games. Rates, names, roster and final art remain adjustable. This is the current progression reference, alongside [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md).
 
 ## The product to build
