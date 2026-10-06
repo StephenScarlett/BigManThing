@@ -9,7 +9,9 @@ const messages: Record<string, string> = {
   round_finished: "This round is complete.",
   profile_changed_reload_before_saving: "This profile changed while you were editing. Reload it before saving.",
   only_reviewed_profiles_can_be_published: "Every selected person needs a reviewed profile before publication.",
-  speciality_caps_exceeded: "Choose at most two cricketers and three people per primary speciality.",
+  speciality_caps_exceeded: "Choose at most five cricket memberships and seven people per primary speciality.",
+  publish_requires_current_profile_version: "Convert the selected profiles to vocabulary version two before publication.",
+  name_needs_letters: "Use a public display name containing letters.",
   roster_needs_more_variety: "Use at least four primary lanes, with no lane over half the roster.",
   clue_must_identify_at_most_three_people: "Review the people the fifth clue could describe: 1–3, including the answer.",
 };

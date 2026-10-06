@@ -16,7 +16,7 @@ function Lines({ label, values, onCommit }: { label: string; values: string[]; o
 }
 function blankProfile(): PeopleEditorProfile {
   const id = crypto.randomUUID();
-  return { id, name: "", slug: "", aliases: [], review_status: "draft", primary_lane: "music", primary_speciality: "soca", known_for: ["music"], specialities: ["soca"],
+  return { id, name: "", slug: "", aliases: [], vocabulary_version: 2, review_status: "draft", primary_lane: "music", primary_speciality: "soca", known_for: ["music"], specialities: ["soca"],
     birth_year: null, gender: null, biography: "", tt_connection: null, fairness_note: "", revision: 0,
     claims: Object.fromEntries(Object.keys(fieldTitles).map(k => [k, { status: k === "birth_year" || k === "gender" ? "unconfirmed" : "draft", urls: [], note: "" }])),
     clue: { text: "", urls: [], reviewed: false, compatible_ids: [id] } };
@@ -75,7 +75,7 @@ export default function PeopleEditor() {
   }
 
   return <div className="space-y-6">
-    <p className="text-sm text-ink-muted">People v1 · four comparisons, eight attempts, free clues at 3 / 5 / 7 misses. Review every claim before admission. Assets have a separate permission register; this iteration uses text clues.</p>
+    <p className="text-sm text-ink-muted">People v2 · five comparisons, eight attempts, free clues at 3 / 5 / 7 misses. Review every claim before admission. Draft nominations are available for unranked editor practice.</p>
     {(catalog.error || context.error) && <p role="alert">{String(catalog.error ?? context.error)}</p>}
     {message && <p role="status" className="border border-line rounded-md p-3 text-sm">{message}</p>}
     <div className="grid md:grid-cols-[15rem_1fr] gap-5">
@@ -96,7 +96,7 @@ export default function PeopleEditor() {
         </div>
         <Lines label="Search aliases (one per line; same canonical person)" values={draft.aliases} onCommit={aliases => patch({ aliases })} />
         {(["known_for", "specialities"] as const).map(key => <fieldset key={key} className="border border-line rounded-md p-3">
-          <legend className="px-1 text-sm">{key === "known_for" ? "Known for" : "Speciality"} · choose 1–2 substantial careers</legend>
+          <legend className="px-1 text-sm">{key === "known_for" ? "Known for" : "Speciality"} · choose 1–3 substantial careers</legend>
           <div className="grid sm:grid-cols-2 gap-2">
             {vocab.filter(v => v.attribute === (key === "known_for" ? key : "speciality")).map(v => <label key={v.value} className="text-xs flex items-center gap-2">
               <input type="checkbox" checked={draft[key].includes(v.value)} onChange={e => {
@@ -153,7 +153,7 @@ export default function PeopleEditor() {
       {feedback && profiles.find(p => p.id === guessId) && <PeopleFeedbackRow person={profiles.find(p => p.id === guessId)!} feedback={feedback} number={1} labels={labels} />}
     </section>
     <section className="border-t border-line pt-5 space-y-3"><h2 className="text-xl">Publish a frozen people daily</h2>
-      <p className="text-sm text-ink-muted">Pick 8–64 reviewed people across at least four lanes. At most two cricketers, at most three per primary speciality, no lane over half the bank. Publishing locks the answer, facts, clues and labels for this date.</p>
+      <p className="text-sm text-ink-muted">Pick 8–64 reviewed people across at least four lanes. Target five in core specialities; maximum seven per primary speciality and five cricket memberships, no lane over half the bank. Publishing freezes names, letter counts, facts, clues and rules. Smaller iconic groups can stay below five.</p>
       <label className="block text-xs">Trinidad date<input type="date" className={input} value={date} min={context.data?.business_date} onChange={e => setDate(e.target.value)} /></label>
       <p className="text-sm">Answer: {profiles.find(p => p.id === answerId)?.name ?? "Choose above"}</p>
       <button className="underline text-sm" onClick={() => setRosterIds(reviewed.map(p => p.id))}>Select all reviewed people</button>

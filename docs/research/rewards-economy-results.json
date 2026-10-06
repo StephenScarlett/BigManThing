@@ -1,0 +1,360 @@
+{
+  "status": "pilot hypotheses; no observed players or retention",
+  "assumptions": [
+    "One fixed eight-item family, with 3 Common, 2 Rare, 2 Epic and 1 Legendary.",
+    "Every earned roll spent in that family; no purchases, item rotations, trades or paid rolls.",
+    "Epic guarantee within 10; Legendary within 40; higher guarantee takes priority.",
+    "Calendars assume every published Guess daily and, after unlocking, every Pan daily is completed.",
+    "Welcome included once. Calendar excludes duplicate coins, leaderboard bonuses and outages.",
+    "Room and wardrobe have separate guarantee counters. Splitting rolls slows each family.",
+    "These are supply/collection calculations, not evidence that a loop is fun or improves retention."
+  ],
+  "first_legendary_exact": {
+    "expected_pulls": 24.944,
+    "median_pulls": 26,
+    "p90_pulls": 40,
+    "hard_max_pulls": 40,
+    "chance_by_pull": {
+      "3": 5.881,
+      "10": 22.934,
+      "20": 41.979,
+      "30": 56.641,
+      "39": 66.656,
+      "40": 100
+    },
+    "no_guarantees_mean_at_base_2_percent": 50
+  },
+  "collection_simulation": {
+    "seed": 20261006,
+    "trials": 25000,
+    "pool_sizes_by_rarity": [
+      3,
+      2,
+      2,
+      1
+    ],
+    "milestones": {
+      "3": {
+        "mean_unique_items": 2.537,
+        "mean_duplicate_coins": 4.041,
+        "percent_full_eight_item_collection": 0.0
+      },
+      "10": {
+        "mean_unique_items": 5.469,
+        "mean_duplicate_coins": 42.711,
+        "percent_full_eight_item_collection": 0.344
+      },
+      "20": {
+        "mean_unique_items": 6.839,
+        "mean_duplicate_coins": 145.113,
+        "percent_full_eight_item_collection": 15.096
+      },
+      "40": {
+        "mean_unique_items": 7.908,
+        "mean_duplicate_coins": 401.276,
+        "percent_full_eight_item_collection": 90.848
+      },
+      "80": {
+        "mean_unique_items": 7.997,
+        "mean_duplicate_coins": 1035.98,
+        "percent_full_eight_item_collection": 99.656
+      }
+    }
+  },
+  "guess_only_calendar": {
+    "day_28_rolls_including_welcome": 42,
+    "day_28_coins_after_game_unlock": 930,
+    "pan_rounds_completed": 0,
+    "first_40_rolls_earned_day": 28,
+    "days": [
+      {
+        "day": 1,
+        "rolls_earned_total": 4,
+        "unspent_coins": 120
+      },
+      {
+        "day": 2,
+        "rolls_earned_total": 5,
+        "unspent_coins": 150
+      },
+      {
+        "day": 3,
+        "rolls_earned_total": 7,
+        "unspent_coins": 180
+      },
+      {
+        "day": 4,
+        "rolls_earned_total": 8,
+        "unspent_coins": 210
+      },
+      {
+        "day": 5,
+        "rolls_earned_total": 9,
+        "unspent_coins": 240
+      },
+      {
+        "day": 6,
+        "rolls_earned_total": 10,
+        "unspent_coins": 270
+      },
+      {
+        "day": 7,
+        "rolls_earned_total": 13,
+        "unspent_coins": 300
+      },
+      {
+        "day": 8,
+        "rolls_earned_total": 14,
+        "unspent_coins": 330
+      },
+      {
+        "day": 9,
+        "rolls_earned_total": 15,
+        "unspent_coins": 360
+      },
+      {
+        "day": 10,
+        "rolls_earned_total": 16,
+        "unspent_coins": 390
+      },
+      {
+        "day": 11,
+        "rolls_earned_total": 17,
+        "unspent_coins": 420
+      },
+      {
+        "day": 12,
+        "rolls_earned_total": 18,
+        "unspent_coins": 450
+      },
+      {
+        "day": 13,
+        "rolls_earned_total": 19,
+        "unspent_coins": 480
+      },
+      {
+        "day": 14,
+        "rolls_earned_total": 23,
+        "unspent_coins": 510
+      },
+      {
+        "day": 15,
+        "rolls_earned_total": 24,
+        "unspent_coins": 540
+      },
+      {
+        "day": 16,
+        "rolls_earned_total": 25,
+        "unspent_coins": 570
+      },
+      {
+        "day": 17,
+        "rolls_earned_total": 26,
+        "unspent_coins": 600
+      },
+      {
+        "day": 18,
+        "rolls_earned_total": 27,
+        "unspent_coins": 630
+      },
+      {
+        "day": 19,
+        "rolls_earned_total": 28,
+        "unspent_coins": 660
+      },
+      {
+        "day": 20,
+        "rolls_earned_total": 29,
+        "unspent_coins": 690
+      },
+      {
+        "day": 21,
+        "rolls_earned_total": 30,
+        "unspent_coins": 720
+      },
+      {
+        "day": 22,
+        "rolls_earned_total": 31,
+        "unspent_coins": 750
+      },
+      {
+        "day": 23,
+        "rolls_earned_total": 32,
+        "unspent_coins": 780
+      },
+      {
+        "day": 24,
+        "rolls_earned_total": 33,
+        "unspent_coins": 810
+      },
+      {
+        "day": 25,
+        "rolls_earned_total": 34,
+        "unspent_coins": 840
+      },
+      {
+        "day": 26,
+        "rolls_earned_total": 35,
+        "unspent_coins": 870
+      },
+      {
+        "day": 27,
+        "rolls_earned_total": 36,
+        "unspent_coins": 900
+      },
+      {
+        "day": 28,
+        "rolls_earned_total": 42,
+        "unspent_coins": 930
+      }
+    ]
+  },
+  "guess_and_pan_calendar": {
+    "day_28_rolls_including_welcome": 69,
+    "day_28_coins_after_game_unlock": 1050,
+    "pan_rounds_completed": 27,
+    "first_40_rolls_earned_day": 16,
+    "days": [
+      {
+        "day": 1,
+        "rolls_earned_total": 4,
+        "unspent_coins": 120
+      },
+      {
+        "day": 2,
+        "rolls_earned_total": 6,
+        "unspent_coins": 10
+      },
+      {
+        "day": 3,
+        "rolls_earned_total": 9,
+        "unspent_coins": 50
+      },
+      {
+        "day": 4,
+        "rolls_earned_total": 11,
+        "unspent_coins": 90
+      },
+      {
+        "day": 5,
+        "rolls_earned_total": 13,
+        "unspent_coins": 130
+      },
+      {
+        "day": 6,
+        "rolls_earned_total": 15,
+        "unspent_coins": 170
+      },
+      {
+        "day": 7,
+        "rolls_earned_total": 19,
+        "unspent_coins": 210
+      },
+      {
+        "day": 8,
+        "rolls_earned_total": 21,
+        "unspent_coins": 250
+      },
+      {
+        "day": 9,
+        "rolls_earned_total": 23,
+        "unspent_coins": 290
+      },
+      {
+        "day": 10,
+        "rolls_earned_total": 25,
+        "unspent_coins": 330
+      },
+      {
+        "day": 11,
+        "rolls_earned_total": 27,
+        "unspent_coins": 370
+      },
+      {
+        "day": 12,
+        "rolls_earned_total": 29,
+        "unspent_coins": 410
+      },
+      {
+        "day": 13,
+        "rolls_earned_total": 31,
+        "unspent_coins": 450
+      },
+      {
+        "day": 14,
+        "rolls_earned_total": 36,
+        "unspent_coins": 490
+      },
+      {
+        "day": 15,
+        "rolls_earned_total": 38,
+        "unspent_coins": 530
+      },
+      {
+        "day": 16,
+        "rolls_earned_total": 40,
+        "unspent_coins": 570
+      },
+      {
+        "day": 17,
+        "rolls_earned_total": 42,
+        "unspent_coins": 610
+      },
+      {
+        "day": 18,
+        "rolls_earned_total": 44,
+        "unspent_coins": 650
+      },
+      {
+        "day": 19,
+        "rolls_earned_total": 46,
+        "unspent_coins": 690
+      },
+      {
+        "day": 20,
+        "rolls_earned_total": 48,
+        "unspent_coins": 730
+      },
+      {
+        "day": 21,
+        "rolls_earned_total": 50,
+        "unspent_coins": 770
+      },
+      {
+        "day": 22,
+        "rolls_earned_total": 52,
+        "unspent_coins": 810
+      },
+      {
+        "day": 23,
+        "rolls_earned_total": 54,
+        "unspent_coins": 850
+      },
+      {
+        "day": 24,
+        "rolls_earned_total": 56,
+        "unspent_coins": 890
+      },
+      {
+        "day": 25,
+        "rolls_earned_total": 58,
+        "unspent_coins": 930
+      },
+      {
+        "day": 26,
+        "rolls_earned_total": 60,
+        "unspent_coins": 970
+      },
+      {
+        "day": 27,
+        "rolls_earned_total": 62,
+        "unspent_coins": 1010
+      },
+      {
+        "day": 28,
+        "rolls_earned_total": 69,
+        "unspent_coins": 1050
+      }
+    ]
+  }
+}

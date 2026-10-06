@@ -1,11 +1,13 @@
 # BigManThing
 
-Current people-game setup and development checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md). The roadmap/context in `docs/` supersede historical rules below.
+Current setup/checkpoint: [Guess Nah implementation](docs/GUESS_NAH_IMPLEMENTATION.md), [rewards and rooms](docs/REWARDS_AND_ROOMS.md), [asset guide](docs/AVATAR_ROOM_ASSET_GUIDE.md), and [roadmap](docs/PROJECT_ROADMAP.md).
 
-A Trinidadian-themed browser game platform. Currently ships two games:
+A Trinidad and Tobago browser-game platform with:
 
 - **Guess Nah** — daily word-guessing game (Wordle-style) built around T&T culture, folklore, people, food, and more.
 - **Draw Nah** — real-time multiplayer sketch-and-guess game with a Trini word bank.
+- **Where Nah** — a Street View location-guessing prototype.
+- **My lime** — a development character/room collection and earned-roll economy, Pan Memory daily and Coconut Catch practice. Try `/room/demo` for an isolated offline sample; final art and device playtests remain pending.
 
 Built with a pnpm monorepo, React + Vite frontend, Express + Socket.io game server, and Supabase for persistence.
 
@@ -34,7 +36,7 @@ Built with a pnpm monorepo, React + Vite frontend, Express + Socket.io game serv
 | Real-time | Socket.io 4.8 (client + server) |
 | Game server | Express 4, Node.js, tsx watch |
 | Database | Supabase (PostgreSQL + Edge Functions) |
-| Shared types | `@bmt/shared` — read directly from TypeScript source, no build step |
+| Shared types | `@bmt/shared` — TypeScript types plus compiled JavaScript exports; root dev scripts build it first |
 | Package manager | pnpm 9 (run via `npx --yes pnpm@9.12.0`) |
 
 ---
@@ -120,10 +122,10 @@ In two separate terminals:
 
 ```bash
 # Game server (hot-reload via tsx)
-npx --yes pnpm@9.12.0 --filter @bmt/game-server run dev
+npx --yes pnpm@9.12.0 dev:server
 
 # Web SPA
-npx --yes pnpm@9.12.0 --filter @bmt/web run dev
+npx --yes pnpm@9.12.0 dev:web
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
@@ -198,12 +200,13 @@ A real-time multiplayer drawing and guessing game. 2–12 players per room.
 
 ## Guess Nah — Game Rules
 
-A daily Wordle-style game using Trinidadian entities (people, places, things, folklore).
+A people guessing game with a separate legacy Ting interface.
 
-- One entity per day, shared by all players
-- 6 attempts; colour-coded feedback (exact / wrong position / absent)
-- Guesses submitted via a Supabase Edge Function (`submit-guess`) to prevent client-side cheating
-- Streak tracking persisted per device
+- Eight guesses; new people-v2 editions compare Known for, Speciality, Born, Gender and displayed-name Letters.
+- Genuine career overlap is partial; unknown facts are neutral; arrows show earlier/later or longer/shorter.
+- Free clues after 3/5/7 misses; canonical aliases; immutable daily/practice editions and server-owned history.
+- Authenticated database RPCs validate guesses and completion rewards. Frozen people-v1 rounds retain their four-column rules.
+- Development has 64 draft people and no reviewed daily; the editor can preview drafts. Sources/clues need review before publication.
 
 ---
 
@@ -211,9 +214,9 @@ A daily Wordle-style game using Trinidadian entities (people, places, things, fo
 
 The Supabase schema lives in [`packages/db/supabase/migrations/`](packages/db/supabase/migrations/).
 
-Seed data is in [`packages/db/supabase/seed.sql`](packages/db/supabase/seed.sql). It contains the entity table used by both games — Trinidadian people, folklore figures, food, music, sports, and more.
+The additive migrations contain draft people/vocabulary and the placeholder home catalogue. `seed.sql` no longer resets legacy entities or invents another answer bank. Versioned content references are in `packages/db/content/`.
 
-The `submit-guess` Edge Function validates guesses server-side for Guess Nah.
+The retained `submit-guess` Edge Function serves the legacy Ting path. The people game and home economy use identity-checked database RPCs. Do not grant rewards from client-only scores.
 
 To run Supabase locally:
 

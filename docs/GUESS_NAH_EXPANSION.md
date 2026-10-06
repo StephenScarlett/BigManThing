@@ -1,10 +1,10 @@
 # Guess Nah: larger roster and a fifth comparison
 
-Researched: 2 October 2026. Status: proposal, not an applied rules version or an approved seed.
+Researched: 2 October 2026. Development implementation checkpoint: **6 October 2026**. The expansion is applied as people-v2; nominees remain drafts, not an approved answer bank.
 
-The owner now wants another comparison column and roughly five recognisable people per speciality, including KyleBoss and Levi García. This revises the earlier small-roster/two-cricketer proposal. The current development application still has **32 draft people, four comparisons and people-v1 rules**; this research does not change Supabase or gameplay.
+The owner requested another comparison column and roughly five recognisable people per speciality, including KyleBoss and Levi García, then authorised implementation. Development now has **64 draft people, five comparisons and people-v2 rules**. Existing people-v1 editions keep their original names and four columns. Source/clue review and human recognition testing remain necessary. See [current implementation](GUESS_NAH_IMPLEMENTATION.md).
 
-Recommendation: nominate **64 people**, with at least five in nine strong core specialities; preserve exceptional people in smaller specialities; merge stage/digital comedy into **Comedy**; test **Letters in the displayed name** as a fifth comparison. Keep eight attempts, neutral unknowns, genuine career overlap, free clues and canonical identity wins. Treat the expanded roster as a recognisability shortlist rather than a ranking of T&T popularity.
+Implemented development proposal: **64 nominees**, five-plus in nine strong core specialities, smaller iconic groups, broad **Comedy**, Food/cooking and **Letters in the displayed name**. Eight attempts, neutral unknowns, genuine career overlap, free clues and canonical identity wins remain. Treat the roster as a recognisability shortlist rather than a ranking of T&T popularity. The historical research below preserves the original proposed display labels; the implementation uses **Kes** (three letters), with the full name retained as an alias. Version-two publication caps are now seven primary members/five cricket memberships; five per core group is editorial guidance. The regenerated model includes the current labels: optimal mean 2.531; wrong-opener average 9.957. Human fun is not measured.
 
 ## Why five can work
 

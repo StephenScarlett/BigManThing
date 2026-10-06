@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { ensurePeopleSession, peopleContext, startPeoplePractice, submitPeopleGuess } from "./people-api";
 import { PeopleFeedbackRow } from "./PeopleFeedbackRow";
 import { PeopleGuessInput } from "./PeopleGuessInput";
+import { DailyReward } from "@/features/home/DailyReward";
 
 export function PeopleGame() {
   const { user, profile, loading } = useAuth();
@@ -60,7 +61,10 @@ export function PeopleGame() {
     pending.current = true; setBusy(true); setError(null);
     try {
       const next = await submitPeopleGuess(game.edition.id, person.id);
-      if (activeUser.current === uid) queryClient.setQueryData(queryKey, next);
+      if (activeUser.current === uid) {
+        queryClient.setQueryData(queryKey, next);
+        if (next.edition?.kind==="daily"&&next.status!=="playing") void queryClient.invalidateQueries({queryKey:["home",uid]});
+      }
     } catch (e) {
       if (activeUser.current === uid) {
         setError(e instanceof Error ? e.message : "Could not send that guess. Please retry.");
@@ -105,6 +109,7 @@ export function PeopleGame() {
         <details className="text-sm border-y border-line py-3">
           <summary className="cursor-pointer font-semibold">How the clues work</summary>
           <p className="text-ink-muted mt-2">Eight guesses. ✓ means the same known values; ≈ means a shared career or speciality. Birth arrows point to the answer's year, with a near marker within five years. ? means unconfirmed on either side. A win comes from naming the person.</p>
+          {game.edition.rules_version === "people-v2" && <p className="text-ink-muted mt-2">Letters counts the name displayed here, ignoring spaces, punctuation and accents. ↑ means the answer's name is longer; ↓ means shorter. Aliases use the same displayed-name count.</p>}
           <p className="text-ink-muted mt-2">Free clues unlock after 3, 5, and 7 wrong guesses. Name variants count as the same person. You can browse the roster below.</p>
         </details>
         <div aria-live="polite" aria-atomic="false" className="space-y-3">
@@ -124,11 +129,12 @@ export function PeopleGame() {
           </ul></details>}
           <pre className="text-lg leading-tight w-fit select-all" aria-label="Share grid">{game.attempts.map(a => peopleFeedbackToEmoji(a.feedback)).join("\n")}</pre>
           <button className="btn-primary text-sm" onClick={() => share(game)}>{copied ? "Copied" : "Copy results"}</button>
+          {game.edition?.kind==="daily"&&!game.edition.is_preview&&!game.expired&&game.edition.date===game.business_date&&<DailyReward edition={game.edition.id}/>}
         </section>}
         <details className="border-t border-line pt-3 text-sm">
           <summary className="cursor-pointer">Who's in this edition? ({game.catalog.length})</summary>
           <ul className="grid sm:grid-cols-2 gap-2 mt-3">
-            {game.catalog.map(p => <li key={p.id} className="border border-line rounded-md p-2.5"><span className="font-semibold">{p.name}</span>
+            {game.catalog.map(p => <li key={p.id} className="border border-line rounded-md p-2.5"><span className="font-semibold">{p.name}</span>{p.letters != null && <span className="ml-2 text-xs text-ink-muted">{p.letters} letters</span>}
               <p className="text-xs text-ink-muted mt-1">{p.specialities.map(v => labels[v] ?? v).join(" + ")} · Born {p.birth_year ?? "unconfirmed"}</p></li>)}
           </ul>
         </details>

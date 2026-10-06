@@ -28,7 +28,7 @@ export default function HomePage() {
         <ModeTile
           to="/guess"
           title="Guess Nah"
-          tagline="Daily mystery. As many guesses as yuh need."
+          tagline="A familiar face. Five clues. Eight guesses."
         />
         <ModeTile
           to="/draw"
@@ -40,6 +40,7 @@ export default function HomePage() {
           title="Where Nah"
           tagline="Dropped in Trinidad. Look around. Guess where."
         />
+        <ModeTile to="/room" title="My lime" tagline="Your character. Your room. Something to collect." />
       </motion.section>
 
       <motion.section className="card" variants={fadeUp}>

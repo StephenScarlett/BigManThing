@@ -20,9 +20,11 @@ export function PeopleFeedbackRow({ person, feedback, number, labels }: {
     { title: "Born", value: person.birth_year?.toString() ?? "Unconfirmed", state: feedback.born.state, text: bornText },
     { title: "Gender", value: person.gender ? labels[person.gender] ?? person.gender : "Unconfirmed", state: feedback.gender, text: stateText[feedback.gender] },
   ];
+  if (feedback.letters) cells.push({ title: "Letters", value: String(person.letters ?? "Unconfirmed"), state: feedback.letters.state,
+    text: feedback.letters.direction ? `${feedback.letters.direction === "longer" ? "↑" : "↓"} Answer name is ${feedback.letters.direction}` : stateText[feedback.letters.state] });
   return <article className="space-y-2" aria-label={`Guess ${number}: ${person.name}`}>
     <div className="flex items-baseline gap-2"><span className="text-ink-muted text-xs tabular-nums">{number.toString().padStart(2, "0")}</span><h3 className="font-semibold">{person.name}</h3></div>
-    <dl className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+    <dl className={`grid grid-cols-2 ${feedback.letters ? "sm:grid-cols-5" : "sm:grid-cols-4"} gap-2`}>
       {cells.map(cell => <div key={cell.title} className={`rounded-md border p-2.5 min-w-0 ${style[cell.state]}`}>
         <dt className="text-[11px] text-ink-muted">{cell.title}</dt>
         <dd className="text-sm font-medium break-words mt-1">{cell.value}</dd>

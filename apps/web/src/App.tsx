@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/auth";
 
 const AdminPage = lazy(() => import("@/pages/AdminPage"));
 const WhereNahPage = lazy(() => import("@/pages/WhereNahPage"));
+const RoomPage = lazy(() => import("@/pages/RoomPage"));
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -18,7 +19,7 @@ export default function App() {
   const isDrawRoom = location.pathname.startsWith("/draw/");
 
   // Show full-screen gate until we have a session (real or anonymous)
-  if (!loading && !user) return <NameGate />;
+  if (!loading && !user && location.pathname !== "/room/demo") return <NameGate />;
 
   return (
     <div className={isDrawRoom ? "h-dvh overflow-hidden" : "min-h-screen flex flex-col"}>
@@ -41,6 +42,8 @@ export default function App() {
             <Routes location={location}>
               <Route path="/" element={<HomePage />} />
               <Route path="/guess" element={<GuessNahPage />} />
+              <Route path="/room" element={<Suspense fallback={<p>Loading your place…</p>}><RoomPage /></Suspense>} />
+              <Route path="/room/demo" element={<Suspense fallback={<p>Loading preview…</p>}><RoomPage demo /></Suspense>} />
               <Route path="/draw" element={<DrawNahPage />} />
               <Route path="/draw/:roomCode" element={<DrawNahPage />} />
               <Route path="/where" element={<Suspense fallback={<div className="text-center py-20 text-ink-muted">Loading…</div>}><WhereNahPage /></Suspense>} />
@@ -65,8 +68,8 @@ function Header() {
           <span className="text-ink">MAN</span>
           <span className="text-brand-red">THING</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <nav className="flex gap-1 text-sm">
+        <div className="flex flex-wrap items-center gap-2 max-w-full">
+          <nav className="flex flex-wrap gap-1 text-sm">
             <NavLink to="/guess" active={pathname.startsWith("/guess")}>
               Guess Nah
             </NavLink>
@@ -75,6 +78,9 @@ function Header() {
             </NavLink>
             <NavLink to="/where" active={pathname.startsWith("/where")}>
               Where Nah
+            </NavLink>
+            <NavLink to="/room" active={pathname.startsWith("/room")}>
+              My lime
             </NavLink>
           </nav>
           <ThemeToggle />

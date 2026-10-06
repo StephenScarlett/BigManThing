@@ -1,6 +1,7 @@
-/** People v1. Feedback is computed by the database's single versioned comparator.
+/** Feedback is computed by the database's edition-versioned comparator.
  * The editor, practice and daily submission RPCs all use that implementation. */
-export const PEOPLE_RULES_VERSION = "people-v1" as const;
+export const PEOPLE_RULES_VERSION = "people-v2" as const;
+export type PeopleRulesVersion = "people-v1" | "people-v2";
 export const PEOPLE_MAX_ATTEMPTS = 8;
 export const PEOPLE_HINT_MISSES = [3, 5, 7] as const;
 
@@ -10,6 +11,7 @@ export interface PeopleFeedback {
   speciality: PeopleMatch;
   born: { state: PeopleMatch; direction: "earlier" | "later" | null };
   gender: PeopleMatch;
+  letters?: { state: PeopleMatch; direction: "longer" | "shorter" | null };
 }
 export interface PeopleCandidate {
   id: string;
@@ -19,6 +21,8 @@ export interface PeopleCandidate {
   specialities: string[];
   birth_year: number | null;
   gender: string | null;
+  /** Absent on historical v1 editions; derived by the server for v2. */
+  letters?: number;
 }
 export interface PeopleVocabulary {
   version: number;
@@ -30,7 +34,7 @@ export interface PeopleEdition {
   id: string;
   kind: "daily" | "practice";
   date: string | null;
-  rules_version: typeof PEOPLE_RULES_VERSION;
+  rules_version: PeopleRulesVersion;
   expires_at: string | null;
   is_preview: boolean;
 }
@@ -58,6 +62,7 @@ export interface PeopleClaim {
   note: string;
 }
 export interface PeopleEditorProfile extends PeopleCandidate {
+  vocabulary_version?: 1 | 2;
   slug: string;
   review_status: "draft" | "reviewed";
   primary_lane: string;
@@ -72,7 +77,14 @@ export interface PeopleEditorProfile extends PeopleCandidate {
 
 export function peopleFeedbackToEmoji(feedback: PeopleFeedback): string {
   const square = (state: PeopleMatch) => ({ exact: "🟩", partial: "🟧", wrong: "🟥", unknown: "⬜" })[state];
-  return [feedback.known_for, feedback.speciality, feedback.born.state, feedback.gender].map(square).join("");
+  const states = [feedback.known_for, feedback.speciality, feedback.born.state, feedback.gender];
+  if (feedback.letters) states.push(feedback.letters.state);
+  return states.map(square).join("");
+}
+
+/** Display-name contract, shared with PostgreSQL NFD/alpha counting. */
+export function peopleNameLetters(name: string): number {
+  return (name.normalize("NFD").match(/\p{L}/gu) ?? []).length;
 }
 
 /** Search spelling variants without merging two different canonical identities. */

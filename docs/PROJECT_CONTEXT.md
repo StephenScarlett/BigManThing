@@ -1,16 +1,19 @@
 # BigManThing project context
 
-Updated: 2026-10-02.
+Updated: 2026-10-06.
 Working plan: [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md).
 Guess research: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
 Current implementation: [GUESS_NAH_IMPLEMENTATION.md](GUESS_NAH_IMPLEMENTATION.md).
 Latest expansion proposal: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
+Progression research/pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md). Art production: [AVATAR_ROOM_ASSET_GUIDE.md](AVATAR_ROOM_ASSET_GUIDE.md).
 
 ## Product intent and current direction
 
 BMT is a Trinidad and Tobago browser-game platform: a short cultural daily challenge, result sharing, and a drawing game for friends. Trustworthy local content and reliable mobile gameplay are the priority. Where Nah needs careful imagery/provider guidance; accounts, leaderboards, streaks and cosmetic rewards follow validated gameplay.
 
-The owner authorized restarting Guess Nah's data structure and implementing the researched design in the personal development application. The people-v1 prototype supports four comparisons, eight attempts and free recognition clues. The owner's latest request explores a fifth column and roughly five recognisable people per speciality, explicitly including KyleBoss and Levi García. Research proposes 64 nominees, nine core groups with five-plus members, broader Comedy and a Letters comparison prototype. This is not yet applied to code/Supabase; the database still has 32 drafts. Next is an expanded unranked comparison/recognition trial and source/clue review. The roster and gameplay targets remain subject to change.
+The owner authorised restarting Guess Nah's data structure and the expanded implementation. People-v2 now supports five comparisons, eight attempts, free clues and 64 draft nominees, including KyleBoss and Levi García. Broad Comedy/Food vocabulary and revised membership/caps are applied in development. Frozen people-v1 editions retain their old four-column contract. There are 19 unconfirmed years and zero reviewed profiles/no people daily. Next is recognition/device testing and sourced clue/claim review; roster/fields remain adjustable.
+
+Latest direction: main games/streaks/leaderboards reward **rolls**, which grant character/room collection outcomes. An isometric browser room, free identity basics, two collection families, visible guarantees, duplicate coins, direct buys and a permanently unlocked daily side game are implemented as a pilot. **Rolls + Lime Coins** replaces the earlier one-currency proposal. Future gacha companion powers can apply to unranked side activities; main ranked results stay independent. Full assets, linking, boards, social visits and broader side-game powers remain planned.
 
 The existing monorepo remains a usable base; openness to a new Guess contract does not by itself require replacing the platform framework. Preserve the latest user steering. README.md and BIGMANTHING_PLAN.md contain historical rules.
 
@@ -21,7 +24,7 @@ The existing monorepo remains a usable base; openness to a new Guess contract do
 - Draw Nah uses an Express/Socket.IO game server with rooms, canvas, chat, word choices and scores.
 - Where Nah uses Google Street View plus Google Maps for a five-round practice experience.
 - Supabase manages content, identity and daily history. Guests, OAuth/magic links and usernames have foundations.
-- A dedicated progressive picture challenge, currency/inventory and leaderboard UI still need design and implementation.
+- My lime adds authenticated room/outfit/inventory state, earned rolls, Lime Coins, collections/guarantees and Pan Memory; Coconut Catch is free local practice. An isolated `/room/demo` allows review without account mutations. A dedicated progressive picture challenge and leaderboard UI remain to implement.
 
 Detailed environment information and security audit evidence belong in the private project research reference. Public documents record product intent and verification milestones.
 
@@ -31,9 +34,9 @@ The legacy content snapshot contains 12 people and 69 allowed attribute values. 
 
 Implemented people-v1: 32 drafts; publication caps two cricket memberships and three per primary speciality; Known for, Speciality, confirmed Born year and public Gender, eight attempts and free hints after 3/5/7 misses. Real major-career overlap is partial; unconfirmed comparisons are neutral. These development caps implement an earlier editorial proposal, not an immutable owner preference.
 
-Latest proposed people-v2: retain the 32 drafts and nominate 32 additions; target five in core groups, cap seven primary members/five cricket memberships; preserve smaller iconic fields; test Letters as a fifth comparison. Nineteen combined draft years are withheld. Stage/digital comedy would merge into Comedy, food/cooking would become explicit vocabulary, and Rikki Jai's three speciality memberships need a revised limit. Two identical model profiles remain with Letters and need discriminating clues. See the expansion report/reproducible files; none is approved content or an import.
+Current people-v2: 32 retained drafts plus 32 imported additions; target five in core groups, cap seven primary members/five cricket memberships; smaller iconic fields remain. Letters is the fifth comparison, the public display is Kes, stage/digital comedy merges into Comedy, Food/cooking is explicit and up to three major careers fit genuine overlap. Nineteen years remain withheld. Two identical model profile pairs still need discriminating clues. Imported nominations are not approved content.
 
-Six draft years remain withheld, and Sampson/Ro’dey share a current categorical profile. Resolve factual/source/alias and discriminating clue paths before publication. All 32 nominees were imported as drafts, with no approved daily. Human recognition and gameplay need validation; the mathematical model assumes complete candidate knowledge.
+Sampson/Ro’dey/KyleBoss now have different displayed-name counts while their uncertain years stay neutral. Ian Alleyne/Adonai Dieu and Patrice Roberts/Nailah Blackman remain identical model profiles. Resolve factual/source/alias and discriminating clue paths before publication. Human recognition and gameplay need validation; the mathematical model assumes complete candidate knowledge.
 
 ## Content and implementation constraints
 
@@ -54,7 +57,7 @@ Provider selection is provisional: compare actual Trinidad/Tobago imagery covera
 
 Keep BMT's bold red/black direction with local copy and distinct game previews. Test compact mobile guessing, touch/keyboard map controls, dialog focus and feedback that does not rely on colour alone.
 
-Start accounts with guest-preserving upgrades and reliable history. Test completion streaks, friend/weekly per-mode boards and later a server-owned idempotent currency ledger for cosmetics. Hint access must not be a purchased advantage in a ranked daily. Economy rates and prices remain pilot hypotheses.
+The pilot ledger grants welcome rewards once, published Guess completion rewards atomically, one daily Pan reward and shared completion-streak bonuses. Server locks, receipts and room revisions protect retries and concurrent edits. Guest-preserving linking, outage grace, correction tools and friend/weekly boards remain next work. Use coin-based predictable game unlocks; explore gacha sidegrades in unranked activities. Hint access stays free in ranked Guess. Rates/prices/guarantees remain pilot hypotheses.
 
 ## Research anchors
 
