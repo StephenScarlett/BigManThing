@@ -4,3 +4,6 @@ export * from "./draw-nah.js";
 export * from "./feedback.js";
 export * from "./where-nah.js";
 export * from "./people-guess.js";
+export * from "./home.js";
+export * from "./farm.js";
+export * from "./farm-crops.js";

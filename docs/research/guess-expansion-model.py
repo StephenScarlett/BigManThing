@@ -130,6 +130,7 @@ def main():
     assert compare(kyle, levi, letters=True)[4] == 'longer'
     assert compare(levi, kyle, letters=True)[4] == 'shorter'
     assert compare(kyle, dict(kyle, name='Kyle Boss'), letters=True) == ('SOLVED',)
+    implemented = json.loads((ROOT/'packages/db/content/people-expanded-draft.json').read_text())['profiles']
     results = {
         'status': 'exploratory model of draft facts; not measured player performance',
         'limitations': [
@@ -146,6 +147,7 @@ def main():
         'expanded_64_five_columns': audit(pool, letters=True),
         'expanded_64_without_birth_four_design': audit(pool, birth=False),
         'expanded_64_without_birth_five_design': audit(pool, letters=True, birth=False),
+        'implemented_v2_current_display_names': audit(implemented, letters=True),
         'primary_speciality_counts': dict(sorted(Counter(p['primary_speciality'] for p in pool).items())),
         'primary_lane_counts': dict(sorted(Counter(p['primary_lane'] for p in pool).items())),
         'letters': {p['name']: letter_count(p['name']) for p in pool},

@@ -32,7 +32,7 @@ export function PeopleGuessInput({ catalog, used, disabled, labels, onPick }: {
       {matches.map((p, i) => <li id={`${listId}-${i}`} key={p.id} role="option" aria-selected={highlight === i}
         onMouseDown={e => { e.preventDefault(); pick(p); }} onMouseEnter={() => setHighlight(i)}
         className={`cursor-pointer px-3 py-2.5 ${highlight === i ? "bg-surface-2" : ""}`}>
-        <div className="font-semibold text-sm">{p.name}</div>
+        <div className="font-semibold text-sm">{p.name}{p.letters != null && <span className="font-normal text-ink-muted ml-2">{p.letters} letters</span>}</div>
         <div className="text-xs text-ink-muted mt-0.5">{p.specialities.map(v => labels[v] ?? v).join(" + ")} · Born {p.birth_year ?? "unconfirmed"}</div>
       </li>)}
       {!matches.length && <li className="px-3 py-3 text-sm text-ink-muted">No unused person matches. Try another name.</li>}

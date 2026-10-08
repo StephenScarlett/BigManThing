@@ -196,6 +196,25 @@
     ],
     "unknown_birth_years": 19
   },
+  "implemented_v2_current_display_names": {
+    "size": 64,
+    "optimal_expected_guesses": 2.531,
+    "worst_along_optimal_expected_strategy": 4,
+    "random_consistent_expected_guesses": 2.996,
+    "mean_candidates_after_uniform_wrong_first_guess": 9.957,
+    "largest_wrong_first_guess_bucket": 37,
+    "identical_stored_profile_groups": [
+      [
+        "Ian Alleyne",
+        "Adonai Dieu"
+      ],
+      [
+        "Patrice Roberts",
+        "Nailah Blackman"
+      ]
+    ],
+    "unknown_birth_years": 19
+  },
   "primary_speciality_counts": {
     "acting": 2,
     "broadcasting": 3,

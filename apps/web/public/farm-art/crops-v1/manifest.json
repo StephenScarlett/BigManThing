@@ -1,0 +1,136 @@
+{
+  "version": "crops-v1",
+  "artPixelsPerWorldUnit": 2,
+  "light": "upper-left",
+  "source": "art/farm/crops-v1/source/crops.png",
+  "assets": {
+    "seed": {
+      "file": "seed.png",
+      "width": 128,
+      "height": 128,
+      "pivot": [
+        64,
+        112
+      ],
+      "extraction": [
+        64,
+        116,
+        294,
+        372
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "sprout": {
+      "file": "sprout.png",
+      "width": 128,
+      "height": 192,
+      "pivot": [
+        64,
+        160
+      ],
+      "extraction": [
+        432,
+        224,
+        326,
+        250
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "growing": {
+      "file": "growing.png",
+      "width": 128,
+      "height": 192,
+      "pivot": [
+        64,
+        160
+      ],
+      "extraction": [
+        764,
+        154,
+        374,
+        324
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "watering-can": {
+      "file": "watering-can.png",
+      "width": 128,
+      "height": 128,
+      "pivot": [
+        64,
+        112
+      ],
+      "extraction": [
+        1144,
+        170,
+        392,
+        314
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "tomato-plant": {
+      "file": "tomato-plant.png",
+      "width": 128,
+      "height": 192,
+      "pivot": [
+        64,
+        160
+      ],
+      "extraction": [
+        20,
+        520,
+        389,
+        448
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "pepper-plant": {
+      "file": "pepper-plant.png",
+      "width": 128,
+      "height": 192,
+      "pivot": [
+        64,
+        160
+      ],
+      "extraction": [
+        412,
+        520,
+        406,
+        446
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "tomato": {
+      "file": "tomato.png",
+      "width": 128,
+      "height": 128,
+      "pivot": [
+        64,
+        112
+      ],
+      "extraction": [
+        880,
+        628,
+        280,
+        280
+      ],
+      "opaqueAlphaThreshold": 160
+    },
+    "pepper": {
+      "file": "pepper.png",
+      "width": 128,
+      "height": 128,
+      "pivot": [
+        64,
+        112
+      ],
+      "extraction": [
+        1224,
+        564,
+        302,
+        370
+      ],
+      "opaqueAlphaThreshold": 160
+    }
+  }
+}

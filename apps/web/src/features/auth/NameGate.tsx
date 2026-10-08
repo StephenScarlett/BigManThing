@@ -16,26 +16,48 @@ export default function NameGate() {
   const [showEmail, setShowEmail] = useState(false);
 
   async function handleGuest() {
+    if (busy) return;
     setBusy(true);
-    await signInAsGuest();
-    // auth state change will set user → gate unmounts
+    setError(null);
+    try {
+      await signInAsGuest();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Guest sign-in failed. Please try again.";
+      setError(/anonymous.*disabled/i.test(message)
+        ? "Guest play isn’t available in this environment. Continue with Google or email."
+        : message);
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function handleGoogle() {
+    if (busy) return;
     setBusy(true);
-    await signInWithGoogle();
-    // redirect happens
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (busy || !email.trim()) return;
     setBusy(true);
     setError(null);
-    const { error: err } = await signInWithEmail(email.trim());
-    setBusy(false);
-    if (err) setError(err);
-    else setLinkSent(true);
+    try {
+      const { error: err } = await signInWithEmail(email.trim());
+      if (err) setError(err);
+      else setLinkSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Email sign-in failed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -105,14 +127,14 @@ export default function NameGate() {
             <button type="submit" disabled={busy} className="btn-primary w-full">
               {busy ? "Sending…" : "Send Magic Link"}
             </button>
-            {error && <p className="text-sm text-brand-red">{error}</p>}
           </form>
         )}
+        {error && <p role="alert" className="text-sm text-brand-red">{error}</p>}
       </div>
 
       <p className="mt-8 text-xs text-ink-muted max-w-xs">
-        Guest accounts save locally — sign in with Google or email to keep
-        your streaks across devices.
+        Return with the same account to keep your progress. Guest sessions
+        are tied to this browser.
       </p>
     </div>
   );
