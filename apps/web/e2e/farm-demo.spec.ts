@@ -170,7 +170,7 @@ test("detailed art loads and starter customization changes the aligned four-faci
 test("missing artwork has a readable fallback and does not break movement or doors", async({page})=>{
   const errors:string[]=[]; page.on("pageerror",error=>errors.push(error.message));
   await page.route("**/farm-art/v1/*.png",route=>route.abort());
-  await start(page); await expect(page.getByRole("status")).toContainText("Some artwork could not load");
+  await start(page); await expect(page.getByRole("status").filter({hasText:"Some artwork could not load"})).toBeVisible();
   const before=await position(page); await page.keyboard.down("d");
   await expect.poll(async()=> (await position(page)).x).toBeGreaterThan(before.x+8); await page.keyboard.up("d");
   await page.getByRole("navigation",{name:"Preview jump points"}).getByRole("button",{name:"House door",exact:true}).click();

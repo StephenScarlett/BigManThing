@@ -1,17 +1,20 @@
 import Phaser from "phaser";
 import { FarmInput } from "./farm-input";
 import { ART_PROPS, ART_ROOT, composeAvatar } from "./farm-avatar";
+import {cropProgress,type FarmPlot} from "@bmt/shared";
 import { DEFAULT_APPEARANCE, TILE, WORLDS, cameraLayout, moveActor, nearestInteraction, propCanvas, transitionSpawn, safeFarmPosition, terrainTiles, type Actor, type Appearance, type Interaction, type Prop, type SceneId, type World, type FarmPosition } from "./farm-world";
 
 export type FarmSnapshot = { scene: SceneId; actor: Actor; nearby: Interaction | null; zoom: number; paused: boolean; missingArt?: string[] };
-export type FarmController = { destroy(): void; resize(width: number, height: number): void; releaseInput(): void; setPaused(paused: boolean): void; setAppearance(appearance: Appearance): void; jump(id: string): void };
-type Options = { input: FarmInput; onSnapshot(snapshot: FarmSnapshot): void; onInspect(item: Interaction): void; onReady(): void; worlds?: Record<SceneId,World>; initialPosition?: FarmPosition };
+export type FarmActionEffect={kind:"plant"|"water"|"harvest";plotId?:string;art?:string;nonce:number};
+export type FarmController = { destroy(): void; resize(width: number, height: number): void; releaseInput(): void; setPaused(paused: boolean): void; setAppearance(appearance: Appearance): void; setCrops(plots:FarmPlot[]):void; playAction(effect:FarmActionEffect):void; jump(id: string): void };
+type Options = { input: FarmInput; onSnapshot(snapshot: FarmSnapshot): void; onInspect(item: Interaction): void; onReady(): void; worlds?: Record<SceneId,World>; initialPosition?: FarmPosition;plots?:FarmPlot[];estimatedServerNow?:()=>number };
 const colour = (hex: string) => Number.parseInt(hex.replace("#", ""), 16);
 
 /** Cosmetic movement renderer shared by the saved farm and isolated demo. */
 export function mountFarm(host: HTMLElement, options: Options): FarmController {
   let scene: FarmScene | undefined, paused = false, destroyed = false;
   let appearance = { ...DEFAULT_APPEARANCE };
+  let plots=options.plots??[];
   const worlds=options.worlds ?? WORLDS, initial=safeFarmPosition(options.initialPosition ?? {scene:"farm",actor:worlds.farm.spawn},worlds);
   class FarmScene extends Phaser.Scene {
     private region: SceneId = initial.scene;
@@ -24,6 +27,10 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
     private wasMoving = false;
     private nearbyId: string | null = null;
     private missingArt: string[] = [];
+    private cropSprites:Phaser.GameObjects.GameObject[]=[];
+    private cropDrawKey="";
+    private actionEnds=0;
+    private actionObjects:Phaser.GameObjects.GameObject[]=[];
     constructor() { super("farm-preview"); }
     preload() {
       this.load.on("loaderror", (file: { key: string }) => this.missingArt.push(file.key));
@@ -31,6 +38,7 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       this.load.image("farm-hair-source", ART_ROOT + "hair.png");
       this.load.image("farm-terrain", ART_ROOT + "terrain.png");
       for (const id of ART_PROPS) this.load.image(`farm-art-${id}`, ART_ROOT + `${id}.png`);
+      for(const id of ["seed","sprout","growing","watering-can","tomato-plant","pepper-plant","tomato","pepper"])this.load.image(`farm-crop-${id}`,`/farm-art/crops-v1/${id}.png`);
     }
     create() {
       scene = this;
@@ -39,7 +47,10 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       this.buildRegion();
       this.scale.on("resize", this.fitCamera, this);
       this.events.once("shutdown", () => { this.scale.off("resize", this.fitCamera, this); options.input.clear(); });
-      options.onReady(); this.publish(true);
+      // Ready means the canvas has actually painted, so an immediately opened
+      // menu can pause the renderer without leaving a blank first frame.
+      this.game.events.once(Phaser.Core.Events.POST_RENDER,()=>{if(!destroyed)options.onReady();});
+      this.publish(true);
     }
     private makeGroundTextures() {
       const g = this.make.graphics({ x: 0, y: 0 }, false);
@@ -61,9 +72,11 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       g.generateTexture("farm-ground", TILE * colours.length, TILE); g.destroy();
     }
     private buildRegion() {
+      this.cancelAction();
       this.cameras.main.stopFollow();
       this.ground?.destroy(); this.ground = undefined;
       this.children.removeAll(true);
+      this.cropSprites=[];this.cropDrawKey="";this.actionEnds=0;
       const world = worlds[this.region];
       const tiles = terrainTiles(world).map(row=>row.map(tile=>this.textures.exists("farm-terrain")?tile:tile>7?7:tile));
       const density = this.textures.exists("farm-terrain") ? 2 : 1, groundKey = density === 2 ? "farm-terrain" : "farm-ground";
@@ -71,6 +84,7 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
       const tileset = this.ground.addTilesetImage(groundKey, groundKey, TILE*density, TILE*density, 0, 0)!;
       this.ground.createLayer(0, tileset, 0, 0)!.setScale(1/density).setDepth(-10000);
       for (const p of world.props) {
+        if(p.kind==="plot")continue;
         const key = this.makePropTexture(p), canvas = propCanvas(p);
         this.add.image((p.x + p.w / 2) * TILE, (p.y + p.h) * TILE, key)
           .setOrigin(canvas.pivot.x / canvas.width, canvas.pivot.y / canvas.height)
@@ -82,12 +96,63 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
         if (this.textures.exists("farm-art-threshold")) this.add.image(door.x,door.y,"farm-art-threshold").setOrigin(.5,160/192).setScale(.5).setDepth(-10);
         else { this.add.rectangle(door.x,door.y + 2,TILE,10,0xcea877).setDepth(-10); this.add.rectangle(door.x,door.y - 7,40,18,0x78513e).setDepth(-10); }
       }
+      this.drawCrops();
       this.shadow = this.add.ellipse(this.actor.x, this.actor.y - 1, 22, 8, 0x263b31, 0.24);
       this.player = this.add.sprite(this.actor.x, this.actor.y, "farm-avatar", `${this.actor.facing}-0`).setOrigin(0.5, 60 / 64).setScale(this.hasAvatarArt() ? .5 : 1);
       this.fitCamera();
       this.cameras.main.startFollow(this.player, true, 1, 1, 0, 24);
       this.cameras.main.centerOn(this.actor.x, this.actor.y - 24);
       this.walkTime = 0; this.wasMoving = false; this.nearbyId = null;
+    }
+    drawCrops(){
+      if(this.region!=="farm")return;
+      const now=options.estimatedServerNow?.()??Date.now();
+      const key=JSON.stringify(plots.map(p=>[p.plot_id,p.crop?.stage,p.crop?.reveal?.art,p.crop?cropProgress(p.crop,now)>=.5:false]));
+      if(key===this.cropDrawKey && this.cropSprites.length)return;this.cropDrawKey=key;
+      for(const sprite of this.cropSprites)sprite.destroy();this.cropSprites=[];
+      for(const prop of worlds.farm.props.filter(p=>p.kind==="plot")){
+        const crop=plots.find(p=>p.plot_id===prop.id)?.crop,x=(prop.x+.5)*TILE,y=(prop.y+1)*TILE;
+        const wet=!!crop?.watered_at,soilKey=wet?"farm-soil-wet":"farm-soil-dry";
+        if(this.textures.exists("farm-terrain")){
+          if(!this.textures.exists(soilKey)){
+            const texture=this.textures.createCanvas(soilKey,128,192)!;
+            texture.context.imageSmoothingEnabled=false;
+            texture.context.drawImage(this.textures.get("farm-terrain").getSourceImage() as CanvasImageSource,(wet?9:8)*64,0,64,64,32,96,64,64);texture.refresh();
+          }
+          this.cropSprites.push(this.add.image(x,y,soilKey).setOrigin(.5,160/192).setScale(.5).setDepth(-100));
+        }else this.cropSprites.push(this.add.rectangle(x,y-16,32,32,wet?0x58412e:0x927045).setDepth(-100));
+        if(crop){
+          const art=crop.reveal?crop.reveal.art+"-plant":cropProgress(crop,now)>=.5?"growing":"sprout",texture="farm-crop-"+art;
+          if(this.textures.exists(texture))this.cropSprites.push(this.add.image(x,y,texture).setOrigin(.5,160/192).setScale(.5).setDepth(y-.02));
+          else this.cropSprites.push(this.add.rectangle(x,y-16,14,20,crop.reveal?0xb8563d:0x57854b).setDepth(y-.02));
+          if(crop.stage==="planted" || crop.stage==="ready")this.cropSprites.push(this.add.text(x,y+3,crop.stage==="ready"?"RIPE":"WATER",{fontFamily:"monospace",fontSize:"7px",color:"#fff6d8",backgroundColor:"#354536"}).setOrigin(.5,0).setDepth(y+1));
+        }
+      }
+    }
+    playAction(effect:FarmActionEffect){
+      // Cosmetic acknowledgement only; rough lean/tool action uses the shared rig.
+      if(paused || destroyed || !this.player)return;
+      this.cancelAction();
+      options.input.clear();this.actionEnds=this.time.now+750;this.walkTime=0;this.placePlayer(0);
+      const x=this.actor.x,y=this.actor.y,left=this.actor.facing==="left";
+      const key="farm-crop-"+(effect.kind==="water"?"watering-can":effect.kind==="plant"?"seed":effect.art??"tomato");
+      const tool=this.textures.exists(key)?this.add.image(x+(left?-13:13),y-22,key).setScale(.25).setFlipX(left).setDepth(y+2):this.add.rectangle(x+12,y-20,10,10,0xd7c891).setDepth(y+2);
+      this.actionObjects.push(tool);
+      const player=this.player;
+      this.tweens.add({targets:player,rotation:left?-.04:.04,y:y-1,duration:250,yoyo:true,onComplete:()=>player.setRotation(0)});
+      this.tweens.add({targets:tool,y:effect.kind==="harvest"?y-38:y-16,alpha:0,duration:650,onComplete:()=>tool.destroy()});
+      if(effect.kind==="water")for(let i=0;i<4;i++){
+        const drop=this.add.rectangle(x+(left?-19:19)+i*2,y-12,2,3,0x91c3d3).setDepth(y+3);
+        this.actionObjects.push(drop);
+        this.tweens.add({targets:drop,y:y+3,alpha:0,delay:i*80,duration:320,onComplete:()=>drop.destroy()});
+      }
+      this.publish(true);
+    }
+    private cancelAction(){
+      this.actionEnds=0;
+      if(this.player){this.tweens.killTweensOf(this.player);this.player.setRotation(0);}
+      for(const object of this.actionObjects){this.tweens.killTweensOf(object);object.destroy();}
+      this.actionObjects=[];
     }
     private makePropTexture(p: Prop): string {
       if (this.textures.exists(`farm-art-${p.kind}`)) return `farm-art-${p.kind}`;
@@ -191,6 +256,7 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
     jump(id: string) {
       const item = worlds[this.region].interactions.find(i => i.id === id);
       if (!item) return;
+      this.cancelAction();
       options.input.clear(); this.actor = { ...item.approach }; this.placePlayer(0); this.cameras.main.centerOn(this.actor.x, this.actor.y - 24); this.publish(true);
     }
     private placePlayer(frame: number) {
@@ -205,6 +271,8 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
     }
     override update(_time: number, delta: number) {
       if (paused || destroyed) return;
+      this.drawCrops();
+      if(this.time.now<this.actionEnds){options.input.clear();return;}
       const before = this.actor, movement = options.input.movement();
       this.actor = moveActor(worlds[this.region], this.actor, movement, delta);
       const moving = Math.hypot(this.actor.x - before.x, this.actor.y - before.y) > 0.01;
@@ -236,6 +304,8 @@ export function mountFarm(host: HTMLElement, options: Options): FarmController {
     releaseInput() { options.input.clear(); if (!destroyed) scene?.publish(true); },
     setPaused(value) { if (destroyed) return; paused = value; options.input.clear(); if (value) game.pause(); else game.resume(); scene?.publish(true); },
     setAppearance(value) { appearance = { ...value }; scene?.drawAvatar(); },
+    setCrops(value){plots=value;scene?.drawCrops();},
+    playAction(effect){scene?.playAction(effect);},
     jump(id) { if (!destroyed && !paused) scene?.jump(id); },
   };
 }

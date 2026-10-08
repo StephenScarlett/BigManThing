@@ -1,13 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import FarmViewport from "@/features/farm/FarmViewport";
 import FarmCharacterPreview from "@/features/farm/FarmCharacterPreview";
 import { FarmInput, isTypingTarget, type Direction } from "@/features/farm/farm-input";
 import { APPEARANCE_CHOICES, APPEARANCE_STYLES, DEFAULT_APPEARANCE, WORLDS, type Appearance, type Interaction, type FarmPosition, type FarmState } from "@/features/farm/farm-world";
 import type { FarmController, FarmSnapshot } from "@/features/farm/farm-engine";
+import {type FarmCropReceipt,TILE} from "@bmt/shared";
+import FarmCropPanel,{CropRecovery,type CropPanelMode} from "@/features/farm/FarmCropPanel";
+import {useFarmCrops} from "@/features/farm/useFarmCrops";
+import type {FarmActionEffect} from "@/features/farm/farm-engine";
 import "@/features/farm/farm.css";
 
-type Panel = { kind: "character" | "bag" | "help" | "inspect"; item?: Interaction };
+type Panel = { kind: "character" | "bag" | "help" | "inspect" | "crops"; item?: Interaction; mode?:CropPanelMode; plotId?:string };
 const directionSymbols: Record<Direction, string> = { up: "↑", left: "←", down: "↓", right: "→" };
 export type FarmPersistence = {
   state: FarmState; status: string; error: string | null; conflict: boolean; characterSaving: boolean;
@@ -17,13 +21,28 @@ export type FarmPersistence = {
 };
 export default function FarmDemoPage({ persistence }: { persistence?: FarmPersistence }) {
   const saved = useRef(persistence); saved.current=persistence;
-  const worlds=persistence?.state.worlds ?? WORLDS;
+  const baseWorlds=persistence?.state.worlds ?? WORLDS;
+  const [worlds]=useState(()=>({...baseWorlds,farm:{...baseWorlds.farm,interactions:[...baseWorlds.farm.interactions,...baseWorlds.farm.props.filter(p=>p.kind==="plot").map(p=>({id:p.id,label:p.id.replace("plot-","Plot "),position:{x:(p.x+.5)*TILE,y:(p.y+1)*TILE-8},approach:{x:(p.x+.5)*TILE,y:(p.y+1)*TILE+10,facing:"up" as const},description:"Plant, water and harvest this plot."}))]}}));
+  const plotIds=useMemo(()=>worlds.farm.props.filter(p=>p.kind==="plot").map(p=>p.id),[worlds]);
+  const crops=useFarmCrops(persistence?.state.owner_id,plotIds);
+  const [actionEffect,setActionEffect]=useState<FarmActionEffect|null>(null);
   const [input] = useState(() => new FarmInput()), controller = useRef<FarmController | null>(null), root = useRef<HTMLElement>(null);
   const [appearance, setAppearance] = useState<Appearance>({ ...(persistence?.state.appearance ?? DEFAULT_APPEARANCE) }), [nickname, setNickname] = useState(persistence?.state.nickname ?? "My lime");
   const [ready, setReady] = useState(false), [userPaused, setUserPaused] = useState(false), [panel, setPanel] = useState<Panel | null>(null);
   const [snapshot, setSnapshot] = useState<FarmSnapshot>({ ...(persistence?.state.position ?? {scene:"farm",actor:{...worlds.farm.spawn}}), nearby: null, zoom: 1, paused: false });
   const paused = userPaused || !!panel || !!persistence?.conflict, enabled = useRef(false); enabled.current = ready && !paused;
-  const inspect = useCallback((item: Interaction) => setPanel({ kind: "inspect", item }), []);
+  const inspect = useCallback((item: Interaction) => {
+    const modes:Record<string,CropPanelMode>={"seed-stall":"seeds",market:"market",storage:"chest",plots:"plots"};
+    if(modes[item.id] || item.id.startsWith("plot-"))setPanel({kind:"crops",item,mode:modes[item.id]??"plots",plotId:item.id.startsWith("plot-")?item.id:undefined});
+    else setPanel({kind:"inspect",item});
+  }, []);
+  const receipt=(r:FarmCropReceipt)=>{
+    if(["plant","water","harvest"].includes(r.action)){
+      const art=r.item_id?crops.state?.catalog.find(c=>c.item_id===r.item_id)?.art:undefined;
+      setActionEffect({kind:r.action as "plant"|"water"|"harvest",plotId:r.plot_id,art,nonce:performance.now()});
+      if(panel?.plotId)setPanel(null);
+    }
+  };
   const report = useCallback((next:FarmSnapshot)=>{setSnapshot(next);saved.current?.onCheckpoint({scene:next.scene,actor:next.actor});},[]);
   const characterDirty=!!persistence && (nickname!==persistence.state.nickname || JSON.stringify(appearance)!==JSON.stringify(persistence.state.appearance));
   useEffect(()=>{
@@ -59,18 +78,20 @@ export default function FarmDemoPage({ persistence }: { persistence?: FarmPersis
     {persistence?<div className="farm-save-bar"><p role="status" data-testid="farm-save-status">{persistence.status}{characterDirty?" · Unsaved character changes":""}</p><button type="button" onClick={persistence.onSavePosition} disabled={persistence.conflict}>Save now</button><button type="button" onClick={persistence.onReload}>Load saved farm</button>
       {persistence.error && <p role="alert">{persistence.error}</p>}
       {persistence.state.position_recovered && <p>Your last spot was blocked, so you’ve returned to a safe place.</p>}
-    </div>:<p className="farm-preview-note">Temporary preview · no login needed. No crops, fish, coins or saved items are changed. Character choices reset when you leave.</p>}
+    </div>:<p className="farm-preview-note">Temporary preview · no login needed. Try quick-growing demo crops; your account and saved items are unaffected. The preview resets when you leave.</p>}
+    <div className="crop-overview"><p data-testid="crop-overview">{crops.state?`${crops.state.coins} ${persistence?"Lime Coins":"demo coins"} · ${crops.state.seed_quantity} mystery seeds · ${crops.state.plots.filter(p=>p.crop?.stage==="ready").length} ripe plots`:"Loading crop supplies…"}</p><p role="status">{crops.message}</p>{crops.error && <CropRecovery game={crops} onReceipt={receipt}/>}</div>
     <div className="farm-shell">
       <div className="farm-toolbar">
         <span className="farm-location" data-testid="farm-location">{snapshot.scene === "farm" ? "The yard" : "Your house"}<small>{ready ? paused ? "Paused" : "Explore at your own pace" : "Preparing your patch…"}</small></span>
         <div className="farm-toolbar-actions">
           <button type="button" disabled={!ready} onClick={() => setPanel({ kind: "character" })}>Character</button>
           <button type="button" disabled={!ready} onClick={() => setPanel({ kind: "bag" })}>Bag</button>
+          <button type="button" disabled={!ready} onClick={()=>setPanel({kind:"crops",mode:"plots"})}>Crops</button>
           <button type="button" disabled={!ready} aria-pressed={userPaused} onClick={() => setUserPaused(p => !p)}>{userPaused ? "Resume" : "Pause"}</button>
           <button type="button" onClick={() => setPanel({ kind: "help" })} aria-label="Control help">?</button>
         </div>
       </div>
-      <FarmViewport input={input} controller={controller} paused={paused} appearance={appearance} onSnapshot={report} onInspect={inspect} onReady={setReady} worlds={worlds} initialPosition={persistence?.state.position} />
+      <FarmViewport input={input} controller={controller} paused={paused} appearance={appearance} onSnapshot={report} onInspect={inspect} onReady={setReady} worlds={worlds} initialPosition={persistence?.state.position} plots={crops.state?.plots} estimatedServerNow={crops.estimatedServerNow} actionEffect={actionEffect}/>
       {!!snapshot.missingArt?.length && <p className="farm-preview-note" role="status">Some artwork could not load. Basic preview art is being used; reload to try again.</p>}
       {paused && <p className="farm-paused-label" aria-live="polite">{persistence?.conflict?"Movement paused. Load the saved farm to continue.":panel ? "Movement paused while the menu is open." : "Paused. Resume when you’re ready."}</p>}
       <div className="farm-controls">
@@ -88,9 +109,9 @@ export default function FarmDemoPage({ persistence }: { persistence?: FarmPersis
     {!persistence && <nav className="farm-waypoints" aria-label="Preview jump points">
       <span>Jump to test:</span>{world.interactions.map(item => <button key={item.id} type="button" disabled={!ready || paused} onClick={() => { controller.current?.jump(item.id); focusWorld(); }}>{item.id === "home-door" ? "House door" : item.label}</button>)}
     </nav>}
-    <div className="farm-next"><p><strong>{persistence?"Your farm is saved.":"This is the foundation."}</strong> {persistence?"Next comes planting, your first harvest, fishing and selling.":"Next: saved farms, mystery crops, fishing and selling—then daily-game supplies and house comfort."}</p><Link to="/guess">Back to Guess Nah →</Link></div>
+    <div className="farm-next"><p><strong>{persistence?"Your crop loop is ready.":"Try a quick harvest."}</strong> {persistence?"Plant, water, return in 24 hours, then keep or sell what grew. Fishing is the next batch.":"Open Crops, plant and water a seed; it grows in 45 seconds here. Your saved farm uses 24 hours."}</p><Link to="/guess">Back to Guess Nah →</Link></div>
     <details className="farm-diagnostics"><summary>Movement diagnostics</summary><output data-testid="farm-position" data-scene={snapshot.scene} data-x={snapshot.actor.x.toFixed(2)} data-y={snapshot.actor.y.toFixed(2)} data-facing={snapshot.actor.facing} data-paused={String(snapshot.paused)}>{snapshot.scene} · feet {snapshot.actor.x.toFixed(1)}, {snapshot.actor.y.toFixed(1)} · facing {snapshot.actor.facing} · zoom {snapshot.zoom}×</output></details>
-    {panel && <FarmDialog title={panel.kind === "character" ? "Your character" : panel.kind === "bag" ? "Your bag" : panel.kind === "help" ? "Make yourself at home" : panel.item!.label} onClose={() => setPanel(null)}>
+    {panel && <FarmDialog title={panel.kind === "character" ? "Your character" : panel.kind === "bag" ? "Your bag" : panel.kind === "help" ? "Make yourself at home" : panel.kind==="crops"?panel.item?.label??"Your crops":panel.item!.label} onClose={() => setPanel(null)}>
       {panel.kind === "character" && <>
         <p>{persistence?"Try your look in every direction, then save your character. These starter choices are free.":"Try your look in every direction. These starter choices are temporary in this demo."}</p>
         <FarmCharacterPreview appearance={appearance} />
@@ -103,7 +124,7 @@ export default function FarmDemoPage({ persistence }: { persistence?: FarmPersis
         {persistence && <p role="status">{characterDirty?"Your character has unsaved changes.":"Character saved."}</p>}
         {persistence?.error && <p role="alert">{persistence.error}</p>}
       </>}
-      {panel.kind === "bag" && (persistence?<><p>Your starter kit is kept with this farm.</p><ul>{persistence.state.inventory.map(item=><li key={item.item_id}>{item.label} × {item.quantity}</li>)}<li>{worlds.farm.props.filter(p=>p.kind==="plot").length} starter plots</li></ul><p>Planting and fishing are coming next. Your seeds and tools will be ready.</p></>:<><p>These describe the starter kit planned for your first farm. They are not account inventory.</p><ul><li>Watering can — water a planted mystery seed.</li><li>Fishing rod — cast at the pond.</li><li>Six starter plots — land upgrades come later.</li></ul><p>Storage, crop and fish stacks, protected favourites and selling arrive with persistence.</p></>)}
+      {(panel.kind==="bag" || panel.kind==="crops") && <FarmCropPanel game={crops} mode={panel.kind==="bag"?"bag":panel.mode??"plots"} plotId={panel.plotId} demo={!persistence} disabled={!!persistence?.conflict} onReceipt={receipt}/>}
       {panel.kind === "help" && <><p>Click the world, then use WASD or arrow keys. Hold the on-screen direction buttons on touch devices. Press E or the action button near a door to enter or leave.</p><p>Furniture, trees, water and the farm edges block your feet; rugs and the dock do not.</p><p>{persistence?"Your position saves after walking and periodically while you move. Use Save now and wait for Saved before leaving. Save character choices separately in Character.":"The jump points help test the farm. No preview interaction grants an economic reward."} Menus, pause, losing focus and leaving the tab release movement.</p></>}
       {panel.kind === "inspect" && <p>{persistence?({"seed-stall":"Your starter seeds are in your bag. Planting and new seed packets are coming next.",market:"Bring your future harvests and catches here to sell them or keep them for another goal.",orders:"Optional crop and fish requests will appear here once growing and fishing are ready.",plots:"These six plots belong to your farm. Planting and watering are coming next.",pond:"Your fishing rod is in your bag. Casting and catches are coming next.",storage:"This chest is part of your home. Harvest and fish storage will arrive with those activities.",furniture:"These furnishings belong to your starter house. Moving furniture and decorating are coming later."} as Record<string,string>)[panel.item!.id] ?? panel.item!.description:panel.item!.description}</p>}
     </FarmDialog>}

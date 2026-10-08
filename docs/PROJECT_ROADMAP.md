@@ -1,13 +1,13 @@
 # BigManThing execution roadmap
 
-Updated: 2026-10-06. Owner: project maintainer, assisted by Codex.
+Updated: 2026-10-08. Owner: project maintainer, assisted by Codex.
 Context: [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md).
 Guess design proposal: [GUESS_NAH_DESIGN.md](GUESS_NAH_DESIGN.md).
 Latest expansion research: [GUESS_NAH_EXPANSION.md](GUESS_NAH_EXPANSION.md).
 Active progression plan: [FARM_AND_HOME_DESIGN.md](FARM_AND_HOME_DESIGN.md). Active asset contract: [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md). Historical implemented pilot: [REWARDS_AND_ROOMS.md](REWARDS_AND_ROOMS.md).
-Status: people-v2/64-draft expansion and room/reward foundation implemented and applied to development. Latest owner pivot is a Stardew-adjacent farm/house; research/economy model, new art contract and isolated [F0 walkable renderer](FARM_PROTOTYPE.md) are implemented. [F1 saved farm/house/character](FARM_PERSISTENCE.md) and its additive development migration are complete. Crops/fishing, physical devices, content review, linking and boards remain open.
+Status: people-v2/64-draft expansion and room/reward foundation implemented and applied to development. Latest owner pivot is a Stardew-adjacent farm/house; research/economy model, new art contract and isolated [F0 walkable renderer](FARM_PROTOTYPE.md) are implemented. [F1 saved farm/house/character](FARM_PERSISTENCE.md) and its additive development migration are complete. [F2 mystery crops/market](FARM_CROPS.md) is also implemented and applied to development. Owner crop feedback, fishing, physical devices, content review, linking and boards remain open.
 
-The owner wants Stardew-adjacent camera/movement/characters, an owned walkable farm with an enterable furnished house, farming/fishing first, mystery seeds/random fish, coin-funded upgrades, useful harvests and persistent main-game incentives. Proposed home/main-streak bonuses affect bounded coin earnings. Square-tile farm art supersedes the old isometric brief. The existing locked wallet/inventory/guarantees and Guess people-v2 are retained foundations. `/farm/demo` exercises movement/house entry with temporary state. `/farm` now saves an owned v1 world/house, character, location and once-only six-seed/two-tool starter kit. Crops/fish and proposed economic rates are not active. Source/recognition review remains necessary and no people daily is published. Single player comes first, with read-only farm snapshots then live friend visits later. Where Nah provider/coverage guidance remains planned. Detailed live evidence belongs in the private reference.
+The owner wants Stardew-adjacent camera/movement/characters, an owned walkable farm with an enterable furnished house, farming/fishing first, mystery seeds/random fish, coin-funded upgrades, useful harvests and persistent main-game incentives. Proposed home/main-streak bonuses affect bounded coin earnings. Square-tile farm art supersedes the old isometric brief. The existing locked wallet/inventory/guarantees and Guess people-v2 are retained foundations. `/farm/demo` exercises movement/house entry with temporary state. `/farm` now saves an owned v1 world/house, character, location and once-only six-seed/two-tool starter kit. F2 enables a small two-crop 75/25 pilot with 24-hour growth, seed purchase, recovery supplies, chest storage and base-price selling. Fish and the broader proposed rates/bonuses are not active. Source/recognition review remains necessary and no people daily is published. Single player comes first, with read-only farm snapshots then live friend visits later. Where Nah provider/coverage guidance remains planned. Detailed live evidence belongs in the private reference.
 
 ## Work order and acceptance gates
 
@@ -23,7 +23,7 @@ The owner wants Stardew-adjacent camera/movement/characters, an owned walkable f
 | 5 | Pending | BMT design decisions; distinct game previews; compact mobile and accessible flows | Target-user tests resolve major confusion; touch/keyboard/focus/reduced-motion/colour checks pass |
 | 6 | Pending | Draw identity, reconnection, lifecycle, bounded input, timing/hints/summaries and persistence | Two/four/twelve-player and host-exit/rejoin flows pass; input/resource boundaries and saved results verified |
 | 7 | Completion streak foundation implemented; account/boards pending | Guest upgrade/merge; server history; daily stats/streaks; friend/weekly per-mode boards | Same-day/missed-day/midnight/outage behavior verified; progress survives upgrades/devices; replay cannot improve rank |
-| 8 | Historical earned-roll/room pilot, F0 art/renderer and F1 persistence implemented; crop loop pending | Farm F0–F6, item/growth/quest economy, art, corrections and closed pilot | Persistent farm loop, bounded main-game bridge, device/economy and restore gates pass |
+| 8 | Historical earned-roll/room pilot, F0 art/renderer and F1 persistence and F2 crop loop implemented; fishing pending | Farm F0–F6, item/growth/quest economy, art, corrections and closed pilot | Persistent farm loop, bounded main-game bridge, device/economy and restore gates pass |
 
 Integrate UI work into each iteration. A 25–50-location beta bank, the 64-person draft Guess pool and a 50-player platform pilot are planning targets. Do not pad rosters/maps to meet numbers. Smaller iconic specialities may stay below five. Rolls/prices/guarantees are hypotheses; paid rolls/trading are not implemented. Unranked companion powers, friend visits and further activities are staged work. Multi-server Draw scaling remains deferred.
 
@@ -51,14 +51,14 @@ These IDs preserve continuity with the detailed private audit. Entries remain op
 | HOME-01 | P1; server checks implemented | Verify owned quantities, room geometry/revisions, avatar composition, actual devices and asset fallback |
 | GACHA-01 | P1 pilot | Verify odds/guarantees/duplicates, coin choices and collection pacing using real play |
 | SIDE-01 | P1 before more rewarded games | Verify daily caps, round/equipment snapshots and shared side-activity reward budget |
-| FARM-01–03 | P1; F0/F1 implemented and tested; crops/fishing/devices open | Verify walkable square-tile farm/house, concealed server-timed crops, inventory-producing fishing and one-time consumption |
+| FARM-01–03 | P1; F0–F2 implemented and tested; crop playtest/fishing/devices open | Verify walkable square-tile farm/house, concealed server-timed crops, inventory-producing fishing and one-time consumption |
 | FARM-04/HOME-02 | P1 before farm reward rollout | Verify optional orders, main-only activity, rating/coin caps, bonus rounding, grants and proposed direct prices |
 
 ## Next product batch
 
-1. **F1 ready for owner testing:** use `/farm` with your existing account, save a character and house checkpoint, refresh, inspect the once-only kit, and check conflict/retry behavior. See [FARM_PERSISTENCE.md](FARM_PERSISTENCE.md). The isolated demo/art standard remains; physical Android/Safari and long-session checks are open.
+1. **F1 confirmed working; F2 ready for owner testing:** use `/farm` for saved 24-hour crops or `/farm/demo` for the 45-second temporary loop. Plant/water, return for reveal/harvest, keep/store, and cancel/confirm a quoted sale. See [FARM_CROPS.md](FARM_CROPS.md). The isolated demo/art standard remains; physical Android/Safari and long-session checks are open.
 2. In parallel, review a varied Guess bank and publish the first development daily; retain the 64-person drafts and 19 unknown years until sourced review. Test recognition/Letters and both remaining profile collisions.
-3. **F2 next, F3 after:** implement one mystery seed purchase/plant/water/offline maturity/reveal/harvest/keep/sell loop with its small action/art batch, then one pond fishing loop. Preserve existing inventory/balances/receipts/history and verify server authority, retry and conservation paths.
+3. **F3 next:** implement one pond fishing loop with its small rod/cast/reel/fish batch, assist controls and authoritative conserved catch sessions. F2 crop purchase/plant/water/offline reveal/harvest/keep/store/sell and eight art assets are implemented. Preserve existing inventory/balances/receipts/history and verify server authority, retry and conservation paths.
 4. **F4–F5:** useful goods, weekly orders, discovery track and display; connect main-only supplies/streak and capped house coin bonuses. The proposed economy/prices are not active until implemented as explicit new versions.
 5. **Art batch 01 implemented:** reference-led detailed pixel-art rig, customization and matching farm/home pack at 2 art pixels/world unit, with a 64×128 character frame. See [FARM_ART_STANDARD.md](FARM_ART_STANDARD.md) and [FARM_ASSET_GUIDE.md](FARM_ASSET_GUIDE.md). Review it in motion before expanding wardrobe/species/furniture; physical phone/Safari checks remain open.
 6. **F6:** device/economy/recognition pilot, guest identity-preserving linking, outage grace and reward corrections. Processing/second habitat and friend farm snapshots follow the basic persistent loop.
@@ -85,12 +85,12 @@ The separate map coverage/provider work and account progression plan remain on t
 | Guest-preserving history; completion streak; friend/weekly boards | History/streak foundations implemented; linking/boards still planned |
 | Rolls plus Lime Coins; idempotent ledger; character/room collections | Owner direction implemented as a development pilot; amounts remain experiments |
 | Permanent coin-based side-game unlock; unranked companion powers | Pan unlock implemented; companion/equipment system planned |
-| Stardew-adjacent outdoor farm and enterable house; farming/fishing first | Latest owner pivot; F0/art and F1 owned world/house/character implemented, crops/fishing pending |
+| Stardew-adjacent outdoor farm and enterable house; farming/fishing first | Latest owner pivot; F0/art, F1 owned world/house/character and F2 crop loop implemented; fishing pending |
 | Square orthogonal tiles, four-facing layered avatar, new farm asset guide | Active art direction supersedes earlier isometric dimensions; master rig needs validation |
 | Detailed pixel art from owner-supplied bottle/human references | Implemented starter art batch; 64×64 terrain/64×128 rig at unchanged world scale, modular demo choices and rough walk; native pixel-editor polishing/owner approval pending |
 | Useful goods: sell/store/orders/journal/projects/displays; processing later | Proposed first progression flow; capped two weekly farm rolls protects main incentive |
 | House + main-streak coin bonuses, proposed maximum +25% with sale allowance | Modelled hypothesis; separate main activity and additive migration required |
-| Coin seeds/upgrades and gacha furniture/outfits; new direct cosmetic prices | Proposed farm economy; current pilot prices remain applied until a new version |
+| Coin seeds/upgrades and gacha furniture/outfits; new direct cosmetic prices | F2 seeds cost10 with tomato75%/pepper25%, sales14/20 and two recovery seeds/day; upgrades/bonuses/larger pool remain proposed, old collection prices unchanged |
 | Paid rolls, trading, broad global ranking | Outside the current implementation; revisit if owner requests |
 
 ## Update protocol and work log
@@ -176,3 +176,14 @@ The additive `20261006221529_farm_persistence_v1.sql` migration is applied to de
 Validation: 48 regression checks, 28 desktop/mobile-sized Chromium browser cases, typecheck and production build passed. Database checks cover starter conservation, appearance/position validation, separate revisions, retries, receipt pruning, owner/role boundaries, safe checkpoint recovery and frozen geometry. Browser checks cover saved appearance/house reload, dropped responses, tab conflicts, account changes, load failure and disabled guest signup in addition to all F0/art cases. Browser Auth/RPC transport uses fixtures; a real-account browser end-to-end test and physical phones/Safari remain owner/device work. Existing large-bundle warnings remain. Current PR delivery/CI evidence is recorded in its description and private checkpoint.
 
 Next: owner plays this saved foundation; then F2 one server-timed mystery crop loop and only its watering/growth/harvest art. No planting, catches, selling, furniture placement, house rating/bonuses or new farm prices are enabled by F1.
+
+
+### F2 mystery crops and market — 8 October 2026
+
+The owner confirmed F1 works and authorized the next implementation step. [F2](FARM_CROPS.md) now implements six saved plots, private frozen seed outcomes, one watering/24-hour server timer, offline maturity/reveal, one harvest to the bag, persistent chest storage and quoted/confirmed sales. Seeds cost10; the disclosed pilot pool is tomato75%/14 coins and hot pepper25%/20 coins, with two recovery seeds per Trinidad day. This deliberately smaller pool does not activate the proposed eight-species model, Rolls/orders/discovery track, house bonus or fishing. `/farm/demo` has a separate transient45-second loop with no economic RPCs.
+
+The additive `20261008153258_farm_crops_v1.sql` migration is applied to development. Five new private RLS/default-deny tables and two authenticated wrappers share wallet→farm lock ordering. Economic revisions and permanent UUID/body receipts are independent of cosmetic checkpoints/pruning. Retries return current inventory with the original acknowledgement; unknown transport failures retain the request and block new actions. Hidden outcomes never appear in pre-maturity context/receipts. Eight original pixel assets retain the approved scale/source/prompt/export contract; acknowledgement animation is a rough lean/tool effect, not an authored action sheet.
+
+Validation:58 regression checks, typecheck/build and44 desktop/mobile-sized Chromium cases pass. Database checks exercise existing-F1 restore, conservation, concealed outcomes, server time, retries, stale revisions, date grants and owner/role denial. Hosted transactional smoke passed and rolled back; existing identity/wallet/inventory/farm/save-receipt/Guess aggregate fingerprints stayed identical. Security advisory warning/error findings are unchanged. Browser transport is fixture-backed, with no claim of physical phone/Safari, real-account browser E2E or simultaneous live PostgreSQL session coverage. Existing bundle warnings remain. PR#4 stays open/unmerged; delivery/CI evidence is maintained in its description and private checkpoint.
+
+Next: owner plays crops, then F3 pond fishing. Preserve frozen rules/worlds and old inventories/balances/history. Parallel Guess content review, physical-device art/performance checks and F6 linking/corrections remain open.

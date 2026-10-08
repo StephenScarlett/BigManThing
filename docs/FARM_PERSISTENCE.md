@@ -1,5 +1,7 @@
 # Saved farm, house and character: F1
 
+This records the F1 foundation. The owner confirmed it works; the later [F2 crop guide](FARM_CROPS.md) supersedes the crop-pending/next-batch notes below.
+
 Development checkpoint: **6 October 2026**. `/farm` adds account-owned state to the [F0 renderer](FARM_PROTOTYPE.md) and [art batch 01](FARM_ART_STANDARD.md). The additive `20261006221529_farm_persistence_v1.sql` migration is applied to the owner's development database. Delivery remains [PR #4](https://github.com/StephenScarlett/BigManThing/pull/4), branch `feat/guess-v2-room-rewards`; this checkpoint does not merge or publish the frontend.
 
 ## Test this batch

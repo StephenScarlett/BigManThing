@@ -53,7 +53,7 @@ Directional furniture uses down/right/up/left exports and matching footprint/app
 
 Mystery packets and early sprouts share art across hidden outcomes. Do not reveal a species via leaf shape, colour or growth speed before the intentional reveal. Mature crop sprites and harvested produce icons use the same lighting, density and material ramps as the starter pack. UI draws rarity borders/badges; do not bake them into item pixels. Fish icons use clear silhouette, fins and restrained wet highlights; review names/habitats before authoring a species bank.
 
-Batch 1: existing demo character + world/home. Batch 2: one mystery packet, common generic growth stages, watering/interact actions, two mature crops and produce icons for a complete crop loop. Batch 3: rod/cast/reel/bobber and a reviewed small pond fish set. Batch 4: approved additional body/wardrobe/furniture families and four orientations. Do not mass-produce a catalogue before the owner reviews this batch in motion.
+Batch 1: existing demo character + world/home. Batch 2 is implemented for [F2](FARM_CROPS.md): one mystery packet, common generic growth stages, watering can, tomato/pepper mature plants and produce icons. Sources/prompts are in `art/farm/crops-v1/`, runtime exports in `apps/web/public/farm-art/crops-v1/`. The 128×192 plant pivot stays (64,160); dry/wet soil reuses v1 terrain. Actions currently use rough shared-rig lean/tool effects rather than the future authored 256×512 action-sheet contract. Batch 3: rod/cast/reel/bobber and a reviewed small pond fish set. Batch 4: approved additional body/wardrobe/furniture families and four orientations. Do not mass-produce a catalogue before the owner reviews this batch in motion.
 
 ## Delivery and acceptance
 
